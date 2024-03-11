@@ -1,19 +1,19 @@
 #Used this tutorial for help making the main menu https://www.youtube.com/watch?v=GMBqjxcKogA
-import pygame, sys
+import pygame, sys, os, game_window as WIN
 from button import Button
 
 pygame.init()
 
-SCREEN = pygame.display.set_mode((1280,720))
+SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Menu")
 
 #Background
-BG = pygame.image.load("/Users/madisoncrank/Downloads/WraithFallMenuScreen.jpeg")
+BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
 
 #load the font we want to use for the game
 #will return the font in the desired size
 def get_font(size):
-    return pygame.font.Font("/Users/madisoncrank/Downloads/Grand9KPixel.ttf", size)
+    return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9Kpixel.ttf"), size)
 
 #If user clicks play, this is a place holder for now until game is ready
 def play():
@@ -26,8 +26,8 @@ def play():
         PLAY_RECT = PLAY_TEXT.get_rect(center = (640, 260))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
         
-        PLAY_BACK = Button(image = None, pos=(640,460),
-                           text_input = "BACK", font = get_font(75), base_color="#FFFFFF", hovering_color="A90505")
+        PLAY_BACK = Button(image = None, pos=(640,460), # #A90505
+                           text_input = "BACK", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         PLAY_BACK.changeColor(PLAY_MOUSE_POSITION)
         PLAY_BACK.update(SCREEN)
         
