@@ -51,9 +51,9 @@ def main_menu():
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
         
         PLAY_BUTTON = Button (image=None, pos=(640,250),
-                               text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="A90505")
+                               text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         QUIT_BUTTON = Button (image = None, pos=(640,400),
-                               text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="A90505")
+                               text_input="QUIT", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
