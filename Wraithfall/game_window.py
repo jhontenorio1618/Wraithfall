@@ -1,4 +1,4 @@
-import pygame, os
+import pygame, os, sys
 
 
 """ Pygame Window Setup & Variables"""
@@ -28,3 +28,9 @@ def setup_window():
     pygame.init()
     SCREEN = pygame.display.set_mode(window_size())
     pygame.display.set_caption("Menu")
+
+
+def game_exit():
+    pygame.quit()
+    sys.exit()
+
