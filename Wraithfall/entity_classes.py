@@ -1,7 +1,15 @@
 import pygame, random
 import game_window as WIN
 
-# TODO need stats
+# TODO Make "class Entity(pygame.sprite.Sprite)" that the other entities extend [ex. class Player(Entity)] for stats
+class Entity(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.HP_max = 5
+        self.HP_curr = 5
+        self.ATK = 2
+
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -12,6 +20,10 @@ class Player(pygame.sprite.Sprite):
         self.rect.centery = WIN.WIN_HEIGHT / 2
         self.speed_x = 0
         self.speed_y = 0
+        # TODO Add more Stats... Idea: make this a dictionary?
+        self.HP_max = 5
+        self.HP_curr = 5
+        self.ATK = 2
 
     def update(self):
         self.speed_x = 0
@@ -27,10 +39,19 @@ class Player(pygame.sprite.Sprite):
             self.speed_y = 5
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
-        """if self.rect.right > winWidth:
-            self.rect.right = winWidth
-        if self.rect.left < 0:
-            self.rect.left = 0"""
+
+    def teleport(self, x, y):
+        """ Move player to specified coordinates """
+        self.rect.x = x
+        self.rect.y = y
+
+    def get_stats(self):
+        # TODO should be for all stats, for now returns HP
+        return {"ATK": self.ATK, "Max HP": self.HP_max, "HP": self.HP_curr}  # [self.HP_max, self.HP_curr, self.ATK]
+
+    def hp_update(self, val):
+        self.HP_curr += val
+        return self.HP_curr
 
 
 class Mob(pygame.sprite.Sprite):
@@ -47,6 +68,10 @@ class Mob(pygame.sprite.Sprite):
         self.speed_x = random.randrange(-3, 3)
         # random speed along the y-axis
         self.speed_y = random.randrange(1, 7)
+        # TODO RPG Stats
+        self.HP_max = 5
+        self.HP_curr = 5
+        self.ATK = 1
 
     def update(self):
         self.rect.x += self.speed_x
@@ -67,4 +92,11 @@ class Mob(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
+    def get_stats(self):
+        # TODO should be for all stats, for now returns HP
+        return {"ATK": self.ATK, "Max HP": self.HP_max, "HP": self.HP_curr}  # [self.HP_max, self.HP_curr, self.ATK]
+
+    def hp_update(self, val):
+        self.HP_curr += val
+        return self.HP_curr
 

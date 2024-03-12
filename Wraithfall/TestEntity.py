@@ -2,6 +2,7 @@ import pygame, sys, os
 import game_window as WIN
 import entity_classes as ENTITY
 import battle_menu as BATTLE
+from battle_menu import Battle
 import pygame.event as EVENTS
 
 
@@ -45,7 +46,16 @@ while looping:
 
     player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
     if player_mob_collide:
-        BATTLE.battle_menu()
+        combat = Battle(player, player_mob_collide)
+        remaining_mob = combat.combat_screen()
+        if remaining_mob:
+            # Run away was chosen
+            # TODO make this invulnerability for a few seconds. changing position could lead to bugs
+            player.teleport(player.rect.x - 10, player.rect.y - 10)
+        else:
+            # Defeated mob,sso remove mob from map
+            # TODO there could be bugs with this- find way to remove mob regardless of collision
+            pygame.sprite.spritecollide(player, mob_sprites, True)
 
     # draw
     # 'rendering' to the window
