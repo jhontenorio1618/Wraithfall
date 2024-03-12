@@ -23,14 +23,21 @@ def window_size():
     return WIN_WIDTH, WIN_HEIGHT
 
 
+def game_exit():
+    pygame.quit()
+    sys.exit()
+
+
+def get_font(size):
+    """ Load font in specified size for the game.
+
+    TODO: could change this to be able to take any specified font we have in assets? if we want more fonts """
+    return pygame.font.Font(os.path.join(DIR_FONTS, "grand9Kpixel.ttf"), size)
+
+
 def setup_window():
     # TODO maybe use this as a method to call for initialize pygame window?
     pygame.init()
     SCREEN = pygame.display.set_mode(window_size())
     pygame.display.set_caption("Menu")
-
-
-def game_exit():
-    pygame.quit()
-    sys.exit()
 
