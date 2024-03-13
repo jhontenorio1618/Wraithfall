@@ -1,13 +1,38 @@
 import pygame, random
 import game_window as WIN
 
+
 # TODO Make "class Entity(pygame.sprite.Sprite)" that the other entities extend [ex. class Player(Entity)] for stats
 class Entity(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.HP_max = 5
-        self.HP_curr = 5
-        self.ATK = 2
+        self.image = pygame.Surface((30, 30))
+        self.image.fill("#FFFFFF")
+        self.rect = self.image.get_rect()
+        self.rect.x = WIN.WIN_WIDTH / 2
+        self.rect.y = WIN.WIN_HEIGHT / 2
+        self.speed_x = 0
+        self.speed_y = 0
+        self.HP_Max = 1
+        self.HP = 1
+        self.ATK = 1
+
+    def set_stats(self, stat_list):
+        if stat_list["ATK"]:
+            self.ATK = stat_list["ATK"]
+        if stat_list["HP Max"]:
+            self.HP_Max = stat_list["HP Max"]
+        if stat_list["HP"]:
+            self.HP = stat_list["HP"]
+        return self.get_stats()
+
+    def get_stats(self):
+        # TODO should be for all stats, for now returns HP
+        return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP}
+
+    def hp_update(self, val):
+        self.HP += val
+        return self.HP
 
 
 class Player(pygame.sprite.Sprite):
@@ -16,13 +41,13 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((30, 30))
         self.image.fill("#FFFFFF")
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIN.WIN_WIDTH / 2
-        self.rect.centery = WIN.WIN_HEIGHT / 2
+        self.rect.x = WIN.WIN_WIDTH / 2
+        self.rect.y = WIN.WIN_HEIGHT / 2
         self.speed_x = 0
         self.speed_y = 0
         # TODO Add more Stats... Idea: make this a dictionary?
-        self.HP_max = 5
-        self.HP_curr = 5
+        self.HP_Max = 5
+        self.HP = 5
         self.ATK = 2
 
     def update(self):
@@ -45,13 +70,22 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
+    def set_stats(self, stat_list):
+        if stat_list["ATK"]:
+            self.ATK = stat_list["ATK"]
+        if stat_list["HP Max"]:
+            self.HP_Max = stat_list["HP Max"]
+        if stat_list["HP"]:
+            self.HP = stat_list["HP"]
+        return self.get_stats()
+
     def get_stats(self):
         # TODO should be for all stats, for now returns HP
-        return {"ATK": self.ATK, "Max HP": self.HP_max, "HP": self.HP_curr}  # [self.HP_max, self.HP_curr, self.ATK]
+        return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP}
 
     def hp_update(self, val):
-        self.HP_curr += val
-        return self.HP_curr
+        self.HP += val
+        return self.HP
 
 
 class Mob(pygame.sprite.Sprite):
@@ -65,12 +99,12 @@ class Mob(pygame.sprite.Sprite):
         self.rect.x = random.randrange(WIN.WIN_WIDTH - self.rect.width)
         self.rect.y = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
         # random speed along the x-axis
-        self.speed_x = random.randrange(-3, 3)
+        self.speed_x = 0  # random.randrange(-3, 3)
         # random speed along the y-axis
-        self.speed_y = random.randrange(1, 7)
+        self.speed_y = 0  # random.randrange(1, 7)
         # TODO RPG Stats
-        self.HP_max = 5
-        self.HP_curr = 5
+        self.HP_Max = 5
+        self.HP = 5
         self.ATK = 1
 
     def update(self):
@@ -92,11 +126,20 @@ class Mob(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
 
+    def set_stats(self, stat_list):
+        if stat_list["ATK"]:
+            self.ATK = stat_list["ATK"]
+        if stat_list["HP Max"]:
+            self.HP_Max = stat_list["HP Max"]
+        if stat_list["HP"]:
+            self.HP = stat_list["HP"]
+        return self.get_stats()
+
     def get_stats(self):
         # TODO should be for all stats, for now returns HP
-        return {"ATK": self.ATK, "Max HP": self.HP_max, "HP": self.HP_curr}  # [self.HP_max, self.HP_curr, self.ATK]
+        return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP}
 
     def hp_update(self, val):
-        self.HP_curr += val
-        return self.HP_curr
+        self.HP += val
+        return self.HP
 
