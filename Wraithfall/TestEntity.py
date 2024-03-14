@@ -51,11 +51,12 @@ while looping:
         if remaining_mob:
             # Run away was chosen
             # TODO make this invulnerability for a few seconds. changing position could lead to bugs
-            player.teleport(player.rect.x - 10, player.rect.y - 10)
+            player.warp(player.rect.x - 10, player.rect.y - 10)
         else:
             # Defeated mob,sso remove mob from map
             # TODO there could be bugs with this- find way to remove mob regardless of collision
             pygame.sprite.spritecollide(player, mob_sprites, True)
+
 
     # draw
     # 'rendering' to the window

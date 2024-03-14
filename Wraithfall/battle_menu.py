@@ -21,6 +21,7 @@ class Battle():
 
             SCREEN.fill("black")
 
+            # TODO Buttons seem to appear even when they shouldn't exist and can be pressed
             # Button pressed to "FIGHT"
             BATTLE_FIGHT = Button(image=None, pos=(320, 460),
                                   text_input="FIGHT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
@@ -68,8 +69,11 @@ class Battle():
                         WIN.game_exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
+                        damage_inflicted = self.mobs[0].get_stats()["DEF"] - self.player.get_stats()["ATK"]
+                        if damage_inflicted > 0:
+                            damage_inflicted = 0
                         # "FIGHT" Button
-                        self.mobs[0].hp_update(-self.player.get_stats()["ATK"])
+                        self.mobs[0].hp_update(damage_inflicted)
                         if self.mobs[0].get_stats()["HP"] <= 0:
                             mobs_living = False
                     if BATTLE_RUN.checkForInput(PLAY_MOUSE_POSITION):
