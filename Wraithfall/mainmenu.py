@@ -19,6 +19,10 @@ BG = pygame.transform.scale(BG, DEFAULT_IMAGE_SIZE)
 #Set a position
 DEFAULT_IMAGE_POSITION = (640,360)
 
+#load the font we want to use for the game
+#will return the font in the desired size
+def get_font(size):
+    return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9Kpixel.ttf"), size)
 
 #If user clicks play, this is a place holder for now until game is ready
 def play():
@@ -27,12 +31,12 @@ def play():
         
         SCREEN.fill("black")
         
-        PLAY_TEXT = WIN.get_font(45).render("This is a place holder for the play screen", True, "White")
+        PLAY_TEXT = get_font(45).render("This is a place holder for the play screen", True, "White")
         PLAY_RECT = PLAY_TEXT.get_rect(center = (640, 260))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
         
         PLAY_BACK = Button(image = None, pos=(640,460), # #A90505
-                           text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+                           text_input = "BACK", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         PLAY_BACK.changeColor(PLAY_MOUSE_POSITION)
         PLAY_BACK.update(SCREEN)
         
@@ -52,13 +56,13 @@ def main_menu():
         
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         
-        MENU_TEXT = WIN.get_font(100).render("WRAITHFALL", True, "White")
+        MENU_TEXT = get_font(150).render("WRAITHFALL", True, "#C2D7E7")
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
         
-        PLAY_BUTTON = Button (image=None, pos=(640,250),
-                               text_input="PLAY", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-        QUIT_BUTTON = Button (image = None, pos=(640,400),
-                               text_input="QUIT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+        PLAY_BUTTON = Button (image=None, pos=(640,400),
+                               text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+        QUIT_BUTTON = Button (image = None, pos=(640,500),
+                               text_input="QUIT", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
