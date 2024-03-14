@@ -10,6 +10,15 @@ pygame.display.set_caption("Menu")
 #Background
 BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
 
+#Set size for image
+DEFAULT_IMAGE_SIZE=(1280,720)
+
+#scale image
+BG = pygame.transform.scale(BG, DEFAULT_IMAGE_SIZE)
+
+#Set a position
+DEFAULT_IMAGE_POSITION = (640,360)
+
 
 #If user clicks play, this is a place holder for now until game is ready
 def play():
