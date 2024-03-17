@@ -7,6 +7,9 @@ pygame.init()
 SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Menu")
 
+MENU_TITLE = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "WRAITHFALL_TITLE.png")).convert_alpha()
+
+
 #Background
 BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
 
@@ -60,9 +63,8 @@ def main_menu():
         MENU_TEXT = get_font(150).render("WRAITHFALL", True, "#C2D7E7")
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
         
-        MENU_TITLE = pygame.image.load("WRAITHFALL_TITLE.png")
-        DEFAULT_TITLE_IMAGE_SIZE = (1280,729)
-        MENU_TITLE = pygame.transform.scale(MENU_TITLE, DEFAULT_TITLE_IMAGE_SIZE)
+        SCREEN.blit(MENU_TITLE, (0, 0))  # Blit the title image
+        SCREEN.blit(MENU_TEXT, MENU_RECT)
         
         
         PLAY_BUTTON = Button (image=None, pos=(640,400),
