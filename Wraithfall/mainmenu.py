@@ -11,13 +11,13 @@ pygame.display.set_caption("Menu")
 BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
 
 #Set size for image
-DEFAULT_IMAGE_SIZE=(1280,720)
+DEFAULT_MENU_BACKGROUND_IMAGE_SIZE=(1280,720)
 
 #scale image
-BG = pygame.transform.scale(BG, DEFAULT_IMAGE_SIZE)
+BG = pygame.transform.scale(BG, DEFAULT_MENU_BACKGROUND_IMAGE_SIZE)
 
 #Set a position
-DEFAULT_IMAGE_POSITION = (640,360)
+DEFAULT_BACKGROUND_IMAGE_POSITION = (640,360)
 
 #load the font we want to use for the game
 #will return the font in the desired size
