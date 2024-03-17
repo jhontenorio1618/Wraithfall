@@ -19,6 +19,7 @@ BG = pygame.transform.scale(BG, DEFAULT_MENU_BACKGROUND_IMAGE_SIZE)
 #Set a position
 DEFAULT_BACKGROUND_IMAGE_POSITION = (640,360)
 
+
 #load the font we want to use for the game
 #will return the font in the desired size
 def get_font(size):
@@ -58,6 +59,11 @@ def main_menu():
         
         MENU_TEXT = get_font(150).render("WRAITHFALL", True, "#C2D7E7")
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
+        
+        MENU_TITLE = pygame.image.load("WRAITHFALL_TITLE.png")
+        DEFAULT_TITLE_IMAGE_SIZE = (1280,729)
+        MENU_TITLE = pygame.transform.scale(MENU_TITLE, DEFAULT_TITLE_IMAGE_SIZE)
+        
         
         PLAY_BUTTON = Button (image=None, pos=(640,400),
                                text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
