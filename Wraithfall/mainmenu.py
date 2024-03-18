@@ -60,7 +60,7 @@ def main_menu():
         
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         
-        MENU_TEXT = get_font(150).render("WRAITHFALL", True, "#C2D7E7")
+        MENU_TEXT = get_font(150).render(" ", True, "#C2D7E7")
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
         
         SCREEN.blit(MENU_TITLE, (0, 0))  # Blit the title image
