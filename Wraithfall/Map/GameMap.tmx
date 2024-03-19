@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="1">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="20" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="1">
  <tileset firstgid="1" source="road_tile.tsx"/>
- <tileset firstgid="487" source="lava_tile.tsx"/>
+<!--  <tileset firstgid="487" source="lava_tile.tsx"/> -->
  <tileset firstgid="487" source="TileSetOne.tsx"/>
  <tileset firstgid="647" source="toxic water.tsx"/>
  <tileset firstgid="3335" source="TileSetTwo.tsx"/>
