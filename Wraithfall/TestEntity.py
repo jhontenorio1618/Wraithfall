@@ -1,7 +1,6 @@
 import pygame, sys, os
 import game_window as WIN
 import entity_classes as ENTITY
-import battle_menu as BATTLE
 from battle_menu import Battle
 import pygame.event as EVENTS
 
@@ -42,7 +41,12 @@ while looping:
             # Escape Key
             if event.key == pygame.K_ESCAPE:
                 WIN.game_exit()
-
+            # G key
+            if event.key == pygame.K_g:
+                # Access Sword Menu
+                if player.access_sword() is not None:
+                    access = Battle(player)
+                    access.sword_menu()
         # check click on window exit button
         if event.type == pygame.QUIT:
             WIN.game_exit()
@@ -50,6 +54,7 @@ while looping:
     # update all game sprites
     game_sprites.update()
 
+    # Player and Mob collision
     player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
     if player_mob_collide:
         combat = Battle(player, player_mob_collide)
@@ -59,20 +64,19 @@ while looping:
             # TODO make this invulnerability for a few seconds. changing position could lead to bugs
             player.warp(player.rect.x - 10, player.rect.y - 10)
         else:
-            # Defeated mob,sso remove mob from map
-            # TODO there could be bugs with this- find way to remove mob regardless of collision
+            # Defeated mob, so remove mob from map
             pygame.sprite.spritecollide(player, mob_sprites, True)
         # Recover HP at the end of combat
         player.set_stats({"HP": player.get_stats()["HP Max"]})
 
+    # Player and Sword collision
     player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
     if player_sword_collide:
         sword_ref = player_sword_collide[0]
         if sword_ref.verify() is None:
+            # Player picks up the sword
             sword_ref.pickup(player)
 
-    # draw
-    # 'rendering' to the window
     SCREEN.fill("#000000")
     game_sprites.draw(SCREEN)
     # update the display window...
