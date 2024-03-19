@@ -12,6 +12,7 @@ class Battle:
     def __init__(self, player=ENTITY.Player(), mobs=[ENTITY.Mob()]):
         self.player = player
         self.mobs = mobs
+        # TODO make "in_combat", "mobs_living", and "player_living" variables here instead of local
 
     def combat_screen(self):
         in_combat = True
@@ -34,6 +35,11 @@ class Battle:
                                  text_input="NEXT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             next_displayed = False
 
+            # Button pressed to access sword menu
+            BATTLE_SWORD = Button(image=None, pos=(320, 580),
+                                 text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+            sword_displayed = False
+
             if mobs_living:
                 # Mobs are displayed as living
                 # TODO Put visuals for mobs here
@@ -47,6 +53,10 @@ class Battle:
                 BATTLE_RUN.changeColor(PLAY_MOUSE_POSITION)
                 BATTLE_RUN.update(SCREEN)
                 run_displayed = True
+                if self.player.access_sword() is not None:
+                    BATTLE_SWORD.changeColor(PLAY_MOUSE_POSITION)
+                    BATTLE_SWORD.update(SCREEN)
+                    sword_displayed = True
             else:
                 # Mobs are displayed as dead, the battle has ended.
                 PLAY_TEXT = WIN.get_font(45).render("The wraith is dead. :)", True, "Red")
@@ -95,6 +105,9 @@ class Battle:
                     if next_displayed and BATTLE_NEXT.checkForInput(PLAY_MOUSE_POSITION):
                         # "NEXT" Button: click to leave combat after killing the mobs
                         in_combat = False
+                    if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
+                        # TODO Sword Menu
+                        x = 1
             pygame.display.update()
         return mobs_living
 

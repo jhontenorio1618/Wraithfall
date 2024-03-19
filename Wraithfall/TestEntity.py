@@ -14,6 +14,7 @@ clock = pygame.time.Clock()
 # Sprite Groups
 game_sprites = pygame.sprite.Group()
 mob_sprites = pygame.sprite.Group()
+sword_sprite = pygame.sprite.Group()
 
 # Player Entity
 player = ENTITY.Player()
@@ -25,6 +26,11 @@ for i in range(5):
     dummy_wraith.set_speed(0, 0)
     game_sprites.add(dummy_wraith)
     mob_sprites.add(dummy_wraith)
+
+# Sword Entity
+sword = ENTITY.Sword()
+game_sprites.add(sword)
+sword_sprite.add(sword)
 
 # Game Loop
 looping = True
@@ -59,6 +65,11 @@ while looping:
         # Recover HP at the end of combat
         player.set_stats({"HP": player.get_stats()["HP Max"]})
 
+    player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
+    if player_sword_collide:
+        sword_ref = player_sword_collide[0]
+        if sword_ref.verify() is None:
+            sword_ref.pickup(player)
 
     # draw
     # 'rendering' to the window

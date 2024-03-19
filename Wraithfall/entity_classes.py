@@ -25,10 +25,16 @@ class Entity(pygame.sprite.Sprite):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
 
+    def get_speed(self):
+        return self.speed_x, self.speed_y
+
     def set_speed(self, x, y):
         # Specify the speed entity moves
         self.speed_x = x
         self.speed_y = y
+
+    def get_coord(self):
+        return self.rect.x, self.rect.y
 
     def warp(self, x, y):
         # Move entity to given coordinates
@@ -67,6 +73,7 @@ class Player(Entity):
         self.rect = self.image.get_rect()
         self.rect.x = WIN.WIN_WIDTH / 2
         self.rect.y = WIN.WIN_HEIGHT / 2
+        self.found_sword = None
 
     def update(self):
         self.speed_x = 0
@@ -82,6 +89,19 @@ class Player(Entity):
             self.speed_y = 5
         super(Player, self).update()
 
+    def access_sword(self):
+        # Returns Sword, or None if Sword not found
+        return self.found_sword
+
+    def pickup_sword(self, sword):
+        self.found_sword = sword
+
+    def get_stats(self):
+        ATK_mod = 0
+        if self.found_sword is not None:
+            ATK_mod = self.found_sword.get_stats()["ATK"]
+        return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
+
 
 class Mob(Entity):
     def __init__(self):
@@ -93,14 +113,46 @@ class Mob(Entity):
 
     def update(self):
         super(Mob, self).update()
-        # check if extra sprite leaves the bottom of the game window - then randomise at the top...
-        if self.rect.top > WIN.WIN_HEIGHT + 15 or self.rect.left < -15 or self.rect.right > WIN.WIN_WIDTH + 15:
-            # specify random start posn & speed
-            self.rect.x = random.randrange(WIN.WIN_WIDTH - self.rect.width)
-            self.rect.y = random.randrange(-100, -50)
-            self.speed_x = random.randrange(-3, 3)
-            self.speed_y = random.randrange(1, 7)
+        # TODO write unique walking behaviors
 
+
+class Sword(Entity):
+    def __init__(self):
+        Entity.__init__(self)
+        self.image = pygame.Surface((15, 15))
+        self.image.fill("#FFCC40")
+        self.rect = self.image.get_rect()
+        self.rect.x = WIN.WIN_WIDTH / 2
+        self.rect.y = WIN.WIN_HEIGHT / 2 - 75
+        self.ATK = 2
+        self.found_player = None
+
+    def update(self):
+        if self.found_player is None:
+            self.speed_x = 0
+            self.speed_y = 0
+        else:
+            # Hover beside player
+            self.rect.x, self.rect.y = self.found_player.get_coord()
+            self.rect.x -= 25
+            self.rect.y -= 25
+            # super(Sword, self).update()
+
+    def pickup(self, player):
+        # Reference Player Entity
+        self.found_player = player
+        player.pickup_sword(self)
+        # new_x, new_y = self.found_player.get_coord()
+        self.update()
+
+    def verify(self):
+        # Returns Player entity is grabbed; otherwise, returns None
+        return self.found_player
+
+    def get_stats(self):
+        # Return a dictionary of stats
+        # TODO should sword affect any stat besides ATK?
+        return {"ATK": self.ATK}
 
 
 # TODO OLDER VERSIONS IN CASE SUPERCLASS MESSED UP. DELETE WHEN CONFIDENT
