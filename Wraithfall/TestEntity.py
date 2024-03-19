@@ -56,6 +56,8 @@ while looping:
             # Defeated mob,sso remove mob from map
             # TODO there could be bugs with this- find way to remove mob regardless of collision
             pygame.sprite.spritecollide(player, mob_sprites, True)
+        # Recover HP at the end of combat
+        player.set_stats({"HP": player.get_stats()["HP Max"]})
 
 
     # draw

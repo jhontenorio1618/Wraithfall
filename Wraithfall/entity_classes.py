@@ -37,15 +37,15 @@ class Entity(pygame.sprite.Sprite):
 
     def set_stats(self, stat_list):
         # Given a dictionary of stats, where keys are the stats and values are the new stat value
-        if stat_list["ATK"]:
+        if "ATK" in stat_list:
             self.ATK = stat_list["ATK"]
-        if stat_list["HP Max"]:
+        if "HP Max" in stat_list:
             self.HP_Max = stat_list["HP Max"]
-        if stat_list["HP"]:
+        if "HP" in stat_list:
             self.HP = stat_list["HP"]
-        if stat_list["DEF"]:
+        if "DEF" in stat_list:
             self.HP = stat_list["DEF"]
-        if stat_list["SPD"]:
+        if "SPD" in stat_list:
             self.HP = stat_list["SPD"]
         return self.get_stats()
 
