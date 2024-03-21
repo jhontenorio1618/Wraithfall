@@ -4,19 +4,21 @@ from button import Button
 
 pygame.init()
 
+#Set screen size using the dimensions in the window_size function in game_window
 SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Menu")
 
+#Load the menu title image
 MENU_TITLE = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "WRAITHFALL_TITLE.png")).convert_alpha()
 
 
-#Background
+#Load the background image
 BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
 
 #Set size for image
 DEFAULT_MENU_BACKGROUND_IMAGE_SIZE=(1280,720)
 
-#scale image
+#scale background image
 BG = pygame.transform.scale(BG, DEFAULT_MENU_BACKGROUND_IMAGE_SIZE)
 
 #Set a position
@@ -33,28 +35,33 @@ def get_font(size):
 #If user clicks play, this is a place holder for now until game is ready
 def play():
     #if game is not paused return false
-    paused = False
+    #paused = False #This will determine if game is paused in the future
     while True:
+        #Retrieve current mouse position
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
         
         SCREEN.fill("black")
         
+        #Render text for play screen
         PLAY_TEXT = get_font(45).render("This is a place holder for the play screen", True, "White")
         PLAY_RECT = PLAY_TEXT.get_rect(center = (640, 260))
         SCREEN.blit(PLAY_TEXT, PLAY_RECT)
         
+        #Create a button that will bring you back to the main menu
         PLAY_BACK = Button(image = None, pos=(640,460), # #A90505
                            text_input = "BACK", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-        PLAY_BACK.changeColor(PLAY_MOUSE_POSITION)
-        PLAY_BACK.update(SCREEN)
+        PLAY_BACK.changeColor(PLAY_MOUSE_POSITION) #Change color of text when cursor hovers over
+        PLAY_BACK.update(SCREEN) #updates the button
         
+        #event loop
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BACK.checkForInput(PLAY_MOUSE_POSITION):
-                    #break #exit the play loop and go to main menu
+                    #break
+                    #exit the play loop and go to main menu
                     main_menu()
                 '''if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                     paused = True
@@ -65,7 +72,7 @@ def play():
             
         pygame.display.update()
         
-#function used to render text and positioning
+#ignore line 76-109 for now.
 '''def text_objexts(text, font):
     textSurface = font.render(text, True("#FFFFF"))
     return textSurface, textSurface.get_rect()
@@ -105,15 +112,17 @@ def main_menu():
     while True:
         SCREEN.blit(BG,(0,0))
         
+        #Get current mouse position
         MENU_MOUSE_POS = pygame.mouse.get_pos()
         
+        #Render text for main menu
         MENU_TEXT = get_font(150).render(" ", True, "#C2D7E7")
         MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
         
         SCREEN.blit(MENU_TITLE, (0, 0))  # Blit the title image
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
-        
+        #Create play and quit buttons
         PLAY_BUTTON = Button (image=None, pos=(640,400),
                                text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         QUIT_BUTTON = Button (image = None, pos=(640,500),
@@ -121,20 +130,22 @@ def main_menu():
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
+        #Update button colors and positions
         for button in [PLAY_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(SCREEN)
-            
+        
+        #event loop    
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    play()
+                    play() #start the game when clicking play (text placeholder for now)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
-                    sys.exit()
+                    sys.exit() #Close/quit the window when clicking the quit button.
                     
         pygame.display.update()
         
