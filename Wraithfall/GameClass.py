@@ -192,6 +192,7 @@ class GameClass:
         game_sprites.add (sword)
         sword_sprite.add (sword)
 
+        tm = self.prepareMapScreen ('Map/GameMap.tmx')
         # Game Loop
         looping = True
         while looping:
@@ -239,7 +240,6 @@ class GameClass:
                     sword_ref.pickup (player)
 
             screen.fill ((0, 0, 0))
-            tm = self.prepareMapScreen ('Map/GameMap.tmx')
             self.draw_map (screen, tm)
             game_sprites.draw (screen)
             # update the display window...
