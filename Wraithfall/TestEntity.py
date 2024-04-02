@@ -14,6 +14,7 @@ clock = pygame.time.Clock()
 game_sprites = pygame.sprite.Group()
 mob_sprites = pygame.sprite.Group()
 sword_sprite = pygame.sprite.Group()
+item_sprites = pygame.sprite.Group()
 
 # Player Entity
 player = ENTITY.Player()
@@ -31,6 +32,14 @@ sword = ENTITY.Sword()
 game_sprites.add(sword)
 sword_sprite.add(sword)
 
+# Item Entities
+for i in range(5):
+    healing_item = ENTITY.Item(item_id=0)
+    healing_item.warp()
+    game_sprites.add(healing_item)
+    item_sprites.add(healing_item)
+
+
 # Game Loop
 looping = True
 while looping:
@@ -47,6 +56,23 @@ while looping:
                 if player.access_sword() is not None:
                     access = Battle(player)
                     access.sword_menu()
+            # Q key
+            if event.key == pygame.K_q:
+                player.scroll_inv(-1)
+                if player.inventory:
+                    # TODO printing to terminal is temp, only for debugging purposes
+                    print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+            # E key
+            if event.key == pygame.K_e:
+                player.scroll_inv(1)
+                if player.inventory:
+                    # TODO printing to terminal is temp, only for debugging purposes
+                    print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+            # F key
+            if event.key == pygame.K_f:
+                selected_item = player.access_item()
+                if selected_item is not None:
+                    selected_item.use_item()
         # check click on window exit button
         if event.type == pygame.QUIT:
             WIN.game_exit()
@@ -67,7 +93,7 @@ while looping:
             # Defeated mob, so remove mob from map
             pygame.sprite.spritecollide(player, mob_sprites, True)
         # Recover HP at the end of combat
-        player.set_stats({"HP": player.get_stats()["HP Max"]})
+        # player.set_stats({"HP": player.get_stats()["HP Max"]})
 
     # Player and Sword collision
     player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
@@ -76,6 +102,15 @@ while looping:
         if sword_ref.verify() is None:
             # Player picks up the sword
             sword_ref.pickup(player)
+
+    # Player and Item collision
+    player_item_collide = pygame.sprite.spritecollide(player, item_sprites, False)
+    if player_item_collide:
+        item_ref = player_item_collide[0]
+        if item_ref.verify() is None:
+            # Player picks up item
+            if item_ref.pickup(player):
+                remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
 
     SCREEN.fill("#000000")
     game_sprites.draw(SCREEN)

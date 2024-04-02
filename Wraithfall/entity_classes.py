@@ -36,10 +36,16 @@ class Entity(pygame.sprite.Sprite):
     def get_coord(self):
         return self.rect.x, self.rect.y
 
-    def warp(self, x, y):
+    def warp(self, x=None, y=None):
         # Move entity to given coordinates
-        self.rect.x = x
-        self.rect.y = y
+        if x is None:
+            self.rect.x = random.randrange(WIN.WIN_WIDTH - self.rect.width)
+        else:
+            self.rect.x = x
+        if y is None:
+            self.rect.y = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+        else:
+            self.rect.y = y
 
     def set_stats(self, stat_list):
         # Given a dictionary of stats, where keys are the stats and values are the new stat value
@@ -62,6 +68,8 @@ class Entity(pygame.sprite.Sprite):
     def hp_update(self, val):
         # Quickly modify HP. Used for combat
         self.HP += val
+        if self.HP > self.HP_Max:
+            self.HP = self.HP_Max
         return self.HP
 
 
@@ -74,6 +82,9 @@ class Player(Entity):
         self.rect.x = WIN.WIN_WIDTH / 2
         self.rect.y = WIN.WIN_HEIGHT / 2
         self.found_sword = None
+        self.inventory = []
+        self.inventory_max = 3
+        self.inventory_pointer = 0
 
     def update(self):
         self.speed_x = 0
@@ -95,6 +106,33 @@ class Player(Entity):
 
     def pickup_sword(self, sword):
         self.found_sword = sword
+
+    def access_item(self, pointer=None):
+        if pointer is not None:
+            self.inventory_pointer = 0
+            self.scroll_inv(pointer)
+        using_item = None
+        if self.inventory and self.inventory[self.inventory_pointer]:
+            using_item = self.inventory[self.inventory_pointer]
+        return using_item
+
+    def scroll_inv(self, move):
+        self.inventory_pointer += move
+        if self.inventory_pointer > len(self.inventory) - 1:
+            self.inventory_pointer = 0
+        if self.inventory_pointer < 0:
+            self.inventory_pointer = len(self.inventory) - 1
+
+    def pickup_item(self, item):
+        can_pickup = False
+        if len(self.inventory) < self.inventory_max:
+            can_pickup = True
+            self.inventory.append(item)
+        return can_pickup
+
+    def lose_item(self, item):
+        if item in self.inventory:
+            self.inventory.remove(item)
 
     def get_stats(self):
         ATK_mod = 0
@@ -158,11 +196,51 @@ class Sword(Entity):
     def shift_form(self, form):
         # Change the form of the sword
         # TODO should change aspects of the sword here. For now, it's only visual
-        if form is "BASE":
+        if form == "BASE":
             self.image.fill("#FFCC40")
-        if form is "FIRE":
+        if form == "FIRE":
             self.image.fill("#FF0000")
-        if form is "ICE":
+        if form == "ICE":
             self.image.fill("#0000FF")
-        if form is "DARK":
+        if form == "DARK":
             self.image.fill("#FF00FF")
+
+
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5},
+             1: {"NAME": "Fire Essence", "TYPE": "SWORD"},
+             2: {"NAME": "Ice Essence", "TYPE": "SWORD"},
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD"}
+             }
+
+
+class Item(Entity):
+    def __init__(self, item_id=0):
+        Entity.__init__(self)
+        self.image = pygame.Surface((15, 15))
+        self.image.fill("#00FF00")
+        self.rect = self.image.get_rect()
+        self.rect.x = WIN.WIN_WIDTH / 2
+        self.rect.y = WIN.WIN_HEIGHT / 2 + 75
+        self.found_player = None
+        self.item_id = item_id
+        self.name = item_dict[self.item_id]["NAME"]
+        self.type = item_dict[self.item_id]["TYPE"]
+
+    def pickup(self, player):
+        picked_up = player.pickup_item(self)
+        if picked_up:
+            # Player has inventory for item
+            self.found_player = player
+        return picked_up
+
+    def verify(self):
+        # Returns Player entity is grabbed; otherwise, returns None
+        return self.found_player
+
+    def use_item(self):
+        if self.type == "HP":
+            self.found_player.hp_update(item_dict[self.item_id]["VALUE"])
+        self.found_player.lose_item(self)
+
+    def get_name(self):
+        return self.name

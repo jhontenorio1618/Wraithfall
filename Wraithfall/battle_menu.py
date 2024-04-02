@@ -19,10 +19,14 @@ class Battle:
         mobs_living = True
         player_living = True
         open_sword_menu = False
+        open_item_menu = False
         while in_combat:
             if open_sword_menu:
                 self.sword_menu()
                 open_sword_menu = False
+            if open_item_menu:
+                self.item_menu()
+                open_item_menu = False
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
 
@@ -38,10 +42,15 @@ class Battle:
             BATTLE_NEXT = Button(image=None, pos=(960, 460),
                                  text_input="NEXT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             next_displayed = False
+            # Button pressed to access item menu
+            BATTLE_ITEM = Button(image=None, pos=(320, 580),
+                                  text_input="ITEM", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+            item_displayed = False
             # Button pressed to access sword menu
-            BATTLE_SWORD = Button(image=None, pos=(320, 580),
+            BATTLE_SWORD = Button(image=None, pos=(960, 580),
                                  text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             sword_displayed = False
+
 
             if mobs_living:
                 # Mobs are displayed as living
@@ -56,6 +65,9 @@ class Battle:
                 BATTLE_RUN.changeColor(PLAY_MOUSE_POSITION)
                 BATTLE_RUN.update(SCREEN)
                 run_displayed = True
+                BATTLE_ITEM.changeColor(PLAY_MOUSE_POSITION)
+                BATTLE_ITEM.update(SCREEN)
+                item_displayed = True
                 if self.player.access_sword() is not None:
                     BATTLE_SWORD.changeColor(PLAY_MOUSE_POSITION)
                     BATTLE_SWORD.update(SCREEN)
@@ -111,6 +123,9 @@ class Battle:
                     if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
                         # TODO Sword Menu
                         open_sword_menu = True
+                    if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
+                        # TODO Item Menu
+                        open_item_menu = True
             pygame.display.update()
         return mobs_living
 
@@ -150,6 +165,10 @@ class Battle:
                                   text_input="DARK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF00FF")
             dark_displayed = False
 
+            BACK_BUTTON = Button(image=None, pos=(150, 650),
+                                 text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+            back_displayed = False
+
             SWORD_BASE.changeColor(PLAY_MOUSE_POSITION)
             SWORD_BASE.update(SCREEN)
             base_displayed = True
@@ -162,6 +181,10 @@ class Battle:
             SWORD_DARK.changeColor(PLAY_MOUSE_POSITION)
             SWORD_DARK.update(SCREEN)
             dark_displayed = True
+
+            BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
+            BACK_BUTTON.update(SCREEN)
+            back_displayed = True
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -187,6 +210,59 @@ class Battle:
                         self.player.access_sword().shift_form("DARK")
                         in_menu = False
                         base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
+                    if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
+                        in_menu = False
+            pygame.display.update()
+
+    def item_menu(self):
+        in_menu = True
+        while in_menu:
+            PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
+            SCREEN.fill("black")
+
+            item_buttons = []
+            item_pointer = 0
+            y_axis = 100
+            for item in self.player.inventory:
+                button_text = str(item_pointer) + ". " + item.get_name()
+                # Button pressed for BASE sword form
+                CURRENT_ITEM = Button(image=None, pos=(320, y_axis),
+                                      text_input=button_text, font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+                y_axis += 120
+                item_displayed = False
+                item_buttons.append([CURRENT_ITEM, item_displayed])
+                item_pointer += 1
+
+            BACK_BUTTON = Button(image=None, pos=(150, 650),
+                                text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+            back_displayed = False
+
+            for i in range(len(item_buttons)):
+                item_buttons[i][0].changeColor(PLAY_MOUSE_POSITION)
+                item_buttons[i][0].update(SCREEN)
+                item_buttons[i][1] = True
+            BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
+            BACK_BUTTON.update(SCREEN)
+            back_displayed = True
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    WIN.game_exit()
+                if event.type == pygame.KEYDOWN:
+                    # Escape Key
+                    if event.key == pygame.K_ESCAPE:
+                        WIN.game_exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for i in range(len(item_buttons)):
+                        if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
+                            selected_item = self.player.access_item(i)
+                            selected_item.use_item()
+                            in_menu = False
+                    if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
+                        in_menu = False
+
+            if not self.player.inventory:
+                in_menu = False
             pygame.display.update()
 
     def player_turn(self):
