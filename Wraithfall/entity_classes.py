@@ -2,21 +2,31 @@ import pygame, random
 import game_window as WIN
 
 
+class BoundingBox(pygame.sprite.Sprite):
+    def __init__(self, bound_box_size=(100, 100)):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface(bound_box_size)
+        self.image.fill("#000000")
+        self.rect = self.image.get_rect()
+        self.rect.x = WIN.WIN_WIDTH
+        self.rect.y = WIN.WIN_HEIGHT
+
+
 class Entity(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#FFFFFF"):
         pygame.sprite.Sprite.__init__(self)
         # TODO keep in mind reinitializing these in subclasses
-        self.image = pygame.Surface((20, 20))
-        self.image.fill("#FFFFFF")
+        self.image = pygame.Surface(bound_box_size)
+        self.image.fill(image_fill)
         self.rect = self.image.get_rect()
-        self.rect.x = WIN.WIN_WIDTH / 2
-        self.rect.y = WIN.WIN_HEIGHT / 2
+        self.rect.x = WIN.WIN_WIDTH
+        self.rect.y = WIN.WIN_HEIGHT
         self.speed_x = 0
         self.speed_y = 0
         # RPG Stats
-        self.HP_Max = 5
-        self.HP = 5
-        self.ATK = 2
+        self.HP_Max = 1
+        self.HP = 1
+        self.ATK = 1
         self.DEF = 1
         self.SPD = 0
 
@@ -56,9 +66,9 @@ class Entity(pygame.sprite.Sprite):
         if "HP" in stat_list:
             self.HP = stat_list["HP"]
         if "DEF" in stat_list:
-            self.HP = stat_list["DEF"]
+            self.DEF = stat_list["DEF"]
         if "SPD" in stat_list:
-            self.HP = stat_list["SPD"]
+            self.SPD = stat_list["SPD"]
         return self.get_stats()
 
     def get_stats(self):
@@ -74,17 +84,15 @@ class Entity(pygame.sprite.Sprite):
 
 
 class Player(Entity):
-    def __init__(self):
-        Entity.__init__(self)
-        self.image = pygame.Surface((30, 30))
-        self.image.fill("#FFFFFF")
-        self.rect = self.image.get_rect()
-        self.rect.x = WIN.WIN_WIDTH / 2
-        self.rect.y = WIN.WIN_HEIGHT / 2
+    def __init__(self, bound_box_size=(30, 30), image_fill="#FFFFFF", player_stats=None):
+        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        if player_stats is None:
+            player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
         self.found_sword = None
         self.inventory = []
         self.inventory_max = 3
         self.inventory_pointer = 0
+        self.set_stats(player_stats)
 
     def update(self):
         self.speed_x = 0
@@ -142,29 +150,37 @@ class Player(Entity):
 
 
 class Mob(Entity):
-    def __init__(self):
-        Entity.__init__(self)
-        self.image.fill("#FF0000")
-        self.rect = self.image.get_rect()
-        self.rect.x = random.randrange(WIN.WIN_WIDTH - self.rect.width)
-        self.rect.y = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+    def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_stats=None):
+        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        if mob_stats is None:
+            mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.set_stats(mob_stats)
 
     def update(self):
         super(Mob, self).update()
         # TODO write unique walking behaviors
 
 
+class PassiveMob(Entity):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", mob_stats=None):
+        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        if mob_stats is None:
+            mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.set_stats(mob_stats)
+
+    def update(self):
+        super(PassiveMob, self).update()
+        # TODO write unique walking behaviors
+
+
 class Sword(Entity):
-    def __init__(self):
-        Entity.__init__(self)
-        self.image = pygame.Surface((15, 15))
-        self.image.fill("#FFCC40")
-        self.rect = self.image.get_rect()
-        self.rect.x = WIN.WIN_WIDTH / 2
-        self.rect.y = WIN.WIN_HEIGHT / 2 - 75
-        self.ATK = 2
+    def __init__(self, bound_box_size=(15, 15), image_fill="#FFCC40", sword_attack=None):
+        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        if sword_attack is None:
+            sword_attack = {"ATK": 2}
         self.found_player = None
         self.form = "BASE"
+        self.set_stats(sword_attack)
 
     def update(self):
         if self.found_player is None:
@@ -188,10 +204,10 @@ class Sword(Entity):
         # Returns Player entity is grabbed; otherwise, returns None
         return self.found_player
 
-    def get_stats(self):
+    """def get_stats(self):
         # Return a dictionary of stats
         # TODO should sword affect any stat besides ATK?
-        return {"ATK": self.ATK}
+        return {"ATK": self.ATK}"""
 
     def shift_form(self, form):
         # Change the form of the sword
@@ -214,13 +230,8 @@ item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5},
 
 
 class Item(Entity):
-    def __init__(self, item_id=0):
-        Entity.__init__(self)
-        self.image = pygame.Surface((15, 15))
-        self.image.fill("#00FF00")
-        self.rect = self.image.get_rect()
-        self.rect.x = WIN.WIN_WIDTH / 2
-        self.rect.y = WIN.WIN_HEIGHT / 2 + 75
+    def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
+        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         self.found_player = None
         self.item_id = item_id
         self.name = item_dict[self.item_id]["NAME"]
@@ -244,3 +255,6 @@ class Item(Entity):
 
     def get_name(self):
         return self.name
+
+
+
