@@ -20,13 +20,28 @@ class Battle:
         player_living = True
         open_sword_menu = False
         open_item_menu = False
+        enemy_turn = False
+        exp_gained = 0
         while in_combat:
             if open_sword_menu:
+                # Pressed SWORD button
                 self.sword_menu()
                 open_sword_menu = False
             if open_item_menu:
-                self.item_menu()
+                # Pressed ITEM button
+                used_item = self.item_menu()
+                enemy_turn = used_item
                 open_item_menu = False
+
+            if enemy_turn:
+                # Enemy attacks
+                self.player.hp_update(self.enemy_turn())
+                if self.player.get_stats()["HP"] <= 0:
+                    # Player is dead
+                    in_combat = False
+                    player_living = False
+                enemy_turn = False
+
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
 
@@ -51,14 +66,13 @@ class Battle:
                                  text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             sword_displayed = False
 
-
             if mobs_living:
                 # Mobs are displayed as living
                 # TODO Put visuals for mobs here
                 PLAY_TEXT = WIN.get_font(45).render("This is where the magic will happen.", True, "White")
                 PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
                 mob_hp_color = "Green"
-                # The battle is ongoing. Show FIGHT and RUN buttons
+                # The battle is ongoing. Show FIGHT, RUN, and ITEM buttons
                 BATTLE_FIGHT.changeColor(PLAY_MOUSE_POSITION)
                 BATTLE_FIGHT.update(SCREEN)
                 fight_displayed = True
@@ -90,15 +104,15 @@ class Battle:
                 if event.type == pygame.QUIT:
                     WIN.game_exit()
                 if event.type == pygame.KEYDOWN:
-                    # Escape Key
                     if event.key == pygame.K_ESCAPE:
+                        # Escape Key
                         WIN.game_exit()
                     if next_displayed and event.key == pygame.K_SPACE:
                         # "NEXT" Button Shortcut
                         in_combat = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
-                        # "FIGHT" Button
+                        # "FIGHT" Button: attack the mob
                         damage_inflicted = self.mobs[0].get_stats()["DEF"] - self.player.get_stats()["ATK"]
                         if damage_inflicted > 0:
                             damage_inflicted = 0
@@ -107,13 +121,11 @@ class Battle:
                         if self.mobs[0].get_stats()["HP"] <= 0:
                             # Mob is dead
                             mobs_living = False
+                            # Player gains EXP from killing mob
+                            self.player.gain_exp(self.mobs[0].drop_exp())
                         else:
-                            # Enemy attacks
-                            self.player.hp_update(self.enemy_turn())
-                            if self.player.get_stats()["HP"] <= 0:
-                                # Player is dead
-                                in_combat = False
-                                player_living = False
+                            # Enemy's turn to attack
+                            enemy_turn = True
                     if run_displayed and BATTLE_RUN.checkForInput(PLAY_MOUSE_POSITION):
                         # "RUN" Button: flee from fight without killing the mobs
                         in_combat = self.run_state()
@@ -121,11 +133,12 @@ class Battle:
                         # "NEXT" Button: click to leave combat after killing the mobs
                         in_combat = False
                     if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
-                        # TODO Sword Menu
+                        # "SWORD" Button: open sword menu to change form of sword
                         open_sword_menu = True
                     if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
-                        # TODO Item Menu
+                        # "ITEM" Button: open item menu to select an item to use
                         open_item_menu = True
+
             pygame.display.update()
         return mobs_living
 
@@ -140,7 +153,7 @@ class Battle:
         # Clicked RUN Button
         # TODO calculate RUN % chance
         success = True
-        return not success
+        return success
 
     def sword_menu(self):
         in_menu = True
@@ -216,6 +229,7 @@ class Battle:
 
     def item_menu(self):
         in_menu = True
+        used_item = False
         while in_menu:
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
@@ -257,6 +271,7 @@ class Battle:
                         if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
                             selected_item = self.player.access_item(i)
                             selected_item.use_item()
+                            used_item = True
                             in_menu = False
                     if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
                         in_menu = False
@@ -264,6 +279,7 @@ class Battle:
             if not self.player.inventory:
                 in_menu = False
             pygame.display.update()
+        return used_item
 
     def player_turn(self):
         # TODO Put player attack in here probably? instead of in display code

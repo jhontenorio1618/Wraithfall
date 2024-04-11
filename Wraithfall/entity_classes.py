@@ -93,6 +93,7 @@ class Player(Entity):
         self.inventory_max = 3
         self.inventory_pointer = 0
         self.set_stats(player_stats)
+        self.EXP = 0
 
     def update(self):
         self.speed_x = 0
@@ -148,17 +149,31 @@ class Player(Entity):
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
+    def gain_exp(self, exp):
+        self.EXP += exp
+        # TODO level check
+        return self.EXP
+
+    def set_exp(self, exp):
+        self.EXP = exp
+        # TODO level check
+        return self.EXP
+
 
 class Mob(Entity):
-    def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_stats=None):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_stats=None, exp=1):
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         if mob_stats is None:
             mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
         self.set_stats(mob_stats)
+        self.exp_gain = exp
 
     def update(self):
         super(Mob, self).update()
         # TODO write unique walking behaviors
+
+    def drop_exp(self):
+        return self.exp_gain
 
 
 class PassiveMob(Entity):
@@ -181,6 +196,7 @@ class Sword(Entity):
         self.found_player = None
         self.form = "BASE"
         self.set_stats(sword_attack)
+        self.EXP = 0
 
     def update(self):
         if self.found_player is None:
@@ -220,6 +236,16 @@ class Sword(Entity):
             self.image.fill("#0000FF")
         if form == "DARK":
             self.image.fill("#FF00FF")
+
+    def gain_exp(self, exp):
+        self.EXP += exp
+        # TODO level check
+        return self.EXP
+
+    def set_exp(self, exp):
+        self.EXP = exp
+        # TODO level check
+        return self.EXP
 
 
 item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5},
