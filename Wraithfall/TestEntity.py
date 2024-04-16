@@ -13,13 +13,14 @@ clock = pygame.time.Clock()
 # Sprite Groups
 game_sprites = pygame.sprite.Group()
 mob_sprites = pygame.sprite.Group()
+mob_vision_sprites = pygame.sprite.Group()
 item_sprites = pygame.sprite.Group()
 sword_sprite = pygame.sprite.Group()
-sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Item": item_sprites, "Sword": sword_sprite}
+sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
+                 "Item": item_sprites, "Sword": sword_sprite}
 
 
 def spawn_entity(new_entity, entity_type, spawn_xy=(None, None)):
-    # TODO figure out how to insert hyperparameters unique for an energy without being overabundant
     sprite_groups[entity_type].add(new_entity)
     game_sprites.add(new_entity)
     new_entity.warp(x=spawn_xy[0], y=spawn_xy[1])
@@ -33,7 +34,13 @@ game_sprites.add(player)
 
 # Mob Entities
 for i in range(5):
+    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(75, 75)), "Mob Vision")
+
+
+
     dummy_wraith = spawn_entity(ENTITY.Mob(), "Mob")
+    dummy_box.set_entity(dummy_wraith)
+    # dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(75, 75), entity_anchor=dummy_wraith), "Mob Vision", spawn_xy=dummy_wraith.get_coord())
     dummy_wraith.set_speed(0, 0)
 
 # Sword Entity
@@ -89,9 +96,11 @@ while looping:
     # Update game sprites
     game_sprites.update()
 
-    player_box_collide = pygame.sprite.spritecollide(player, bounding_box_test_sprites, False)
-    if player_box_collide:
-        player.warp(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)
+    mob_detection = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
+    if mob_detection:
+        found_mob = mob_detection[0].get_entity()
+        if found_mob:
+            found_mob.warp(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2)
 
     # Player and Mob collision
     player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
@@ -100,12 +109,11 @@ while looping:
         remaining_mob = combat.combat_screen()
         if remaining_mob:
             # Run away was chosen
-            # TODO make this invulnerability for a few seconds. changing position could lead to bugs
-            # player.warp(player.rect.x - 10, player.rect.y - 10)
             combat_invul = True
             start_invul_time = pygame.time.get_ticks()
         else:
             # Defeated mob, so remove mob from map
+            # TODO remove mob bounding box
             pygame.sprite.spritecollide(player, mob_sprites, True)
         # Recover HP at the end of combat
         # player.set_stats({"HP": player.get_stats()["HP Max"]})

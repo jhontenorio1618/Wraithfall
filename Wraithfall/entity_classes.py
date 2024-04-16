@@ -6,20 +6,50 @@ class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
 
-    def __init__(self, bound_box_size=(100, 100), location_coord=(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)):
+    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(bound_box_size)
-        self.image.fill("#000000")
+        self.image.fill("#FFFFFF")
         self.rect = self.image.get_rect()
-        self.rect.x = location_coord[0]
-        self.rect.y = location_coord[1]
+        self.speed_x = 0
+        self.speed_y = 0
+        if entity_anchor is None:
+            self.rect.centerx, self.rect.centery = location_coord
+            # self.rect.y = location_coord[1]
+        else:
+            self.rect.centerx, self.rect.centery = entity_anchor.get_coord()
+        self.entity_anchor = entity_anchor
 
-    def warp(self, x, y):
+    def update(self):
+        """ If tied to an Entity, follow the Entity when it moves """
+        if self.entity_anchor is None:
+            self.speed_x = 0
+            self.speed_y = 0
+        else:
+            # Stick to associated mob
+            self.rect.centerx, self.rect.centery = self.entity_anchor.get_coord()
+
+    def warp(self, x=None, y=None):
         """ Move bounding box to given coordinates. Used for spawning and moving position on map.
         Returns the new coordinates of the bounding box. """
-        self.rect.x = x
-        self.rect.y = y
+        if x is None:
+            self.rect.centerx = random.randrange(WIN.WIN_WIDTH - self.rect.width)
+        else:
+            self.rect.centerx = x
+        if y is None:
+            self.rect.centery = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+        else:
+            self.rect.centery = y
         return x, y
+
+    def get_entity(self):
+        """ Returns associated Entity, if one exists """
+        return self.entity_anchor
+
+    def set_entity(self, entity):
+        self.entity_anchor = entity
+        return self.entity_anchor
+
 
 
 class Entity(pygame.sprite.Sprite):
@@ -34,8 +64,8 @@ class Entity(pygame.sprite.Sprite):
         self.image = pygame.Surface(bound_box_size)
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
-        self.rect.x = WIN.WIN_WIDTH
-        self.rect.y = WIN.WIN_HEIGHT
+        self.rect.centerx = WIN.WIN_WIDTH
+        self.rect.centery = WIN.WIN_HEIGHT
         self.speed_x = 0
         self.speed_y = 0
         # RPG Stats
@@ -47,8 +77,8 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         """ Calculate movement of the Entity. """
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
+        self.rect.centerx += self.speed_x
+        self.rect.centery += self.speed_y
 
     def get_speed(self):
         """ Return the current speed of the Entity. """
@@ -61,20 +91,20 @@ class Entity(pygame.sprite.Sprite):
 
     def get_coord(self):
         """ Return the current coordinates of the Entity. """
-        return self.rect.x, self.rect.y
+        return self.rect.centerx, self.rect.centery
 
     def warp(self, x=None, y=None):
         """ Move Entity to given coordinates. Used for spawning and moving position on map.
         If no coordinates are given, then the Entity is spawned randomly on screen.
         Returns new coordinates of the Entity. """
         if x is None:
-            self.rect.x = random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = random.randrange(WIN.WIN_WIDTH - self.rect.width)
         else:
-            self.rect.x = x
+            self.rect.centerx = x
         if y is None:
-            self.rect.y = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
         else:
-            self.rect.y = y
+            self.rect.centery = y
         return x, y
 
     def set_stats(self, stat_list):
@@ -251,9 +281,9 @@ class Sword(Entity):
             self.speed_y = 0
         else:
             # Hover beside player
-            self.rect.x, self.rect.y = self.found_player.get_coord()
-            self.rect.x -= 25
-            self.rect.y -= 25
+            self.rect.centerx, self.rect.centery = self.found_player.get_coord()
+            self.rect.centerx -= 25
+            self.rect.centery -= 25
             # super(Sword, self).update()
 
     def pickup(self, player):
