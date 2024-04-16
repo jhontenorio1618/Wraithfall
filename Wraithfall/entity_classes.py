@@ -7,9 +7,10 @@ class BoundingBox(pygame.sprite.Sprite):
     For example: mob detection radius, area to apply particular effect, etc. """
 
     def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)):
+        # TODO figure out transparency
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(bound_box_size)
-        self.image.fill("#FFFFFF")
+        self.image.fill("#520000")
         self.rect = self.image.get_rect()
         self.speed_x = 0
         self.speed_y = 0
@@ -47,9 +48,9 @@ class BoundingBox(pygame.sprite.Sprite):
         return self.entity_anchor
 
     def set_entity(self, entity):
+        entity.set_bb_anchor(self)
         self.entity_anchor = entity
         return self.entity_anchor
-
 
 
 class Entity(pygame.sprite.Sprite):
@@ -68,6 +69,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect.centery = WIN.WIN_HEIGHT
         self.speed_x = 0
         self.speed_y = 0
+        self.bb_anchor = None
         # RPG Stats
         self.HP_Max = 1
         self.HP = 1
@@ -134,6 +136,13 @@ class Entity(pygame.sprite.Sprite):
         if self.HP > self.HP_Max:
             self.HP = self.HP_Max
         return self.HP
+
+    def get_bb_anchor(self):
+        return self.bb_anchor
+
+    def set_bb_anchor(self, bb):
+        self.bb_anchor = bb
+        return self.bb_anchor
 
 
 class Player(Entity):

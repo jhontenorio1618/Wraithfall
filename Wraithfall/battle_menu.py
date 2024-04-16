@@ -9,7 +9,7 @@ pygame.display.set_caption("Battle")
 
 
 class Battle:
-    def __init__(self, player=ENTITY.Player(), mobs=[ENTITY.Mob()]):
+    def __init__(self, player=ENTITY.Player(), mobs=ENTITY.Mob()):
         self.player = player
         self.mobs = mobs
         # TODO make "in_combat", "mobs_living", and "player_living" variables here instead of local
@@ -113,16 +113,16 @@ class Battle:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
                         # "FIGHT" Button: attack the mob
-                        damage_inflicted = self.mobs[0].get_stats()["DEF"] - self.player.get_stats()["ATK"]
+                        damage_inflicted = self.mobs.get_stats()["DEF"] - self.player.get_stats()["ATK"]
                         if damage_inflicted > 0:
                             damage_inflicted = 0
                         # Calculate Mob HP after damage
-                        self.mobs[0].hp_update(damage_inflicted)
-                        if self.mobs[0].get_stats()["HP"] <= 0:
+                        self.mobs.hp_update(damage_inflicted)
+                        if self.mobs.get_stats()["HP"] <= 0:
                             # Mob is dead
                             mobs_living = False
                             # Player gains EXP from killing mob
-                            self.player.gain_exp(self.mobs[0].drop_exp())
+                            self.player.gain_exp(self.mobs.drop_exp())
                         else:
                             # Enemy's turn to attack
                             enemy_turn = True
@@ -286,7 +286,7 @@ class Battle:
         return 0
 
     def enemy_turn(self):
-        damage_inflicted = self.player.get_stats()["DEF"] - self.mobs[0].get_stats()["ATK"]
+        damage_inflicted = self.player.get_stats()["DEF"] - self.mobs.get_stats()["ATK"]
         if damage_inflicted > 0:
             damage_inflicted = 0
         # self.player.hp_update(damage_inflicted)
@@ -294,8 +294,8 @@ class Battle:
 
     def display_hp(self, mob_hp_color):
         # Mob HP display
-        mob_hp_text = WIN.get_font(30).render(str(self.mobs[0].get_stats()["HP"]) + "/" +
-                                              str(self.mobs[0].get_stats()["HP Max"]), True, mob_hp_color)
+        mob_hp_text = WIN.get_font(30).render(str(self.mobs.get_stats()["HP"]) + "/" +
+                                              str(self.mobs.get_stats()["HP Max"]), True, mob_hp_color)
         mob_hp_rect = mob_hp_text.get_rect(center=(640, 360))
         SCREEN.blit(mob_hp_text, mob_hp_rect)
 

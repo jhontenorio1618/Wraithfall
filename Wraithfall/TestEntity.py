@@ -34,13 +34,9 @@ game_sprites.add(player)
 
 # Mob Entities
 for i in range(5):
-    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(75, 75)), "Mob Vision")
-
-
-
+    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(100, 100)), "Mob Vision")
     dummy_wraith = spawn_entity(ENTITY.Mob(), "Mob")
     dummy_box.set_entity(dummy_wraith)
-    # dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(75, 75), entity_anchor=dummy_wraith), "Mob Vision", spawn_xy=dummy_wraith.get_coord())
     dummy_wraith.set_speed(0, 0)
 
 # Sword Entity
@@ -49,12 +45,6 @@ sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN
 # Item Entities
 for i in range(5):
     healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
-
-# TODO implement
-bounding_box_test_sprites = pygame.sprite.Group()
-box = ENTITY.BoundingBox()
-game_sprites.add(box)
-bounding_box_test_sprites.add(box)
 
 # Game Loop
 looping = True
@@ -105,7 +95,7 @@ while looping:
     # Player and Mob collision
     player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
     if not combat_invul and player_mob_collide:
-        combat = Battle(player, player_mob_collide)
+        combat = Battle(player, player_mob_collide[0])
         remaining_mob = combat.combat_screen()
         if remaining_mob:
             # Run away was chosen
@@ -113,8 +103,10 @@ while looping:
             start_invul_time = pygame.time.get_ticks()
         else:
             # Defeated mob, so remove mob from map
-            # TODO remove mob bounding box
-            pygame.sprite.spritecollide(player, mob_sprites, True)
+            player_mob_collide[0].get_bb_anchor().kill()
+            player_mob_collide[0].kill()
+            # pygame.sprite.spritecollide(player, mob_sprites, True)
+            # mob_sprites[0]
         # Recover HP at the end of combat
         # player.set_stats({"HP": player.get_stats()["HP Max"]})
 
