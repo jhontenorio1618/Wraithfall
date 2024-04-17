@@ -13,7 +13,7 @@ MENU_TITLE = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "WRAITHFALL_TITLE.pn
 
 
 #Load the background image
-BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "menu_screen.jpeg")).convert()
+BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "Wraithfall_MenuPhoto.png")).convert()
 
 #Set size for image
 DEFAULT_MENU_BACKGROUND_IMAGE_SIZE=(1280,720)
