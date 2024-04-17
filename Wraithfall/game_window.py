@@ -15,7 +15,8 @@ DIR_ASSETS = os.path.join(DIR_MAIN, "assets")
 DIR_IMAGES = os.path.join(DIR_ASSETS, "images")
 # relative path to image dir
 DIR_FONTS = os.path.join(DIR_ASSETS, "fonts")
-
+# relative path to image dir
+DIR_AUDIO = os.path.join(DIR_ASSETS, "music")
 
 def window_size():
     """ Returns tuple of window width x height """
