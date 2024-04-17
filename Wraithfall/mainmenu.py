@@ -30,7 +30,10 @@ DEFAULT_BACKGROUND_IMAGE_POSITION = (640,360)
 def get_font(size):
     return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9Kpixel.ttf"), size)
 
-
+#Load main menu music file
+pygame.mixer.music.load("Main_Menu_Music.mp3")
+#Loop through the music indefinitely
+pygame.mixer.play(-1)
 
 #If user clicks play, this is a place holder for now until game is ready
 def play():
