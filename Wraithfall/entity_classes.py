@@ -10,7 +10,9 @@ class BoundingBox(pygame.sprite.Sprite):
         # TODO figure out transparency
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(bound_box_size)
-        self.image.fill("#520000")
+        trans_color = "#FF00FF"
+        self.image.fill(trans_color)
+        self.image.set_colorkey(trans_color)
         self.rect = self.image.get_rect()
         self.speed_x = 0
         self.speed_y = 0
@@ -167,6 +169,7 @@ class Player(Entity):
         self.speed_x = 0
         self.speed_y = 0
         key_state = pygame.key.get_pressed()
+        # TODO make player diagonal movements smooth & consistent
         if key_state[pygame.K_LEFT]:
             self.speed_x = -5
         if key_state[pygame.K_RIGHT]:
@@ -249,9 +252,22 @@ class Mob(Entity):
             mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
         self.set_stats(mob_stats)
         self.exp_gain = exp
+        self.target = None
 
     def update(self):
         """ Calculate movement of the Mob. """
+        self.speed_x = 0
+        self.speed_y = 0
+        if self.target is not None:
+            player_x, player_y = self.target.get_coord()
+            mob_x, mob_y = self.get_coord()
+            distance_x = player_x - mob_x
+            distance_y = player_y - mob_y
+            distance = (distance_x**2 + distance_y**2)**0.5
+            if distance != 0:
+                self.speed_x = 4 * distance_x/distance
+                self.speed_y = 4 * distance_y/distance
+
         super(Mob, self).update()
         # TODO write unique walking behaviors
 
@@ -259,6 +275,12 @@ class Mob(Entity):
         """ Returns the number of EXP the mob will give player are dying. Used in combat menu. """
         return self.exp_gain
 
+    def set_target(self, player):
+        self.target = player
+        return self.target
+
+    def get_target(self):
+        return self.target
 
 class PassiveMob(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", mob_stats=None):

@@ -153,7 +153,7 @@ class Battle:
         # Clicked RUN Button
         # TODO calculate RUN % chance
         success = True
-        return success
+        return not success
 
     def sword_menu(self):
         in_menu = True

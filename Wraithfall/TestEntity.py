@@ -34,7 +34,7 @@ game_sprites.add(player)
 
 # Mob Entities
 for i in range(5):
-    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(100, 100)), "Mob Vision")
+    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(200, 200)), "Mob Vision")
     dummy_wraith = spawn_entity(ENTITY.Mob(), "Mob")
     dummy_box.set_entity(dummy_wraith)
     dummy_wraith.set_speed(0, 0)
@@ -86,12 +86,6 @@ while looping:
     # Update game sprites
     game_sprites.update()
 
-    mob_detection = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
-    if mob_detection:
-        found_mob = mob_detection[0].get_entity()
-        if found_mob:
-            found_mob.warp(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2)
-
     # Player and Mob collision
     player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
     if not combat_invul and player_mob_collide:
@@ -114,6 +108,17 @@ while looping:
         curr_time = pygame.time.get_ticks()
         if curr_time - start_invul_time >= 5000:
             combat_invul = False
+
+    # Mob stops following Player if outside of detection bounding box
+    for mob in mob_sprites:
+        mob.set_target(None)
+
+    # Checks if Player is in Mob's detection bounding box
+    mob_detection_box = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
+    if mob_detection_box and not combat_invul:
+        found_mob = mob_detection_box[0].get_entity()
+        if found_mob:
+            found_mob.set_target(player)
 
     # Player and Sword collision
     player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
