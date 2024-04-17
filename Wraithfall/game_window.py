@@ -1,5 +1,4 @@
-import pygame, os, sys
-
+import pygame, os, sys, math, random
 
 """ Pygame Window Setup & Variables"""
 # TODO contemplate reformatting all of this to be an class instead of separate vars and defs

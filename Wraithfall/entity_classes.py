@@ -1,4 +1,4 @@
-import pygame, random
+import pygame
 import game_window as WIN
 
 
@@ -36,11 +36,11 @@ class BoundingBox(pygame.sprite.Sprite):
         """ Move bounding box to given coordinates. Used for spawning and moving position on map.
         Returns the new coordinates of the bounding box. """
         if x is None:
-            self.rect.centerx = random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -102,11 +102,11 @@ class Entity(pygame.sprite.Sprite):
         If no coordinates are given, then the Entity is spawned randomly on screen.
         Returns new coordinates of the Entity. """
         if x is None:
-            self.rect.centerx = random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -340,13 +340,21 @@ class Sword(Entity):
         Used in combination of the SWORD menu. """
         # TODO should change aspects of the sword here. For now, it's only visual
         if form == "BASE":
+            self.form = "BASE"
             self.image.fill("#FFCC40")
         if form == "FIRE":
+            self.form = "FIRE"
             self.image.fill("#FF0000")
         if form == "ICE":
+            self.form = "ICE"
             self.image.fill("#0000FF")
         if form == "DARK":
+            self.form = "DARK"
             self.image.fill("#FF00FF")
+        return self.form
+
+    def get_form(self):
+        return self.form
 
     def gain_exp(self, exp):
         """ Adds to Sword's EXP total. Returns new EXP total. """
