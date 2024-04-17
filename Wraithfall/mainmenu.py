@@ -125,9 +125,9 @@ def main_menu():
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
         #Create play and quit buttons
-        PLAY_BUTTON = Button (image=None, pos=(640,430),
+        PLAY_BUTTON = Button (image=None, pos=(640,450),
                                text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-        QUIT_BUTTON = Button (image = None, pos=(640,520),
+        QUIT_BUTTON = Button (image = None, pos=(640,540),
                                text_input="QUIT", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
