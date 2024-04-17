@@ -299,7 +299,7 @@ class Sword(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#FFCC40", sword_attack=None):
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         if sword_attack is None:
-            sword_attack = {"ATK": 2}
+            sword_attack = {"ATK": 0}
         self.found_player = None
         self.form = "BASE"
         self.set_stats(sword_attack)

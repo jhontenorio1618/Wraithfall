@@ -38,11 +38,28 @@ class Battle:
 
             if enemy_turn:
                 # Enemy attacks
-                self.player.hp_update(self.enemy_turn())
-                if self.player.get_stats()["HP"] <= 0:
-                    # Player is dead
-                    in_combat = False
-                    player_living = False
+                status_chance = WIN.random.randrange(100)
+                if not (mob_effect == 2 and status_chance >= 40):
+                    # 60% for Mob to be frozen and unable to move
+                    if mob_effect == 1:
+                        fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
+                        print("Burning Mob got burnt for " + str(-fire_dmg))
+                        self.mob.hp_update(fire_dmg)
+                    # Calculate Mob HP after damage
+
+                    if self.mob.get_stats()["HP"] <= 0:
+                        # Mob is dead
+                        mobs_living = False
+                        # Player gains EXP from killing mob
+                        exp_gained = self.player.gain_exp(self.mob.drop_exp())
+                    else:
+                        self.player.hp_update(self.enemy_turn())
+                        if self.player.get_stats()["HP"] <= 0:
+                            # Player is dead
+                            in_combat = False
+                            player_living = False
+                else:
+                    print("Mob is FROZEN")
                 enemy_turn = False
 
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
@@ -120,16 +137,33 @@ class Battle:
                         bonus_dmg = 0
                         if self.player.access_sword() is not None:
                             sword_form = self.player.access_sword().get_form()
-                            if sword_form == "DARK":
-                                bonus_dmg = WIN.math.ceil(self.player.get_stats()["ATK"] * 1.25)
-                            if sword_form == "ICE":
-                                x = 2
+                            status_chance = WIN.random.randrange(100)
                             if sword_form == "FIRE":
-                                y = 2
+                                # Checks if Mob is already burning.
+                                if mob_effect != 1:
+                                    print(status_chance)
+                                    if status_chance >= 0:
+                                        # 80% chance of working
+                                        mob_effect = 1
+                                        print("Mob is on fire.")
+                            if sword_form == "ICE":
+                                # Checks if Mob is already frozen.
+                                if mob_effect != 2:
+                                    print(status_chance)
+                                    if status_chance >= 25:
+                                        # 75% chance of working
+                                        mob_effect = 2
+                                        print("Mob is frozen.")
+                            if sword_form == "DARK":
+                                bonus_dmg = WIN.math.ceil(self.player.get_stats()["ATK"] * .3)
+                                print("Bonus Damage: " + str(bonus_dmg))
+                                print("Mob has suffered more.")
 
                         player_attack = self.player.get_stats()["ATK"] + bonus_dmg
+                        print("Total Attack: " + str(player_attack))
                         damage_inflicted = self.mob.get_stats()["DEF"] - player_attack # self.player.get_stats()["ATK"] - bonus_dmg
                         if damage_inflicted > 0:
+                            # If the damage inflicted was negative, the enemy's defense is too high.
                             damage_inflicted = 0
 
                         # Calculate Mob HP after damage
