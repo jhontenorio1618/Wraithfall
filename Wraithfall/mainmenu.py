@@ -13,7 +13,7 @@ MENU_TITLE = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "WRAITHFALL_TITLE.pn
 
 
 #Load the background image
-BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "Wraithfall_MenuPhoto.png")).convert()
+BG = pygame.image.load(os.path.join(WIN.DIR_IMAGES, "Main_Menu_Background.png")).convert()
 
 #Set size for image
 DEFAULT_MENU_BACKGROUND_IMAGE_SIZE=(1280,720)
@@ -125,9 +125,9 @@ def main_menu():
         SCREEN.blit(MENU_TEXT, MENU_RECT)
         
         #Create play and quit buttons
-        PLAY_BUTTON = Button (image=None, pos=(640,400),
+        PLAY_BUTTON = Button (image=None, pos=(640,430),
                                text_input="PLAY", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-        QUIT_BUTTON = Button (image = None, pos=(640,500),
+        QUIT_BUTTON = Button (image = None, pos=(640,520),
                                text_input="QUIT", font = get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
         
         SCREEN.blit(MENU_TEXT, MENU_RECT)
