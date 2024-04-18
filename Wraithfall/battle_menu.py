@@ -12,11 +12,17 @@ class Battle:
     def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob()):
         self.player = player
         self.mob = mob
-        # TODO make "in_combat", "mobs_living", and "player_living" variables here instead of local
+        self.player_chosen_action = 0
+        self.in_combat = True
+        self.mob_living = True
+        self.player_living = True
+        self.status_effects = {"Normal": 0, "Burning": 1, "Frozen": 2}
+        self.mob_effect = 0
+        self.player_effect = 0
 
     def combat_screen(self):
         in_combat = True
-        mobs_living = True
+        mob_living = True
         player_living = True
         open_sword_menu = False
         open_item_menu = False
@@ -24,10 +30,7 @@ class Battle:
         exp_gained = 0
         player_decided = False
         enemy_decided = False
-        status_effects = {"Normal": 0, "Burning": 1, "Frozen": 2}
-        mob_effect = 0
-        player_status = 0
-        while in_combat:
+        while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
                 self.sword_menu()
@@ -64,7 +67,7 @@ class Battle:
                                  text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             sword_displayed = False
 
-            if mobs_living:
+            if self.mob_living:
                 # Mobs are displayed as living
                 # TODO Put visuals for mobs here
                 PLAY_TEXT = WIN.get_font(45).render("This is where the magic will happen.", True, "White")
@@ -107,10 +110,12 @@ class Battle:
                         WIN.game_exit()
                     if next_displayed and event.key == pygame.K_SPACE:
                         # "NEXT" Button Shortcut
-                        in_combat = False
+                        self.in_combat = False
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
+                        self.player_chosen_action = 1
+                        """
                         # "FIGHT" Button: attack the mob
                         bonus_dmg = 0
                         if self.player.access_sword() is not None:
@@ -148,18 +153,21 @@ class Battle:
                         self.mob.hp_update(damage_inflicted)
                         if self.mob.get_stats()["HP"] <= 0:
                             # Mob is dead
-                            mobs_living = False
+                            mob_living = False
                             # Player gains EXP from killing mob
                             exp_gained = self.player.gain_exp(self.mob.drop_exp())
                         else:
                             # Enemy's turn to attack
                             enemy_turn = True
+                        """
+                        enemy_turn = True
+                        player_decided = True
                     if run_displayed and BATTLE_RUN.checkForInput(PLAY_MOUSE_POSITION):
                         # "RUN" Button: flee from fight without killing the mobs
-                        in_combat = self.run_state()
+                        self.in_combat = self.run_state()
                     if next_displayed and BATTLE_NEXT.checkForInput(PLAY_MOUSE_POSITION):
                         # "NEXT" Button: click to leave combat after killing the mobs
-                        in_combat = False
+                        self.in_combat = False
                     if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
                         # "SWORD" Button: open sword menu to change form of sword
                         open_sword_menu = True
@@ -168,6 +176,8 @@ class Battle:
                         open_item_menu = True
 
             if enemy_turn:
+                # Logic for enemy making move decision
+                """
                 # Enemy attacks
                 status_chance = WIN.random.randrange(100)
                 if not (mob_effect == 2 and status_chance >= 40):
@@ -180,20 +190,42 @@ class Battle:
 
                     if self.mob.get_stats()["HP"] <= 0:
                         # Mob is dead
-                        mobs_living = False
+                        mob_living = False
                         # Player gains EXP from killing mob
                         exp_gained = self.player.gain_exp(self.mob.drop_exp())
                     else:
-                        self.player.hp_update(self.enemy_turn())
+                        damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
+                        if damage_inflicted > 0:
+                            damage_inflicted = 0
+                        self.player.hp_update(damage_inflicted)
                         if self.player.get_stats()["HP"] <= 0:
                             # Player is dead
                             in_combat = False
                             player_living = False
                 else:
                     print("Mob is FROZEN")
+                """
                 enemy_turn = False
+                enemy_decided = True
 
             if player_decided and enemy_decided:
+                player_speed = self.player.get_stats()["SPD"]
+                mob_speed = self.mob.get_stats()["SPD"]
+                if player_speed > mob_speed:
+                    # Player is faster, so player goes first.
+                    first_turn = self.player_turn
+                    second_turn = self.enemy_turn
+                elif player_speed < mob_speed:
+                    # Mob is faster, so mob goes first.
+                    first_turn = self.enemy_turn
+                    second_turn = self.player_turn
+                else:
+                    # Speed is tied. Randomly decide who goes first this turn.
+                    random_order = WIN.random.sample([self.player_turn, self.enemy_turn], 2)
+                    first_turn = random_order[0]
+                    second_turn = random_order[1]
+                first_turn()
+                second_turn()
 
                 """ Process Decisions
                 
@@ -213,7 +245,7 @@ class Battle:
                 enemy_decided = False
 
             pygame.display.update()
-        return mobs_living
+        return self.mob_living
 
     def fight_state(self):
         # Clicked FIGHT Button
@@ -355,15 +387,80 @@ class Battle:
         return used_item
 
     def player_turn(self):
-        # TODO Put player attack in here probably? instead of in display code
+        if self.player_chosen_action == 1:
+            # "FIGHT" Button: attack the mob
+            bonus_dmg = 0
+            if self.player.access_sword() is not None:
+                sword_form = self.player.access_sword().get_form()
+                status_chance = WIN.random.randrange(100)
+                if sword_form == "FIRE":
+                    # Checks if Mob is already burning.
+                    if self.mob_effect != 1:
+                        print(status_chance)
+                        if status_chance >= 0:
+                            # 80% chance of working
+                            self.mob_effect = 1
+                            print("Mob is on fire.")
+                if sword_form == "ICE":
+                    # Checks if Mob is already frozen.
+                    if self.mob_effect != 2:
+                        print(status_chance)
+                        if status_chance >= 25:
+                            # 75% chance of working
+                            self.mob_effect = 2
+                            print("Mob is frozen.")
+                if sword_form == "DARK":
+                    bonus_dmg = WIN.math.ceil(self.player.get_stats()["ATK"] * .3)
+                    print("Bonus Damage: " + str(bonus_dmg))
+                    print("Mob has suffered more.")
+
+            player_attack = self.player.get_stats()["ATK"] + bonus_dmg
+            print("Total Attack: " + str(player_attack))
+            damage_inflicted = self.mob.get_stats()["DEF"] - player_attack # self.player.get_stats()["ATK"] - bonus_dmg
+            if damage_inflicted > 0:
+                # If the damage inflicted was negative, the enemy's defense is too high.
+                damage_inflicted = 0
+
+            # Calculate Mob HP after damage
+            self.mob.hp_update(damage_inflicted)
+            if self.mob.get_stats()["HP"] <= 0:
+                # Mob is dead
+                self.mob_living = False
+                # Player gains EXP from killing mob
+                exp_gained = self.player.gain_exp(self.mob.drop_exp())
+            else:
+                # Enemy's turn to attack
+                enemy_turn = True
         return 0
 
     def enemy_turn(self):
-        damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
-        if damage_inflicted > 0:
-            damage_inflicted = 0
-        # self.player.hp_update(damage_inflicted)
-        return damage_inflicted
+        # Enemy attacks
+        status_chance = WIN.random.randrange(100)
+        if not (self.mob_effect == 2 and status_chance >= 40):
+            # 60% for Mob to be frozen and unable to move
+            if self.mob_effect == 1:
+                fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
+                print("Burning Mob got burnt for " + str(fire_dmg))
+                self.mob.hp_update(-fire_dmg)
+            # Calculate Mob HP after damage
+
+            if self.mob.get_stats()["HP"] <= 0:
+                # Mob is dead
+                self.mob_living = False
+                # Player gains EXP from killing mob
+                exp_gained = self.player.gain_exp(self.mob.drop_exp())
+            else:
+                damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
+                if damage_inflicted > 0:
+                    damage_inflicted = 0
+                self.player.hp_update(damage_inflicted)
+                if self.player.get_stats()["HP"] <= 0:
+                    # Player is dead
+                    self.in_combat = False
+                    self.player_living = False
+        else:
+            print("Mob is FROZEN")
+        return 0
 
     def display_hp(self, mob_hp_color):
         # Mob HP display
