@@ -50,7 +50,7 @@ for i in range(5):
 looping = True
 combat_invul = False
 while looping:
-    clock.tick(WIN.FPS)
+    clock.tick(WIN.get_fps())
     # Input Events
     for event in EVENTS.get():
         if event.type == pygame.KEYDOWN:

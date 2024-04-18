@@ -27,12 +27,20 @@ DEFAULT_BACKGROUND_IMAGE_POSITION = (640,360)
 
 #load the font we want to use for the game
 #will return the font in the desired size
-def get_font(size):
-    return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9Kpixel.ttf"), size)
+def get_font(size, font_file="grand9Kpixel.ttf"):
+    return pygame.font.Font(os.path.join(WIN.DIR_FONTS, font_file), size)
+
+def play_music(music_file, n=-1):
+    """ audio_file = name of the audio file you want to play.
+        n = number of times audio should play. if -1, it will loop forever"""
+    pygame.mixer.music.load(os.path.join(WIN.DIR_MUSIC, music_file))
+    pygame.mixer.music.play(n)
+    return music_file
 
 #Load the music file
-pygame.mixer.music.load(os.path.join(WIN.DIR_AUDIO, "Main_Menu_Music.wav"))
-pygame.mixer.music.play(-1)
+WIN.play_music("Main_Menu_Music.wav")
+# pygame.mixer.music.load(os.path.join(WIN.DIR_AUDIO, "Main_Menu_Music.wav"))
+# pygame.mixer.music.play(-1)
 
 #If user clicks play, this is a place holder for now until game is ready
 def play():
@@ -112,6 +120,9 @@ def pause_menu():
       
 def main_menu():
     while True:
+        if not pygame.mixer.music.get_busy():
+            # Assures main menu music is playing when on main menu
+            play_music("Main_Menu_Music.wav")
         SCREEN.blit(BG,(0,0))
         
         #Get current mouse position
@@ -144,6 +155,7 @@ def main_menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    WIN.stop_music()
                     play() #start the game when clicking play (text placeholder for now)
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()

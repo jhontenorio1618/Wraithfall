@@ -12,7 +12,7 @@ def get_font(size):
 
 # Font size
 font_size = 20
-font = get_font(font_size)
+font = WIN.get_font(font_size)
 
 # Display test text
 text_lines = [
@@ -30,7 +30,7 @@ text_delay = 0.1
 
 #Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_AUDIO, "text_sound.wav"))
+sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "text_sound.wav"))
 #play sound and loop until text is finished
 sound.play(loops=-1)
 
@@ -83,7 +83,7 @@ while running:
 
     # Update the display
     pygame.display.flip()
-    clock.tick(WIN.FPS)
+    clock.tick(WIN.get_fps())
 
 pygame.quit()
 sys.exit()
