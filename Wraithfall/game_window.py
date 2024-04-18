@@ -18,7 +18,7 @@ DIR_FONTS = os.path.join(DIR_ASSETS, "fonts")
 # relative path to music dir
 DIR_MUSIC = os.path.join(DIR_ASSETS, "music")
 # relative path to sprite dir
-DIR_SPRITE = os.path.join(DIR_ASSETS, "sprites")
+DIR_SPRITES = os.path.join(DIR_ASSETS, "sprites")
 
 
 def window_size():

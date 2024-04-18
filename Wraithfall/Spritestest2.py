@@ -1,4 +1,4 @@
-import pygame
+import pygame, sys, os, game_window as WIN
 
 pygame.init()
 
@@ -8,7 +8,7 @@ SCREEN_HEIGHT = 500
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sprite sheets")
 
-sprite_sheet_image = pygame.image.load("MCSPRITESFINAL.PNG").convert_alpha()
+sprite_sheet_image = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "MCSPRITESFINAL.PNG")).convert_alpha()
 
 BG = (50, 50, 50)
 
