@@ -8,6 +8,134 @@ SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Battle")
 
 
+def item_menu(player):
+    in_menu = True
+    selected_item = None
+    while in_menu:
+        PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
+        SCREEN.fill("black")
+
+        item_buttons = []
+        item_pointer = 0
+        y_axis = 100
+        for item in player.inventory:
+            button_text = str(item_pointer) + ". " + item.get_name()
+            # Button pressed for BASE sword form
+            CURRENT_ITEM = Button(image=None, pos=(320, y_axis),
+                                  text_input=button_text, font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+            y_axis += 120
+            item_displayed = False
+            item_buttons.append([CURRENT_ITEM, item_displayed])
+            item_pointer += 1
+
+        BACK_BUTTON = Button(image=None, pos=(150, 650),
+                             text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        back_displayed = False
+
+        for i in range(len(item_buttons)):
+            item_buttons[i][0].changeColor(PLAY_MOUSE_POSITION)
+            item_buttons[i][0].update(SCREEN)
+            item_buttons[i][1] = True
+        BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
+        BACK_BUTTON.update(SCREEN)
+        back_displayed = True
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                WIN.game_exit()
+            if event.type == pygame.KEYDOWN:
+                # Escape Key
+                if event.key == pygame.K_ESCAPE:
+                    WIN.game_exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                for i in range(len(item_buttons)):
+                    if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
+                        selected_item = player.access_item(i)
+                        # selected_item.use_item()
+                        in_menu = False
+                if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
+                    in_menu = False
+
+        if not player.inventory:
+            in_menu = False
+        pygame.display.update()
+    return selected_item
+
+
+def sword_menu(player):
+    in_menu = True
+    while in_menu:
+        PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
+        SCREEN.fill("black")
+
+        # Button pressed for BASE sword form
+        SWORD_BASE = Button(image=None, pos=(320, 220),
+                            text_input="BASE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        base_displayed = False
+        # Button pressed for FIRE sword form
+        SWORD_FIRE = Button(image=None, pos=(320, 340),
+                            text_input="FIRE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF0000")
+        fire_displayed = False
+        # Button pressed for ICE sword form
+        SWORD_ICE = Button(image=None, pos=(320, 460),
+                           text_input="ICE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#0000FF")
+        ice_displayed = False
+        # Button pressed for DARK sword form
+        SWORD_DARK = Button(image=None, pos=(320, 580),
+                            text_input="DARK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF00FF")
+        dark_displayed = False
+
+        BACK_BUTTON = Button(image=None, pos=(150, 650),
+                             text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        back_displayed = False
+
+        SWORD_BASE.changeColor(PLAY_MOUSE_POSITION)
+        SWORD_BASE.update(SCREEN)
+        base_displayed = True
+        SWORD_FIRE.changeColor(PLAY_MOUSE_POSITION)
+        SWORD_FIRE.update(SCREEN)
+        fire_displayed = True
+        SWORD_ICE.changeColor(PLAY_MOUSE_POSITION)
+        SWORD_ICE.update(SCREEN)
+        ice_displayed = True
+        SWORD_DARK.changeColor(PLAY_MOUSE_POSITION)
+        SWORD_DARK.update(SCREEN)
+        dark_displayed = True
+
+        BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
+        BACK_BUTTON.update(SCREEN)
+        back_displayed = True
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                WIN.game_exit()
+            if event.type == pygame.KEYDOWN:
+                # Escape Key
+                if event.key == pygame.K_ESCAPE:
+                    WIN.game_exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if base_displayed and SWORD_BASE.checkForInput(PLAY_MOUSE_POSITION):
+                    player.access_sword().shift_form("BASE")
+                    in_menu = False
+                    base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
+                if fire_displayed and SWORD_FIRE.checkForInput(PLAY_MOUSE_POSITION):
+                    player.access_sword().shift_form("FIRE")
+                    in_menu = False
+                    base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
+                if ice_displayed and SWORD_ICE.checkForInput(PLAY_MOUSE_POSITION):
+                    player.access_sword().shift_form("ICE")
+                    in_menu = False
+                    base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
+                if dark_displayed and SWORD_DARK.checkForInput(PLAY_MOUSE_POSITION):
+                    player.access_sword().shift_form("DARK")
+                    in_menu = False
+                    base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
+                if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
+                    in_menu = False
+        pygame.display.update()
+    return player.access_sword().get_form()
+
+
 class Battle:
     def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob()):
         self.player = player
@@ -22,9 +150,6 @@ class Battle:
         self.player_effect = 0
 
     def combat_screen(self):
-        in_combat = True
-        mob_living = True
-        player_living = True
         open_sword_menu = False
         open_item_menu = False
         exp_gained = 0
@@ -33,11 +158,11 @@ class Battle:
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
-                self.sword_menu()
+                sword_menu(self.player)
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
-                self.selected_item = self.item_menu()
+                self.selected_item = item_menu(self.player)
                 if self.selected_item:
                     self.player_chosen_action = 2
                     player_decided = True
@@ -133,35 +258,7 @@ class Battle:
                         self.in_combat = False
 
             if player_decided:
-                # Logic for enemy making move decision
-                """
-                # Enemy attacks
-                status_chance = WIN.random.randrange(100)
-                if not (mob_effect == 2 and status_chance >= 40):
-                    # 60% for Mob to be frozen and unable to move
-                    if mob_effect == 1:
-                        fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
-                        print("Burning Mob got burnt for " + str(fire_dmg))
-                        self.mob.hp_update(-fire_dmg)
-                    # Calculate Mob HP after damage
-
-                    if self.mob.get_stats()["HP"] <= 0:
-                        # Mob is dead
-                        mob_living = False
-                        # Player gains EXP from killing mob
-                        exp_gained = self.player.gain_exp(self.mob.drop_exp())
-                    else:
-                        damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
-                        if damage_inflicted > 0:
-                            damage_inflicted = 0
-                        self.player.hp_update(damage_inflicted)
-                        if self.player.get_stats()["HP"] <= 0:
-                            # Player is dead
-                            in_combat = False
-                            player_living = False
-                else:
-                    print("Mob is FROZEN")
-                """
+                # TODO Logic for enemy making move decision
                 enemy_decided = True
 
             if player_decided and enemy_decided:
@@ -208,131 +305,6 @@ class Battle:
         # TODO calculate RUN % chance
         success = True
         return not success
-
-    def sword_menu(self):
-        in_menu = True
-        while in_menu:
-            PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-            SCREEN.fill("black")
-
-            # Button pressed for BASE sword form
-            SWORD_BASE = Button(image=None, pos=(320, 220),
-                                  text_input="BASE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
-            base_displayed = False
-            # Button pressed for FIRE sword form
-            SWORD_FIRE = Button(image=None, pos=(320, 340),
-                                text_input="FIRE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF0000")
-            fire_displayed = False
-            # Button pressed for ICE sword form
-            SWORD_ICE = Button(image=None, pos=(320, 460),
-                                 text_input="ICE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#0000FF")
-            ice_displayed = False
-            # Button pressed for DARK sword form
-            SWORD_DARK = Button(image=None, pos=(320, 580),
-                                  text_input="DARK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF00FF")
-            dark_displayed = False
-
-            BACK_BUTTON = Button(image=None, pos=(150, 650),
-                                 text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
-            back_displayed = False
-
-            SWORD_BASE.changeColor(PLAY_MOUSE_POSITION)
-            SWORD_BASE.update(SCREEN)
-            base_displayed = True
-            SWORD_FIRE.changeColor(PLAY_MOUSE_POSITION)
-            SWORD_FIRE.update(SCREEN)
-            fire_displayed = True
-            SWORD_ICE.changeColor(PLAY_MOUSE_POSITION)
-            SWORD_ICE.update(SCREEN)
-            ice_displayed = True
-            SWORD_DARK.changeColor(PLAY_MOUSE_POSITION)
-            SWORD_DARK.update(SCREEN)
-            dark_displayed = True
-
-            BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
-            BACK_BUTTON.update(SCREEN)
-            back_displayed = True
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    WIN.game_exit()
-                if event.type == pygame.KEYDOWN:
-                    # Escape Key
-                    if event.key == pygame.K_ESCAPE:
-                        WIN.game_exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if base_displayed and SWORD_BASE.checkForInput(PLAY_MOUSE_POSITION):
-                        self.player.access_sword().shift_form("BASE")
-                        in_menu = False
-                        base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
-                    if fire_displayed and SWORD_FIRE.checkForInput(PLAY_MOUSE_POSITION):
-                        self.player.access_sword().shift_form("FIRE")
-                        in_menu = False
-                        base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
-                    if ice_displayed and SWORD_ICE.checkForInput(PLAY_MOUSE_POSITION):
-                        self.player.access_sword().shift_form("ICE")
-                        in_menu = False
-                        base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
-                    if dark_displayed and SWORD_DARK.checkForInput(PLAY_MOUSE_POSITION):
-                        self.player.access_sword().shift_form("DARK")
-                        in_menu = False
-                        base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
-                    if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
-                        in_menu = False
-            pygame.display.update()
-
-    def item_menu(self):
-        in_menu = True
-        selected_item = None
-        while in_menu:
-            PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-            SCREEN.fill("black")
-
-            item_buttons = []
-            item_pointer = 0
-            y_axis = 100
-            for item in self.player.inventory:
-                button_text = str(item_pointer) + ". " + item.get_name()
-                # Button pressed for BASE sword form
-                CURRENT_ITEM = Button(image=None, pos=(320, y_axis),
-                                      text_input=button_text, font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
-                y_axis += 120
-                item_displayed = False
-                item_buttons.append([CURRENT_ITEM, item_displayed])
-                item_pointer += 1
-
-            BACK_BUTTON = Button(image=None, pos=(150, 650),
-                                text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
-            back_displayed = False
-
-            for i in range(len(item_buttons)):
-                item_buttons[i][0].changeColor(PLAY_MOUSE_POSITION)
-                item_buttons[i][0].update(SCREEN)
-                item_buttons[i][1] = True
-            BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
-            BACK_BUTTON.update(SCREEN)
-            back_displayed = True
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    WIN.game_exit()
-                if event.type == pygame.KEYDOWN:
-                    # Escape Key
-                    if event.key == pygame.K_ESCAPE:
-                        WIN.game_exit()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    for i in range(len(item_buttons)):
-                        if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
-                            selected_item = self.player.access_item(i)
-                            # selected_item.use_item()
-                            in_menu = False
-                    if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
-                        in_menu = False
-
-            if not self.player.inventory:
-                in_menu = False
-            pygame.display.update()
-        return selected_item
 
     def player_turn(self):
         print(self.player_chosen_action)

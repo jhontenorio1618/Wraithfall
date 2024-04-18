@@ -1,7 +1,7 @@
 import pygame, sys, os
 import game_window as WIN
 import entity_classes as ENTITY
-from battle_menu import Battle
+from battle_menu import Battle, item_menu, sword_menu
 import pygame.event as EVENTS
 
 
@@ -61,8 +61,7 @@ while looping:
             if event.key == pygame.K_g:
                 # Access Sword Menu
                 if player.access_sword() is not None:
-                    access = Battle(player)
-                    access.sword_menu()
+                    sword_menu(player)
             # Q key
             if event.key == pygame.K_q:
                 player.scroll_inv(-1)
