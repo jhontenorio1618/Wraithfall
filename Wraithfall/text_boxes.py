@@ -15,8 +15,15 @@ font_size = 20
 font = get_font(font_size)
 
 # Display test text
-text_to_display = "Welcome to Wraithfall..."
+text_lines = [
+    "Welcome to Wraithfall...",
+    "Press Enter...",
+    "New line of text test..."
+]
 # Index to keep track of the characters
+current_line_index = 0
+text_to_display = text_lines[current_line_index]
+#index to keep track of the characters
 text_index = 0
 # Time delay between the display of each character (in seconds)
 text_delay = 0.1
@@ -48,11 +55,17 @@ while running:
         # If user closes the window exit the loop
         if event.type == pygame.QUIT:
             running = False
+        elif event.type == pygame.KEYDOWN:
+            #If enter key is pressed move to the next line
+            if event.key == pygame.K_RETURN:
+                text_index = 0
+                current_line_index = (current_line_index + 1) % len (text_lines)
+                text_to_display = text_lines[current_line_index]
 
     draw_text_box()  # Draw the outline of the text box
 
     # Delay the characters before displaying them
-    if pygame.time.get_ticks() % (text_delay * 50) == 0:
+    if pygame.time.get_ticks() % (text_delay * 50) == 0 and text_index < len(text_to_display):
         # Increment the index to display the next character
         text_index += 1
 
