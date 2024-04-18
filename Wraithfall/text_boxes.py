@@ -32,34 +32,29 @@ def draw_text_box(text):
     text_rect.bottomleft = (0, WIN.WIN_HEIGHT)
     #blit the text surface onto the screen
     SCREEN.blit(text_surface, text_rect)
-    
+
     #Main loop
 running = True
 while running:
     SCREEN.fill("black")
-        
+
     for event in pygame.event.get():
-        #uf yser closes the window exit the loop
+        #if user closes the window exit the loop
         if event.type == pygame.QUIT:
             running = False
-                
-    #Display one character at a time
-    if text_index < len(text_to_display):
-        #Get the substring up to the current index
-        text = text_to_display[:text_index + 1]
-        #Draw the text box with current substring
-        draw_text_box(text)
-        #Delay the characters before displaying them
-        if pygame.time.get_ticks() % (text_delay * 80) == 0:
-            #Incremenet the index to display the next character
-            text_index += 1
-    
-    #Update the display           
+
+    #Get the substring up to the current index
+    text = text_to_display[:text_index + 1]
+    #Draw the text box with current substring
+    draw_text_box(text)
+    #Delay the characters before displaying them
+    if pygame.time.get_ticks() % (text_delay * 50) == 0:
+        #Increment the index to display the next character
+        text_index += 1
+
+    #Update the display
     pygame.display.flip()
     clock.tick(WIN.FPS)
-        
+
 pygame.quit()
 sys.exit()
-                
-        
-    
