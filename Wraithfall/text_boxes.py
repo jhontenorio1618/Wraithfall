@@ -27,7 +27,7 @@ clock = pygame.time.Clock()
 def draw_text_box():
     # Define dimensions and position of the textbox
     text_box_width = WIN.WIN_WIDTH - 40
-    text_box_height = font_size + 100
+    text_box_height = font_size + 40
     text_box_rect = pygame.Rect((20, WIN.WIN_HEIGHT - text_box_height - 20), (text_box_width, text_box_height))
     
     pygame.draw.rect(SCREEN, "white", text_box_rect, 2)
