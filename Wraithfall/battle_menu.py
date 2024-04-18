@@ -13,6 +13,7 @@ class Battle:
         self.player = player
         self.mob = mob
         self.player_chosen_action = 0
+        self.selected_item = None
         self.in_combat = True
         self.mob_living = True
         self.player_living = True
@@ -26,7 +27,6 @@ class Battle:
         player_living = True
         open_sword_menu = False
         open_item_menu = False
-        enemy_turn = False
         exp_gained = 0
         player_decided = False
         enemy_decided = False
@@ -37,8 +37,10 @@ class Battle:
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
-                used_item = self.item_menu()
-                enemy_turn = used_item
+                self.selected_item = self.item_menu()
+                if self.selected_item:
+                    self.player_chosen_action = 2
+                    player_decided = True
                 open_item_menu = False
 
 
@@ -115,67 +117,22 @@ class Battle:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
                         self.player_chosen_action = 1
-                        """
-                        # "FIGHT" Button: attack the mob
-                        bonus_dmg = 0
-                        if self.player.access_sword() is not None:
-                            sword_form = self.player.access_sword().get_form()
-                            status_chance = WIN.random.randrange(100)
-                            if sword_form == "FIRE":
-                                # Checks if Mob is already burning.
-                                if mob_effect != 1:
-                                    print(status_chance)
-                                    if status_chance >= 0:
-                                        # 80% chance of working
-                                        mob_effect = 1
-                                        print("Mob is on fire.")
-                            if sword_form == "ICE":
-                                # Checks if Mob is already frozen.
-                                if mob_effect != 2:
-                                    print(status_chance)
-                                    if status_chance >= 25:
-                                        # 75% chance of working
-                                        mob_effect = 2
-                                        print("Mob is frozen.")
-                            if sword_form == "DARK":
-                                bonus_dmg = WIN.math.ceil(self.player.get_stats()["ATK"] * .3)
-                                print("Bonus Damage: " + str(bonus_dmg))
-                                print("Mob has suffered more.")
-
-                        player_attack = self.player.get_stats()["ATK"] + bonus_dmg
-                        print("Total Attack: " + str(player_attack))
-                        damage_inflicted = self.mob.get_stats()["DEF"] - player_attack # self.player.get_stats()["ATK"] - bonus_dmg
-                        if damage_inflicted > 0:
-                            # If the damage inflicted was negative, the enemy's defense is too high.
-                            damage_inflicted = 0
-
-                        # Calculate Mob HP after damage
-                        self.mob.hp_update(damage_inflicted)
-                        if self.mob.get_stats()["HP"] <= 0:
-                            # Mob is dead
-                            mob_living = False
-                            # Player gains EXP from killing mob
-                            exp_gained = self.player.gain_exp(self.mob.drop_exp())
-                        else:
-                            # Enemy's turn to attack
-                            enemy_turn = True
-                        """
-                        enemy_turn = True
                         player_decided = True
+                    if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
+                        # "ITEM" Button: open item menu to select an item to use
+                        open_item_menu = True
+                    if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
+                        # "SWORD" Button: open sword menu to change form of sword
+                        self.player_chosen_action = 3
+                        open_sword_menu = True
                     if run_displayed and BATTLE_RUN.checkForInput(PLAY_MOUSE_POSITION):
                         # "RUN" Button: flee from fight without killing the mobs
                         self.in_combat = self.run_state()
                     if next_displayed and BATTLE_NEXT.checkForInput(PLAY_MOUSE_POSITION):
                         # "NEXT" Button: click to leave combat after killing the mobs
                         self.in_combat = False
-                    if sword_displayed and BATTLE_SWORD.checkForInput(PLAY_MOUSE_POSITION):
-                        # "SWORD" Button: open sword menu to change form of sword
-                        open_sword_menu = True
-                    if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
-                        # "ITEM" Button: open item menu to select an item to use
-                        open_item_menu = True
 
-            if enemy_turn:
+            if player_decided:
                 # Logic for enemy making move decision
                 """
                 # Enemy attacks
@@ -205,7 +162,6 @@ class Battle:
                 else:
                     print("Mob is FROZEN")
                 """
-                enemy_turn = False
                 enemy_decided = True
 
             if player_decided and enemy_decided:
@@ -246,13 +202,6 @@ class Battle:
 
             pygame.display.update()
         return self.mob_living
-
-    def fight_state(self):
-        # Clicked FIGHT Button
-        # TODO finish
-        self.player_turn()
-        self.enemy_turn()
-        return 0
 
     def run_state(self):
         # Clicked RUN Button
@@ -334,7 +283,7 @@ class Battle:
 
     def item_menu(self):
         in_menu = True
-        used_item = False
+        selected_item = None
         while in_menu:
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
@@ -375,8 +324,7 @@ class Battle:
                     for i in range(len(item_buttons)):
                         if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
                             selected_item = self.player.access_item(i)
-                            selected_item.use_item()
-                            used_item = True
+                            # selected_item.use_item()
                             in_menu = False
                     if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
                         in_menu = False
@@ -384,9 +332,10 @@ class Battle:
             if not self.player.inventory:
                 in_menu = False
             pygame.display.update()
-        return used_item
+        return selected_item
 
     def player_turn(self):
+        print(self.player_chosen_action)
         if self.player_chosen_action == 1:
             # "FIGHT" Button: attack the mob
             bonus_dmg = 0
@@ -431,6 +380,11 @@ class Battle:
             else:
                 # Enemy's turn to attack
                 enemy_turn = True
+        if self.player_chosen_action == 2:
+            print("REACHED")
+            self.selected_item.use_item()
+            self.selected_item = None
+        self.player_chosen_action = 0
         return 0
 
     def enemy_turn(self):
