@@ -43,8 +43,8 @@ class Battle:
                     # 60% for Mob to be frozen and unable to move
                     if mob_effect == 1:
                         fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
-                        print("Burning Mob got burnt for " + str(-fire_dmg))
-                        self.mob.hp_update(fire_dmg)
+                        print("Burning Mob got burnt for " + str(fire_dmg))
+                        self.mob.hp_update(-fire_dmg)
                     # Calculate Mob HP after damage
 
                     if self.mob.get_stats()["HP"] <= 0:
@@ -69,20 +69,20 @@ class Battle:
             BATTLE_FIGHT = Button(image=None, pos=(320, 460),
                                   text_input="FIGHT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             fight_displayed = False
-            # Button pressed to "RUN"
-            BATTLE_RUN = Button(image=None, pos=(960, 460),
+            # Button pressed to "RUN" # 960, 460
+            BATTLE_RUN = Button(image=None, pos=(960, 580),
                                 text_input="RUN", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             run_displayed = False
             # Button pressed to exit combat menu after finishing the fight
             BATTLE_NEXT = Button(image=None, pos=(960, 460),
                                  text_input="NEXT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             next_displayed = False
-            # Button pressed to access item menu
-            BATTLE_ITEM = Button(image=None, pos=(320, 580),
+            # Button pressed to access item menu # 320, 580
+            BATTLE_ITEM = Button(image=None, pos=(960, 460),
                                   text_input="ITEM", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             item_displayed = False
-            # Button pressed to access sword menu
-            BATTLE_SWORD = Button(image=None, pos=(960, 580),
+            # Button pressed to access sword menu # 960, 580
+            BATTLE_SWORD = Button(image=None, pos=(320, 580),
                                  text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
             sword_displayed = False
 
@@ -336,11 +336,8 @@ class Battle:
         return 0
 
     def enemy_turn(self):
-        damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
-        if damage_inflicted > 0:
-            damage_inflicted = 0
-        # self.player.hp_update(damage_inflicted)
-        return damage_inflicted
+        # TODO
+        return 0
 
     def display_hp(self, mob_hp_color):
         # Mob HP display

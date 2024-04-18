@@ -219,7 +219,7 @@ class GameClass:
             # Player and Mob collision
             player_mob_collide = pygame.sprite.spritecollide (player, mob_sprites, False)
             if player_mob_collide:
-                combat = Battle (player, player_mob_collide)
+                combat = Battle (player, player_mob_collide[0])
                 remaining_mob = combat.combat_screen ()
                 if remaining_mob:
                     # Run away was chosen
