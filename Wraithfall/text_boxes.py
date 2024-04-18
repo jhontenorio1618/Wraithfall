@@ -30,9 +30,9 @@ text_delay = 0.1
 
 #Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_AUDIO, "text_scroll_sound.wav"))
-#play sound
-sound.play()
+sound = pygame.mixer.Sound(os.path.join(WIN.DIR_AUDIO, "text_sound.wav"))
+#play sound and loop until text is finished
+sound.play(loops=-1)
 
 # Add a clock to control the frame rate
 clock = pygame.time.Clock()
@@ -73,7 +73,7 @@ while running:
     draw_text_box()  # Draw the outline of the text box
 
     # Delay the characters before displaying them
-    if pygame.time.get_ticks() % (text_delay * 50) == 0 and text_index < len(text_to_display):
+    if pygame.time.get_ticks() % (text_delay * 40) == 0 and text_index < len(text_to_display):
         # Increment the index to display the next character
         text_index += 1
         
