@@ -241,17 +241,23 @@ class Player(Entity):
         return self.EXP
 
 
+mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0},
+                "EXP": 1, "SPRITE": ""}}
+
+
 class Mob(Entity):
-    def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_stats=None, exp=1):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_id=0):
         """ bound_box_size = size of the sprite
         image_fill = color code for basic rectangle without sprite
         mob_stats = dictionary of RPG stats, where the keys are strings of the stats and values are ints
         exp = the number of exp the mob entity gives player when killed """
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
-        if mob_stats is None:
-            mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
-        self.set_stats(mob_stats)
-        self.exp_gain = exp
+        if mob_id not in mob_dict:
+            mob_id = 0
+        self.mob_val = mob_dict[mob_id]
+        self.name = self.mob_val["NAME"]
+        self.set_stats(self.mob_val["STATS"])
+        self.exp_gain = self.mob_val["EXP"]
         self.target = None
 
     def update(self):
@@ -281,6 +287,7 @@ class Mob(Entity):
 
     def get_target(self):
         return self.target
+
 
 class PassiveMob(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", mob_stats=None):
@@ -369,10 +376,10 @@ class Sword(Entity):
         return self.EXP
 
 
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5},
-             1: {"NAME": "Fire Essence", "TYPE": "SWORD"},
-             2: {"NAME": "Ice Essence", "TYPE": "SWORD"},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD"}
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
+             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
+             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""}
              }
 
 
@@ -380,9 +387,11 @@ class Item(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         self.found_player = None
-        self.item_id = item_id
-        self.name = item_dict[self.item_id]["NAME"]
-        self.type = item_dict[self.item_id]["TYPE"]
+        if item_id not in item_dict:
+            item_id = 0
+        self.item_val = item_dict[item_id]
+        self.name = self.item_val["NAME"]
+        self.type = self.item_val["TYPE"]
 
     def pickup(self, player):
         """ Checks if Player has room in inventory for item. If yes, set reference to Player. """
@@ -401,7 +410,7 @@ class Item(Entity):
         """ Player selected to use Item from inventory. Determines what type of Item is being used, applies the Item,
         then removes the Item from the player's inventory (if it is finite). """
         if self.type == "HP":
-            self.found_player.hp_update(item_dict[self.item_id]["VALUE"])
+            self.found_player.hp_update(self.item_val["VALUE"])
         self.found_player.lose_item(self)
 
     def get_name(self):

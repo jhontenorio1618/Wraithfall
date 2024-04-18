@@ -278,7 +278,9 @@ class Battle:
                     first_turn = random_order[0]
                     second_turn = random_order[1]
                 first_turn()
+                # TODO check if participants are alive
                 second_turn()
+                # TODO check if participants are alive
 
                 """ Process Decisions
                 
@@ -307,7 +309,6 @@ class Battle:
         return not success
 
     def player_turn(self):
-        print(self.player_chosen_action)
         if self.player_chosen_action == 1:
             # "FIGHT" Button: attack the mob
             bonus_dmg = 0
@@ -353,7 +354,7 @@ class Battle:
                 # Enemy's turn to attack
                 enemy_turn = True
         if self.player_chosen_action == 2:
-            print("REACHED")
+            # TODO change so player items are always used first in combat
             self.selected_item.use_item()
             self.selected_item = None
         self.player_chosen_action = 0
