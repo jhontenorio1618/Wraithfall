@@ -22,6 +22,8 @@ class Battle:
         open_item_menu = False
         enemy_turn = False
         exp_gained = 0
+        player_decided = False
+        enemy_decided = False
         status_effects = {"Normal": 0, "Burning": 1, "Frozen": 2}
         mob_effect = 0
         player_status = 0
@@ -36,31 +38,7 @@ class Battle:
                 enemy_turn = used_item
                 open_item_menu = False
 
-            if enemy_turn:
-                # Enemy attacks
-                status_chance = WIN.random.randrange(100)
-                if not (mob_effect == 2 and status_chance >= 40):
-                    # 60% for Mob to be frozen and unable to move
-                    if mob_effect == 1:
-                        fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
-                        print("Burning Mob got burnt for " + str(fire_dmg))
-                        self.mob.hp_update(-fire_dmg)
-                    # Calculate Mob HP after damage
 
-                    if self.mob.get_stats()["HP"] <= 0:
-                        # Mob is dead
-                        mobs_living = False
-                        # Player gains EXP from killing mob
-                        exp_gained = self.player.gain_exp(self.mob.drop_exp())
-                    else:
-                        self.player.hp_update(self.enemy_turn())
-                        if self.player.get_stats()["HP"] <= 0:
-                            # Player is dead
-                            in_combat = False
-                            player_living = False
-                else:
-                    print("Mob is FROZEN")
-                enemy_turn = False
 
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
@@ -188,6 +166,51 @@ class Battle:
                     if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
                         # "ITEM" Button: open item menu to select an item to use
                         open_item_menu = True
+
+            if enemy_turn:
+                # Enemy attacks
+                status_chance = WIN.random.randrange(100)
+                if not (mob_effect == 2 and status_chance >= 40):
+                    # 60% for Mob to be frozen and unable to move
+                    if mob_effect == 1:
+                        fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
+                        print("Burning Mob got burnt for " + str(fire_dmg))
+                        self.mob.hp_update(-fire_dmg)
+                    # Calculate Mob HP after damage
+
+                    if self.mob.get_stats()["HP"] <= 0:
+                        # Mob is dead
+                        mobs_living = False
+                        # Player gains EXP from killing mob
+                        exp_gained = self.player.gain_exp(self.mob.drop_exp())
+                    else:
+                        self.player.hp_update(self.enemy_turn())
+                        if self.player.get_stats()["HP"] <= 0:
+                            # Player is dead
+                            in_combat = False
+                            player_living = False
+                else:
+                    print("Mob is FROZEN")
+                enemy_turn = False
+
+            if player_decided and enemy_decided:
+
+                """ Process Decisions
+                
+                speed to determine who goes first? run these turns in methods maybe
+                
+                player accuracy check
+                    self.mob.hp_update(CALCULATED DAMAGE DONE BY MOB)
+                        check if mob should be alive. kill if not and do not run rest of code
+                    if status effect should be inflicted, inflict it
+                
+                enemy accuracy check
+                    if mob should be affected by status effect, affect it
+                        check if mob should be alive. kill if not and do not run rest of code
+                    self.player.hp_update(CALCULATED DAMAGE DONE BY MOB)"""
+
+                player_decided = False
+                enemy_decided = False
 
             pygame.display.update()
         return mobs_living
@@ -336,8 +359,11 @@ class Battle:
         return 0
 
     def enemy_turn(self):
-        # TODO
-        return 0
+        damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
+        if damage_inflicted > 0:
+            damage_inflicted = 0
+        # self.player.hp_update(damage_inflicted)
+        return damage_inflicted
 
     def display_hp(self, mob_hp_color):
         # Mob HP display
