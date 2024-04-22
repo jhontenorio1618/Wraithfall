@@ -147,6 +147,14 @@ class Entity(pygame.sprite.Sprite):
         return self.bb_anchor
 
 
+""" Keys: Current Level of Player
+    Values: Stored in a dictionary
+        BASE EXP: Minimum total EXP needed for current level (same as previous NEXT LVL, or 0 if level 1)
+        GOAL EXP: Total EXP needed to reach next level """
+level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5},
+              2: {"BASE EXP": 5, "GOAL EXP": 15}}
+
+
 class Player(Entity):
     def __init__(self, bound_box_size=(30, 30), image_fill="#FFFFFF", player_stats=None):
         """ bound_box_size = size of the sprite
@@ -161,6 +169,7 @@ class Player(Entity):
         self.inventory_max = 3
         self.inventory_pointer = 0
         self.set_stats(player_stats)
+        self.LVL = 1
         self.EXP = 0
         self.hunger = 100
 
@@ -231,16 +240,33 @@ class Player(Entity):
     def gain_exp(self, exp):
         """ Adds to EXP total. Returns new EXP total. """
         self.EXP += exp
-        # TODO level check
+        # Level Up
+        while self.EXP >= level_dict[self.LVL]["GOAL EXP"]:
+            self.LVL += 1
+        # TODO Debug
+        print("Level: " + str(self.LVL) +
+              "\nEXP Total: " + str(self.EXP) + "/" + str(level_dict[self.LVL]["GOAL EXP"]))
         return self.EXP
 
     def set_exp(self, exp):
         """ Changes EXP total. Returns new EXP total. """
+        # Adjust Level to new  EXP total
+        if self.EXP > exp:
+            while self.EXP < level_dict[self.LVL]["BASE EXP"]:
+                self.LVL -= 1
+        elif self.EXP < exp:
+            while self.EXP >= level_dict[self.LVL]["GOAL EXP"]:
+                self.LVL += 1
         self.EXP = exp
-        # TODO level check
         return self.EXP
 
 
+""" Keys: Unique ID of Mob to call it
+    Values: Stored in a dictionary
+        NAME: In-game name of the Mob (can repeat for higher-leveled versions of the same type of Mob)
+        STATS: Dictionary of stats {ATK, HP Max, HP, DEF, SPD} to set as Mob's stats
+        EXP: Number of EXP given to player for killing mob
+        SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0},
                 "EXP": 1, "SPRITE": ""}}
 
@@ -376,6 +402,12 @@ class Sword(Entity):
         return self.EXP
 
 
+""" Keys: Unique ID of Item to call it
+    Values: Stored in a dictionary
+        NAME: In-game name of the Item
+        TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
+        VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
+        SPRITE: Reference to sprite sheet for the item """
 item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
