@@ -150,9 +150,10 @@ class Entity(pygame.sprite.Sprite):
 """ Keys: Current Level of Player
     Values: Stored in a dictionary
         BASE EXP: Minimum total EXP needed for current level (same as previous NEXT LVL, or 0 if level 1)
-        GOAL EXP: Total EXP needed to reach next level """
-level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5},
-              2: {"BASE EXP": 5, "GOAL EXP": 15}}
+        GOAL EXP: Total EXP needed to reach next level
+        STATS: Dictionary of stats for player's corresponding level """
+level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}},
+              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}}}
 
 
 class Player(Entity):
@@ -243,7 +244,8 @@ class Player(Entity):
         # Level Up
         while self.EXP >= level_dict[self.LVL]["GOAL EXP"]:
             self.LVL += 1
-        # TODO Debug
+            self.set_stats(level_dict[self.LVL]["STATS"])
+        # TODO Remove Debug
         print("Level: " + str(self.LVL) +
               "\nEXP Total: " + str(self.EXP) + "/" + str(level_dict[self.LVL]["GOAL EXP"]))
         return self.EXP
@@ -257,6 +259,7 @@ class Player(Entity):
         elif self.EXP < exp:
             while self.EXP >= level_dict[self.LVL]["GOAL EXP"]:
                 self.LVL += 1
+        self.set_stats(level_dict[self.LVL]["STATS"])
         self.EXP = exp
         return self.EXP
 

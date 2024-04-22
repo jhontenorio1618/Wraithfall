@@ -281,6 +281,9 @@ class Battle:
                 # TODO check if participants are alive
                 second_turn()
                 # TODO check if participants are alive
+                if not self.mob_living and self.player_living:
+                    # Player gains EXP for killing Mob
+                    exp_gained = self.player.gain_exp(self.mob.drop_exp())
 
                 """ Process Decisions
                 
@@ -348,8 +351,6 @@ class Battle:
             if self.mob.get_stats()["HP"] <= 0:
                 # Mob is dead
                 self.mob_living = False
-                # Player gains EXP from killing mob
-                exp_gained = self.player.gain_exp(self.mob.drop_exp())
             else:
                 # Enemy's turn to attack
                 enemy_turn = True
@@ -374,8 +375,6 @@ class Battle:
             if self.mob.get_stats()["HP"] <= 0:
                 # Mob is dead
                 self.mob_living = False
-                # Player gains EXP from killing mob
-                exp_gained = self.player.gain_exp(self.mob.drop_exp())
             else:
                 damage_inflicted = self.player.get_stats()["DEF"] - self.mob.get_stats()["ATK"]
                 if damage_inflicted > 0:
