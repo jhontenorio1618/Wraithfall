@@ -8,7 +8,7 @@ SCREEN_HEIGHT = 500
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sprite sheets")
 
-sprite_sheet_image = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "MCSPRITESFINAL.PNG")).convert_alpha()
+sprite_sheet_image = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
 
 BG = (50, 50, 50)
 
@@ -21,18 +21,23 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-frame_0 = get_image(sprite_sheet_image, 0, 14, 17, 3)
-frame_1 = get_image(sprite_sheet_image, 1, 14, 17, 3)
-frame_2 = get_image(sprite_sheet_image, 2, 14, 17, 3)
-frame_3 = get_image(sprite_sheet_image, 3, 14, 17, 3)
-frame_4 = get_image(sprite_sheet_image, 4, 14, 17, 3)
-frame_5 = get_image(sprite_sheet_image, 5, 14, 17, 3)
-frame_6 = get_image(sprite_sheet_image, 6, 14, 17, 3)
-frame_7 = get_image(sprite_sheet_image, 7, 14, 17, 3)
-frame_8 = get_image(sprite_sheet_image, 8, 14, 17, 3)
-frame_9 = get_image(sprite_sheet_image, 9, 14, 17, 3)
-frame_10 = get_image(sprite_sheet_image, 10, 14, 17, 3)
-frame_11 = get_image(sprite_sheet_image, 11, 14, 17, 3)
+frame_0 = get_image(sprite_sheet_image, 0, 17, 20, 3)
+frame_1 = get_image(sprite_sheet_image, 1, 17, 20, 3)
+frame_2 = get_image(sprite_sheet_image, 2, 17, 20, 3)
+frame_3 = get_image(sprite_sheet_image, 3, 17, 20, 3)
+frame_4 = get_image(sprite_sheet_image, 4, 17, 20, 3)
+frame_5 = get_image(sprite_sheet_image, 5, 17, 20, 3)
+frame_6 = get_image(sprite_sheet_image, 6, 17, 20, 3)
+frame_7 = get_image(sprite_sheet_image, 7, 17, 20, 3)
+frame_8 = get_image(sprite_sheet_image, 8, 17, 20, 3)
+frame_9 = get_image(sprite_sheet_image, 9, 17, 20, 3)
+frame_10 = get_image(sprite_sheet_image, 10, 17, 20, 3)
+frame_11 = get_image(sprite_sheet_image, 11, 17, 20, 3)
+frame_12 = get_image(sprite_sheet_image, 12, 17, 20, 3)
+frame_13 = get_image(sprite_sheet_image, 13, 17, 20, 3)
+frame_14 = get_image(sprite_sheet_image, 14, 17, 20, 3)
+frame_15 = get_image(sprite_sheet_image, 15, 17, 20, 3)
+frame_16 = get_image(sprite_sheet_image, 16, 17, 20, 3)
 
 run = True
 while run:
