@@ -29,6 +29,7 @@ frame_4 = get_image(sprite_sheet_image, 4, 17, 20, 3)
 frame_5 = get_image(sprite_sheet_image, 5, 17, 20, 3)
 frame_6 = get_image(sprite_sheet_image, 6, 17, 20, 3)
 frame_7 = get_image(sprite_sheet_image, 7, 17, 20, 3)
+
 frame_8 = get_image(sprite_sheet_image, 8, 17, 20, 3)
 frame_9 = get_image(sprite_sheet_image, 9, 17, 20, 3)
 frame_10 = get_image(sprite_sheet_image, 10, 17, 20, 3)
@@ -37,7 +38,7 @@ frame_12 = get_image(sprite_sheet_image, 12, 17, 20, 3)
 frame_13 = get_image(sprite_sheet_image, 13, 17, 20, 3)
 frame_14 = get_image(sprite_sheet_image, 14, 17, 20, 3)
 frame_15 = get_image(sprite_sheet_image, 15, 17, 20, 3)
-frame_16 = get_image(sprite_sheet_image, 16, 17, 20, 3)
+# frame_16 = get_image(sprite_sheet_image, 16, 17, 20, 3)
 
 run = True
 while run:
@@ -46,6 +47,7 @@ while run:
     screen.fill(BG)
 
     # show frame image
+    # facing forward
     screen.blit(frame_0, (0, 0))
     screen.blit(frame_1, (50, 0))
     screen.blit(frame_2, (100, 0))
@@ -54,10 +56,16 @@ while run:
     screen.blit(frame_5, (250, 0))
     screen.blit(frame_6, (300, 0))
     screen.blit(frame_7, (350, 0))
-    screen.blit(frame_8, (400, 0))
-    screen.blit(frame_9, (450, 0))
-    screen.blit(frame_10, (500, 0))
-    screen.blit(frame_11, (550, 0))
+    # facing away
+    screen.blit(frame_8, (0, 50))
+    screen.blit(frame_9, (50, 50))
+    screen.blit(frame_10, (100, 50))
+    screen.blit(frame_11, (150, 50))
+    screen.blit(frame_12, (200, 50))
+    screen.blit(frame_13, (250, 50))
+    screen.blit(frame_14, (300, 50))
+    screen.blit(frame_15, (350, 50))
+    # screen.blit(frame_16, (400, 50))
 
     # event handler
     for event in pygame.event.get():

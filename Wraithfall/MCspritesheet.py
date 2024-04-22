@@ -41,18 +41,21 @@ while run:
     screen.fill(BG)
 
     # show frame image
+    # facing forward
     screen.blit(frame_0, (0, 0))
     screen.blit(frame_1, (50, 0))
     screen.blit(frame_2, (100, 0))
     screen.blit(frame_3, (150, 0))
-    screen.blit(frame_4, (200, 0))
-    screen.blit(frame_5, (250, 0))
-    screen.blit(frame_6, (300, 0))
-    screen.blit(frame_7, (350, 0))
-    screen.blit(frame_8, (400, 0))
-    screen.blit(frame_9, (450, 0))
-    screen.blit(frame_10, (500, 0))
-    screen.blit(frame_11, (550, 0))
+    # facing away
+    screen.blit(frame_4, (0, 50))
+    screen.blit(frame_5, (50, 50))
+    screen.blit(frame_6, (100, 50))
+    screen.blit(frame_7, (150, 50))
+    # facing right
+    screen.blit(frame_8, (0, 100))
+    screen.blit(frame_9, (50, 100))
+    screen.blit(frame_10, (100, 100))
+    screen.blit(frame_11, (150, 100))
 
     # event handler
     for event in pygame.event.get():
