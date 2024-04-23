@@ -72,6 +72,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed_x = 0
         self.speed_y = 0
         self.bb_anchor = None
+        self.name = ""
         # RPG Stats
         self.HP_Max = 1
         self.HP = 1
@@ -131,6 +132,9 @@ class Entity(pygame.sprite.Sprite):
         """ Returns a dictionary of the Entity's stats. """
         return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
+    def get_name(self):
+        return self.name
+
     def hp_update(self, val):
         """ Quickly modify HP. Used during combat. """
         # Quickly modify HP. Used for combat
@@ -173,6 +177,7 @@ class Player(Entity):
         if player_stats is None:
             # Default Player Stats if none are given to initialize.
             player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.name = "Oliver"
         self.found_sword = None
         self.inventory = []
         self.inventory_max = 3
@@ -510,8 +515,4 @@ class Item(Entity):
         if self.type == "HP":
             self.found_player.hp_update(self.item_val["VALUE"])
         self.found_player.lose_item(self)
-
-    def get_name(self):
-        """ Returns String name of the item. """
-        return self.name
 

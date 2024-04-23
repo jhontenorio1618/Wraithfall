@@ -33,8 +33,17 @@ def enable_button(button, PLAY_MOUSE_POSITION):
 def display_text(text, coords, font_size, font_color="White"):
     """ Displays given text at given coordinates with given size and color of font."""
     text_to_display = get_font(stsc(font_size)).render(text, True, font_color)
-    text_rect = text_to_display.get_rect(center=stsc(coords))
+    text_rect = text_to_display.get_rect(topleft=stsc(coords))
     SCREEN.blit(text_to_display, text_rect)
+
+
+def draw_rect(coords, size, box_color="White", border_size=None):
+    new_rectangle = pygame.Rect(stsc(coords), stsc(size))
+    if border_size is None:
+        pygame.draw.rect(SCREEN, box_color, new_rectangle)
+    else:
+        pygame.draw.rect(SCREEN, box_color, new_rectangle, stsc(border_size))
+    return new_rectangle
 
 
 def item_menu(player):
@@ -92,18 +101,14 @@ def sword_menu(player):
 
         # Button pressed for BASE sword form
         SWORD_BASE, base_displayed = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
-        # base_displayed = False
         # Button pressed for FIRE sword form
         SWORD_FIRE, fire_displayed = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
-        # fire_displayed = False
         # Button pressed for ICE sword form
         SWORD_ICE, ice_displayed = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
-        # ice_displayed = False
         # Button pressed for DARK sword form
         SWORD_DARK, dark_displayed = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
-        # dark_displayed = False
+        # Button pressed to exit Sword menu without making a selection
         BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
-        # back_displayed = False
 
         base_displayed = enable_button(SWORD_BASE, PLAY_MOUSE_POSITION)
         fire_displayed = enable_button(SWORD_FIRE, PLAY_MOUSE_POSITION)
@@ -183,25 +188,38 @@ class Battle:
 
             # Button pressed to attack the mob
             BATTLE_FIGHT, fight_displayed = setup_button(coords=(320, 460), text="FIGHT")
-            # fight_displayed = False
             # Button pressed to access item menu
             BATTLE_ITEM, item_displayed = setup_button(coords=(960, 460), text="ITEM")
-            # item_displayed = False
             # Button pressed to escape combat
             BATTLE_RUN, run_displayed = setup_button(coords=(960, 580), text="RUN")
-            # run_displayed = False
             # Button pressed to access sword menu
             BATTLE_SWORD, sword_displayed = setup_button(coords=(320, 580), text="SWORD")
-            # sword_displayed = False
             # After combat is finished, button pressed to exit combat menu
             BATTLE_NEXT, next_displayed = setup_button(coords=(960, 460), text="NEXT")
-            # next_displayed = False
 
+            # TODO format
+
+            # Mob Data Box
+            mob_box = draw_rect(coords=(75, 50), size=(500, 150), border_size=2)
+            self.draw_status_bar(coords=(115, 135), size=(420, 30),
+                                 curr_val=self.mob.get_stats()["HP"], max_val=self.mob.get_stats()["HP Max"])
+            display_text(text=self.mob.get_name(), coords=(95, 63), font_size=40, font_color="White")
+
+            # Player Data Box
+            player_box = draw_rect(coords=(705, 275), size=(500, 150), border_size=2)
+            player_hp = [self.player.get_stats()["HP"], self.player.get_stats()["HP Max"]]
+            self.draw_status_bar(coords=(745, 360), size=(420, 30),
+                                 curr_val=player_hp[0], max_val=player_hp[1])
+            player_hp_text = str(player_hp[0]) + "/" + str(player_hp[1])
+            display_text(text=player_hp_text, coords=(1160, 395), font_size=20, font_color="White")
+            display_text(text=self.player.get_name(), coords=(1060, 288), font_size=40, font_color="White")
+
+            # Command Box
+            command_box = draw_rect(coords=(20, 480), size=(1240, 220), border_size=2)
             if self.mob_living:
                 # Mob remains alive
                 # TODO Put visuals for mobs here
-                display_text(text="This is where the magic will happen.",
-                             coords=(640, 260), font_size=45, font_color="White")
+                # display_text(text="This is where the magic will happen.", coords=(640, 260), font_size=45, font_color="White")
                 # The battle is ongoing. Show FIGHT, RUN, and ITEM buttons
                 fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
                 run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
@@ -211,13 +229,12 @@ class Battle:
                     sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
             else:
                 # Mob is dead
-                display_text(text="The wraith is dead. :)",
-                             coords=(640, 260), font_size=45, font_color="Red", )
+                # display_text(text="The wraith is dead. :)", coords=(640, 260), font_size=45, font_color="Red", )
                 # Display exit button that appears as "NEXT"
                 next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
 
-            self.display_hp(entity=self.player, coords=(30, 30))
-            self.display_hp(entity=self.mob, coords=(640, 360))
+            # self.display_hp(entity=self.player, coords=(30, 30), font_size=30)
+            # self.display_hp(entity=self.mob, coords=(640, 360), font_size=30)
 
             # Determine what happens for each event
             for event in pygame.event.get():
@@ -386,15 +403,35 @@ class Battle:
             print("Mob is FROZEN")
         return 0
 
-    def display_hp(self, entity, coords):
+    def display_hp(self, entity, coords, font_size):
         current_hp = entity.get_stats()["HP"]
         max_hp = entity.get_stats()["HP Max"]
         hp_text_color = "Green"
         if current_hp <= 0:
             hp_text_color = "Red"
         hp_text = str(current_hp) + "/" + str(max_hp)
-        display_text(text=hp_text, font_size=30, font_color=hp_text_color, coords=coords)
+        display_text(text=hp_text, font_size=font_size, font_color=hp_text_color, coords=coords)
         return current_hp
+
+    def draw_status_bar(self, coords, size, curr_val, max_val):
+        # defaults for status bar dimension
+        BAR_WIDTH, BAR_HEIGHT = stsc(size)
+        x, y = stsc(coords)
+        # check health does not fall below 0 - just in case...
+        if curr_val < 0:
+            curr_val = 0
+        # use health as percentage to calculate fill for status bar
+        bar_fill = (curr_val / max_val) * BAR_WIDTH
+        # rectangles - outline of status bar &
+        bar_rect = pygame.Rect(x, y, BAR_WIDTH, BAR_HEIGHT)
+        fill_rect = pygame.Rect(x, y, bar_fill, BAR_HEIGHT)
+        # draw health status bar to the game window - 3 specifies pixels for border width
+        if bar_fill < 250:
+            pygame.draw.rect(SCREEN, "Yellow", fill_rect)
+        else:
+            pygame.draw.rect(SCREEN, "Green", fill_rect)
+        pygame.draw.rect(SCREEN, "White", bar_rect, 3)
+
 
 
 
