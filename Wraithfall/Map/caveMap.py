@@ -10,7 +10,7 @@ class Tile(pygame.sprite.Sprite):
 
 pygame.init()
 screen = pygame.display.set_mode((1280, 720))
-tmx_data = load_pygame(r"C:\Users\magro\Downloads\wraithfall cave1.tmx")
+tmx_data = load_pygame("wraithfall cave1.tmx")
 sprite_group = pygame.sprite.Group()
 
 for layer in tmx_data.visible_layers:
