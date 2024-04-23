@@ -1,18 +1,20 @@
 import pygame, sys, os, game_window as WIN
 from button import Button
 import entity_classes as ENTITY
+from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc
 
 
 pygame.init()
-SCREEN = pygame.display.set_mode(WIN.window_size())
+SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Battle")
 
 
 def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_color="#A90505"):
-    NEW_BUTTON = Button(image=None, pos=coords,
-                        text_input=text, font=WIN.get_font(font_size),
+    NEW_BUTTON = Button(image=None, pos=stsc(coords),
+                        text_input=text, font=get_font(stsc(font_size)),
                         base_color=base_color, hovering_color=hovering_color)
-    return NEW_BUTTON
+    display_button = False
+    return NEW_BUTTON, display_button
 
 
 def enable_button(button, PLAY_MOUSE_POSITION):
@@ -23,10 +25,9 @@ def enable_button(button, PLAY_MOUSE_POSITION):
 
 
 def display_text(text, coords, font_size, font_color):
-    text_to_display = WIN.get_font(font_size).render(text, True, font_color)
-    text_rect = text_to_display.get_rect(center=coords)
+    text_to_display = get_font(stsc(font_size)).render(text, True, font_color)
+    text_rect = text_to_display.get_rect(center=stsc(coords))
     SCREEN.blit(text_to_display, text_rect)
-
 
 def item_menu(player):
     in_menu = True
@@ -41,13 +42,13 @@ def item_menu(player):
         for item in player.inventory:
             button_text = str(item_pointer) + ". " + item.get_name()
             # Button pressed for BASE sword form
-            CURRENT_ITEM = setup_button(coords=(320, y_axis), text=button_text)
-            item_displayed = False
+            CURRENT_ITEM, item_displayed = setup_button(coords=(320, y_axis), text=button_text)
+            # item_displayed = False
             item_buttons.append([CURRENT_ITEM, item_displayed])
             y_axis += 120
             item_pointer += 1
-        BACK_BUTTON = setup_button(coords=(150, 650), text="BACK")
-        back_displayed = False
+        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+        # back_displayed = False
 
         for i in range(len(item_buttons)):
             item_buttons[i][1] = enable_button(item_buttons[i][0], PLAY_MOUSE_POSITION)
@@ -55,11 +56,11 @@ def item_menu(player):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                WIN.game_exit()
+                game_exit()
             if event.type == pygame.KEYDOWN:
                 # Escape Key
                 if event.key == pygame.K_ESCAPE:
-                    WIN.game_exit()
+                    game_exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for i in range(len(item_buttons)):
                     if item_buttons[i][1] and item_buttons[i][0].checkForInput(PLAY_MOUSE_POSITION):
@@ -82,19 +83,19 @@ def sword_menu(player):
         SCREEN.fill("black")
 
         # Button pressed for BASE sword form
-        SWORD_BASE = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
-        base_displayed = False
+        SWORD_BASE, base_displayed = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
+        # base_displayed = False
         # Button pressed for FIRE sword form
-        SWORD_FIRE = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
-        fire_displayed = False
+        SWORD_FIRE, fire_displayed = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
+        # fire_displayed = False
         # Button pressed for ICE sword form
-        SWORD_ICE = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
-        ice_displayed = False
+        SWORD_ICE, ice_displayed = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
+        # ice_displayed = False
         # Button pressed for DARK sword form
-        SWORD_DARK = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
-        dark_displayed = False
-        BACK_BUTTON = setup_button(coords=(150, 650), text="BACK")
-        back_displayed = False
+        SWORD_DARK, dark_displayed = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
+        # dark_displayed = False
+        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+        # back_displayed = False
 
         base_displayed = enable_button(SWORD_BASE, PLAY_MOUSE_POSITION)
         fire_displayed = enable_button(SWORD_FIRE, PLAY_MOUSE_POSITION)
@@ -104,11 +105,11 @@ def sword_menu(player):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                WIN.game_exit()
+                game_exit()
             if event.type == pygame.KEYDOWN:
                 # Escape Key
                 if event.key == pygame.K_ESCAPE:
-                    WIN.game_exit()
+                    game_exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if base_displayed and SWORD_BASE.checkForInput(PLAY_MOUSE_POSITION):
                     # Base Sword form selected
@@ -173,20 +174,20 @@ class Battle:
             SCREEN.fill("black")
 
             # Button pressed to attack the mob
-            BATTLE_FIGHT = setup_button(coords=(320, 460), text="FIGHT")
-            fight_displayed = False
+            BATTLE_FIGHT, fight_displayed = setup_button(coords=(320, 460), text="FIGHT")
+            # fight_displayed = False
             # Button pressed to access item menu
-            BATTLE_ITEM = setup_button(coords=(960, 460), text="ITEM")
-            item_displayed = False
+            BATTLE_ITEM, item_displayed = setup_button(coords=(960, 460), text="ITEM")
+            # item_displayed = False
             # Button pressed to escape combat
-            BATTLE_RUN = setup_button(coords=(960, 580), text="RUN")
-            run_displayed = False
+            BATTLE_RUN, run_displayed = setup_button(coords=(960, 580), text="RUN")
+            # run_displayed = False
             # Button pressed to access sword menu
-            BATTLE_SWORD = setup_button(coords=(320, 580), text="SWORD")
-            sword_displayed = False
+            BATTLE_SWORD, sword_displayed = setup_button(coords=(320, 580), text="SWORD")
+            # sword_displayed = False
             # After combat is finished, button pressed to exit combat menu
-            BATTLE_NEXT = setup_button(coords=(960, 460), text="NEXT")
-            next_displayed = False
+            BATTLE_NEXT, next_displayed = setup_button(coords=(960, 460), text="NEXT")
+            # next_displayed = False
 
             if self.mob_living:
                 # Mob remains alive
@@ -213,11 +214,11 @@ class Battle:
             # Determine what happens for each event
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    WIN.game_exit()
+                    game_exit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         # Escape Key
-                        WIN.game_exit()
+                        game_exit()
                     if next_displayed and event.key == pygame.K_SPACE:
                         # "NEXT" Button Shortcut
                         self.in_combat = False
@@ -264,7 +265,7 @@ class Battle:
                         second_turn = self.player_turn
                     else:
                         # Speed is tied. Randomly decide who goes first this turn.
-                        random_order = WIN.random.sample([self.player_turn, self.enemy_turn], 2)
+                        random_order = random.sample([self.player_turn, self.enemy_turn], 2)
                         first_turn = random_order[0]
                         second_turn = random_order[1]
                 first_turn()
@@ -307,7 +308,7 @@ class Battle:
             bonus_dmg = 0
             if self.player.access_sword() is not None:
                 sword_form = self.player.access_sword().get_form()
-                status_chance = WIN.random.randrange(100)
+                status_chance = random.randrange(100)
                 if sword_form == "FIRE":
                     # Checks if Mob is already burning.
                     if self.mob_effect != 1:
@@ -325,7 +326,7 @@ class Battle:
                             self.mob_effect = 2
                             print("Mob is frozen.")
                 if sword_form == "DARK":
-                    bonus_dmg = WIN.math.ceil(self.player.get_stats()["ATK"] * .3)
+                    bonus_dmg = math.ceil(self.player.get_stats()["ATK"] * .3)
                     print("Bonus Damage: " + str(bonus_dmg))
                     print("Mob has suffered more.")
 
@@ -352,11 +353,11 @@ class Battle:
 
     def enemy_turn(self):
         # Enemy attacks
-        status_chance = WIN.random.randrange(100)
+        status_chance = random.randrange(100)
         if not (self.mob_effect == 2 and status_chance >= 40):
             # 60% for Mob to be frozen and unable to move
             if self.mob_effect == 1:
-                fire_dmg = WIN.math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
+                fire_dmg = math.ceil(self.mob.get_stats()["HP Max"] * 0.1)
                 print("Burning Mob got burnt for " + str(fire_dmg))
                 self.mob.hp_update(-fire_dmg)
             # Calculate Mob HP after damage

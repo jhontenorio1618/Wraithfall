@@ -1,5 +1,5 @@
 import pygame
-from game_window import random, WIN_WIDTH, DIR_SPRITES, WIN_HEIGHT
+from game_window import random, WIN_WIDTH, DIR_SPRITES, WIN_HEIGHT, scale_to_screen as stsc
 import os
 from view_spritesheets import collect_frames
 
@@ -10,7 +10,7 @@ class BoundingBox(pygame.sprite.Sprite):
 
     def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface(bound_box_size)
+        self.image = pygame.Surface(stsc(bound_box_size))
         trans_color = "#FF00FF"
         self.image.fill(trans_color)
         self.image.set_colorkey(trans_color)
@@ -65,7 +65,7 @@ class Entity(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         # Determining basic appearance of Sprite
         # TODO add way to insert sprites in the hyperparameters
-        self.image = pygame.Surface(bound_box_size)
+        self.image = pygame.Surface(stsc(bound_box_size))
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIN_WIDTH
@@ -82,8 +82,8 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         """ Calculate movement of the Entity. """
-        self.rect.centerx += self.speed_x
-        self.rect.centery += self.speed_y
+        self.rect.centerx += stsc(self.speed_x)
+        self.rect.centery += stsc(self.speed_y)
 
     def get_speed(self):
         """ Return the current speed of the Entity. """
@@ -187,7 +187,7 @@ class Player(Entity):
         mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
         frame_width = 14
         frame_height = 17
-        scale = 2
+        scale = stsc(2)
         # Load all frames for each direction
         all_frames = collect_frames(mc_sheet, 12, frame_width, frame_height, scale)
 
@@ -228,8 +228,9 @@ class Player(Entity):
             self.current_frame = 0
             self.image = self.images[self.direction][self.current_frame]
 
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
+        super(Player, self).update()
+        # self.rect.x += self.speed_x
+        # self.rect.y += self.speed_y
 
     def access_sword(self):
         """ Returns Sword if the player has it. Otherwise, returns None. """
@@ -311,7 +312,7 @@ class Player(Entity):
         STATS: Dictionary of stats {ATK, HP Max, HP, DEF, SPD} to set as Mob's stats
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
-mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0},
+mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 1, "SPRITE": ""},
             1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
                 "EXP": 50, "SPRITE": ""}}
@@ -411,8 +412,8 @@ class Sword(Entity):
         else:
             # Hover beside player
             self.rect.centerx, self.rect.centery = self.found_player.get_coord()
-            self.rect.centerx -= 25
-            self.rect.centery -= 25
+            self.rect.centerx -= stsc(25)
+            self.rect.centery -= stsc(25)
             # super(Sword, self).update()
 
     def pickup(self, player):

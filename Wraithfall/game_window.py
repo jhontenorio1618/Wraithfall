@@ -69,6 +69,33 @@ def play_sound(sound_file, loop=-1):
     return sound
 
 
+def scale_to_screen(unscaled_nums, encoded_scale=(1280, 720)):
+    """ Scale given numbers to current window size.
+    Battle Menu was made with a 1280 x 720 screen in mind. """
+    scale_to = window_size()
+    if encoded_scale[0] == scale_to[0] and encoded_scale[1] == scale_to[1]:
+        scaled_nums = unscaled_nums
+    else:
+        if isinstance(unscaled_nums, tuple):
+            # Scaling coordinates
+            adj_x = (unscaled_nums[0] / encoded_scale[0]) * scale_to[0]
+            adj_y = (unscaled_nums[1] / encoded_scale[1]) * scale_to[1]
+            scaled_nums = (adj_x, adj_y)
+            # print(str(unscaled_nums) + " vs. " + str(scaled_nums))
+        elif isinstance(unscaled_nums, list):
+            # Scaling a list of digits
+            scaled_nums = []
+            for nums in unscaled_nums:
+                scaling_ratio = scale_to[0] / encoded_scale[0]
+                rescaled = int(nums * scaling_ratio)
+                scaled_nums.append(rescaled)
+        else:
+            # Scaling a single digit
+            scaling_ratio = scale_to[0] / encoded_scale[0]
+            scaled_nums = int(unscaled_nums * scaling_ratio)
+    return scaled_nums
+
+
 def setup_window():
     # TODO maybe use this as a method to call for initialize pygame window?
     pygame.init()
