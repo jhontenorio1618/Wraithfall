@@ -32,7 +32,7 @@ def collect_frames(sheet, total_frames, width, height, scale):
 
 # Main Character Frames
 mc_sprites = collect_frames(mc_sheet, 12, 14, 17, 3)
-gpa_sprites = collect_frames(gpa_sheet, 12, 14, 17, 3)
+gpa_sprites = collect_frames(gpa_sheet, 12, 17, 17, 3)
 sword_sprites = collect_frames(sword_sheet, 16, 17, 20, 3)
 
 
