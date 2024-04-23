@@ -211,6 +211,24 @@ class Player(Entity):
         key_state = pygame.key.get_pressed()
         self.speed_x = 0
         self.speed_y = 0
+        # Diagonal movement
+        if key_state[pygame.K_LEFT] and key_state[pygame.K_UP]:
+            self.speed_x = -5
+            self.speed_y = -5
+            self.direction = 'left'
+        elif key_state[pygame.K_RIGHT] and key_state[pygame.K_UP]:
+            self.speed_x = 5
+            self.speed_y = -5
+            self.direction = 'right'
+        elif key_state[pygame.K_LEFT] and key_state[pygame.K_DOWN]:
+            self.speed_x = -5
+            self.speed_y = 5
+            self.direction = 'left'
+        elif key_state[pygame.K_RIGHT] and key_state[pygame.K_DOWN]:
+            self.speed_x = 5
+            self.speed_y = 5
+            self.direction = 'right'
+        # Regular movement
         if key_state[pygame.K_LEFT]:
             self.speed_x = -5
             self.direction = 'left'
