@@ -168,8 +168,6 @@ class Battle:
                     player_decided = True
                 open_item_menu = False
 
-
-
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
 

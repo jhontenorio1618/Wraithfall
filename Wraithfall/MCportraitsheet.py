@@ -8,7 +8,7 @@ SCREEN_HEIGHT = 500
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Sprite sheets")
 
-sprite_sheet_image = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "MCportraits.PNG")).convert_alpha()
+mc_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "MCportraits.PNG")).convert_alpha()
 
 BG = (50, 50, 50)
 
@@ -21,11 +21,11 @@ def get_image(sheet, frame, width, height, scale):
     return image
 
 
-frame_0 = get_image(sprite_sheet_image, 0, 104, 111, 2)
-frame_1 = get_image(sprite_sheet_image, 1, 104, 111, 2)
-frame_2 = get_image(sprite_sheet_image, 2, 104, 111, 2)
-frame_3 = get_image(sprite_sheet_image, 3, 104, 111, 2)
-frame_4 = get_image(sprite_sheet_image, 4, 104, 111, 2)
+frame_0 = get_image(mc_sheet, 0, 104, 111, 2)
+frame_1 = get_image(mc_sheet, 1, 104, 111, 2)
+frame_2 = get_image(mc_sheet, 2, 104, 111, 2)
+frame_3 = get_image(mc_sheet, 3, 104, 111, 2)
+frame_4 = get_image(mc_sheet, 4, 104, 111, 2)
 
 run = True
 while run:
