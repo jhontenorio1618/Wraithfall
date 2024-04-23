@@ -9,7 +9,6 @@ class BoundingBox(pygame.sprite.Sprite):
     For example: mob detection radius, area to apply particular effect, etc. """
 
     def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
-        # TODO figure out transparency
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(bound_box_size)
         trans_color = "#FF00FF"
@@ -155,19 +154,20 @@ class Entity(pygame.sprite.Sprite):
         GOAL EXP: Total EXP needed to reach next level
         STATS: Dictionary of stats for player's corresponding level """
 level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}},
-              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}}}
+              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              3: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              4: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              5: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
 
 
 class Player(Entity):
     def __init__(self, bound_box_size=(30, 30), image_fill="#FFFFFF", player_stats=None):
         super().__init__()  # Initialize the base class (Entity)
-        self.found_sword = None
-        self.inventory_pointer = None
         self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
         self.current_frame = 0
         self.animation_speed = 0.1
         self.last_update = pygame.time.get_ticks()
-        self.load_spritesheets()
+        self.load_spritesheets(sprite_sheet="MCSPRITESHEET.png", dimensions=(14, 17, 2))
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
         self.direction = 'forward'
@@ -183,7 +183,7 @@ class Player(Entity):
         self.EXP = 0
         self.hunger = 100
 
-    def load_spritesheets(self):
+    def load_spritesheets(self, sprite_sheet, dimensions):
         mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
         frame_width = 14
         frame_height = 17
@@ -312,7 +312,9 @@ class Player(Entity):
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0},
-                "EXP": 1, "SPRITE": ""}}
+                "EXP": 1, "SPRITE": ""},
+            1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
+                "EXP": 50, "SPRITE": ""}}
 
 
 class Mob(Entity):
@@ -359,17 +361,36 @@ class Mob(Entity):
         return self.target
 
 
-class PassiveMob(Entity):
-    def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", mob_stats=None):
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"},}
+
+
+class NPC(Entity):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
-        if mob_stats is None:
-            mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
-        self.set_stats(mob_stats)
+        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.npc_id = npc_id
+        self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.set_stats(npc_stats)
 
     def update(self):
         """ Calculate movement of the Mob. """
-        super(PassiveMob, self).update()
+        super(NPC, self).update()
         # TODO write unique walking behaviors
+
+    def load_spritesheets(self, sprite_sheet, dimensions):
+        sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
+        frame_width = dimensions[0]
+        frame_height = dimensions[1]
+        scale = dimensions[2]
+        # Load all frames for each direction
+        all_frames = collect_frames(sheet, 12, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
 
 
 class Sword(Entity):
@@ -455,7 +476,8 @@ class Sword(Entity):
 item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""}
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""},
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": ""}
              }
 
 
