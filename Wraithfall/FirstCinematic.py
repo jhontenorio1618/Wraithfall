@@ -13,14 +13,34 @@ pygame.display.set_caption("Menu")
 
 # Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "text_sound.wav"))
+sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
 # play sound and loop until text is finished
 sound.play(loops=-1)
 
 #Text lines
 text_lines = [
-    textbox.TextBox("Welcome to Wraitfall...", "MainCharacter", "Happy"),
-    textbox.TextBox("Press Enter...", "MainCharacter", "Excited")
+    textbox.TextBox("JOURNAL: \"June 18th, 2058: ", "MainCharacter", "Neutral"),
+    textbox.TextBox("Dear Alice,", "MainCharacter", "Neutral"),
+    textbox.TextBox("It's been six months, now, since the Rift appeared in the sky above the city.", "MainCharacter", "Neutral"),
+    textbox.TextBox("When Grandpa lets me go up on the roof of the cabin, I've got a perfect view of it", "MainCharacter", "Neutral"),
+    textbox.TextBox("now, just past a few moutain peaks. It looks like the fabric of the sky is torn open.", "MainCharacter", "Neutral"),
+    textbox.TextBox("The black smoke pours out constantly, covering the world in darkness.", "MainCharacter", "Neutral"),
+    textbox.TextBox("They still don't know how to stop it; it's hidden the sun from everyone now.", "MainCharacter", "Neutral"),
+    textbox.TextBox("Just last week the UN declared a worldwide emergency, fearful of a new ice age.", "MainCharacter", "Neutral"),
+    textbox.TextBox("It's supposed to be summer here, but it's still freezing.", "MainCharacter", "Neutral"),
+    textbox.TextBox("Grandpa thinks we'll never see the sun again...", "MainCharacter", "Neutral"),
+    textbox.TextBox("The wraiths are coming constantly from the Rift now, too.", "MainCharacter", "Neutral"),
+    textbox.TextBox("Grandpa and I were attacked by one in the woods a few weeks ago; at this point,", "MainCharacter", "Neutral"),
+    textbox.TextBox("it's barely safe to go out and hunt.", "MainCharacter", "Neutral"),
+    textbox.TextBox("Two of them got our neighbor, Nellie, this week.", "MainCharacter", "Neutral"),
+    textbox.TextBox("I know it sounds stupid, but I've been researching the rift in my spare time.", "MainCharacter", "Neutral"),
+    textbox.TextBox("I want to understand it. I want to figure out why it's here.", "MainCharacter", "Neutral"),
+    textbox.TextBox("I'll be writing you to keep documenting my findings.", "MainCharacter", "Neutral"),
+    textbox.TextBox("Who knows, maybe I'll actually figure something out.", "MainCharacter", "Neutral"),
+    textbox.TextBox("I know the city's destroyed now, but I hope you're alright.", "MainCharacter", "Neutral"),
+    textbox.TextBox("I'm not even sure if these letters ever get to you. If they do, write back, ok?", "MainCharacter", "Neutral"),
+    textbox.TextBox("Eventually, I'll come find you.", "MainCharacter", "Neutral"),
+    textbox.TextBox("-   Oliver\"", "MainCharacter", "Neutral"),
 ]
 
 #initialize variables
