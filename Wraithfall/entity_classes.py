@@ -170,9 +170,18 @@ class Player(Entity):
         self.load_spritesheets()
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
-        self.speed_x = 0
-        self.speed_y = 0
         self.direction = 'forward'
+        if player_stats is None:
+            # Default Player Stats if none are given to initialize.
+            player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.found_sword = None
+        self.inventory = []
+        self.inventory_max = 3
+        self.inventory_pointer = 0
+        self.set_stats(player_stats)
+        self.LVL = 1
+        self.EXP = 0
+        self.hunger = 100
 
     def load_spritesheets(self):
         mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
@@ -222,9 +231,9 @@ class Player(Entity):
         self.rect.x += self.speed_x
         self.rect.y += self.speed_y
 
-def access_sword(self):
-    """ Returns Sword if the player has it. Otherwise, returns None. """
-    return self.found_sword
+    def access_sword(self):
+        """ Returns Sword if the player has it. Otherwise, returns None. """
+        return self.found_sword
 
     def pickup_sword(self, sword):
         """ Connects picked up sword to player. Run by Sword Entity's pickup() method. """
