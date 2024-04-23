@@ -1,12 +1,14 @@
 import pygame
-import game_window as WIN
+from game_window import random, WIN_WIDTH, DIR_SPRITES, WIN_HEIGHT
+import os
+from view_spritesheets import collect_frames
 
 
 class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
 
-    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)):
+    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
         # TODO figure out transparency
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(bound_box_size)
@@ -36,11 +38,11 @@ class BoundingBox(pygame.sprite.Sprite):
         """ Move bounding box to given coordinates. Used for spawning and moving position on map.
         Returns the new coordinates of the bounding box. """
         if x is None:
-            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = random.randrange(WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = random.randrange(WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -67,8 +69,8 @@ class Entity(pygame.sprite.Sprite):
         self.image = pygame.Surface(bound_box_size)
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIN.WIN_WIDTH
-        self.rect.centery = WIN.WIN_HEIGHT
+        self.rect.centerx = WIN_WIDTH
+        self.rect.centery = WIN_HEIGHT
         self.speed_x = 0
         self.speed_y = 0
         self.bb_anchor = None
@@ -102,11 +104,11 @@ class Entity(pygame.sprite.Sprite):
         If no coordinates are given, then the Entity is spawned randomly on screen.
         Returns new coordinates of the Entity. """
         if x is None:
-            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = random.randrange(WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = random.randrange(WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -158,10 +160,17 @@ level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5,
 
 class Player(Entity):
     def __init__(self, bound_box_size=(30, 30), image_fill="#FFFFFF", player_stats=None):
-        """ bound_box_size = size of the sprite
-        image_fill = color code for basic rectangle without sprite
-        player_stats = dictionary of RPG stats, where the keys are strings of the stats and values are ints """
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
+        self.found_sword = None
+        self.inventory_pointer = None
+        self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
+        self.current_frame = 0
+        self.animation_speed = 0.1
+        self.last_update = pygame.time.get_ticks()
+        self.load_spritesheets()
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+        self.direction = 'forward'
         if player_stats is None:
             # Default Player Stats if none are given to initialize.
             player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
@@ -174,21 +183,53 @@ class Player(Entity):
         self.EXP = 0
         self.hunger = 100
 
+    def load_spritesheets(self):
+        mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
+        frame_width = 14
+        frame_height = 17
+        scale = 2
+        # Load all frames for each direction
+        all_frames = collect_frames(mc_sheet, 12, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
+
+    def animate_walking(self):
+        self.update()
+
     def update(self):
-        """ Calculate the movement of the player. """
+        """ Update the player's position and animation. """
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.animation_speed * 1000:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.image = self.images[self.direction][self.current_frame]
+
+        key_state = pygame.key.get_pressed()
         self.speed_x = 0
         self.speed_y = 0
-        key_state = pygame.key.get_pressed()
-        # TODO make player diagonal movements smooth & consistent
         if key_state[pygame.K_LEFT]:
             self.speed_x = -5
-        if key_state[pygame.K_RIGHT]:
+            self.direction = 'left'
+        elif key_state[pygame.K_RIGHT]:
             self.speed_x = 5
-        if key_state[pygame.K_UP]:
+            self.direction = 'right'
+        elif key_state[pygame.K_UP]:
             self.speed_y = -5
-        if key_state[pygame.K_DOWN]:
+            self.direction = 'backward'
+        elif key_state[pygame.K_DOWN]:
             self.speed_y = 5
-        super(Player, self).update()
+            self.direction = 'forward'
+        else:
+            # No movement keys are pressed, reset the animation to the first frame
+            self.current_frame = 0
+            self.image = self.images[self.direction][self.current_frame]
+
+        self.rect.x += self.speed_x
+        self.rect.y += self.speed_y
 
     def access_sword(self):
         """ Returns Sword if the player has it. Otherwise, returns None. """
@@ -451,6 +492,4 @@ class Item(Entity):
     def get_name(self):
         """ Returns String name of the item. """
         return self.name
-
-
 

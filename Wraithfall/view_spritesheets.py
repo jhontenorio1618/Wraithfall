@@ -32,7 +32,7 @@ def collect_frames(sheet, total_frames, width, height, scale):
 
 # Main Character Frames
 mc_sprites = collect_frames(mc_sheet, 12, 14, 17, 3)
-gpa_sprites = collect_frames(gpa_sheet, 12, 14, 17, 3)
+gpa_sprites = collect_frames(gpa_sheet, 12, 17, 17, 3)
 sword_sprites = collect_frames(sword_sheet, 16, 17, 20, 3)
 
 
@@ -48,22 +48,25 @@ def print_frames(frames, x, y):
     return x, y
 
 
-run = True
-# currently, set to print main character, grandpa, and sword sprites
-sprites_to_print = [mc_sprites, gpa_sprites, sword_sprites]
-while run:
+def display_sprites():
+    run = True
+    # currently, set to print main character, grandpa, and sword sprites
+    sprites_to_print = [mc_sprites, gpa_sprites, sword_sprites]
+    while run:
 
-    # update background
-    screen.fill(BG)
+        # update background
+        screen.fill(BG)
 
-    # show frame images
-    x_ref, y_ref = 0, 0
-    for sprites in sprites_to_print:
-        x_ref, y_ref = print_frames(sprites, x_ref, y_ref)
+        # show frame images
+        x_ref, y_ref = 0, 0
+        for sprites in sprites_to_print:
+            x_ref, y_ref = print_frames(sprites, x_ref, y_ref)
 
-    # event handler
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+        # event handler
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 
-    pygame.display.update()
+        pygame.display.update()
+
+# display_sprites()
