@@ -8,6 +8,26 @@ SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Battle")
 
 
+def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_color="#A90505"):
+    NEW_BUTTON = Button(image=None, pos=coords,
+                        text_input=text, font=WIN.get_font(font_size),
+                        base_color=base_color, hovering_color=hovering_color)
+    return NEW_BUTTON
+
+
+def enable_button(button, PLAY_MOUSE_POSITION):
+    button.changeColor(PLAY_MOUSE_POSITION)
+    button.update(SCREEN)
+    display = True
+    return display
+
+
+def display_text(text, coords, font_size, font_color):
+    text_to_display = WIN.get_font(font_size).render(text, True, font_color)
+    text_rect = text_to_display.get_rect(center=coords)
+    SCREEN.blit(text_to_display, text_rect)
+
+
 def item_menu(player):
     in_menu = True
     selected_item = None
@@ -16,29 +36,22 @@ def item_menu(player):
         SCREEN.fill("black")
 
         item_buttons = []
-        item_pointer = 0
+        item_pointer = 1
         y_axis = 100
         for item in player.inventory:
             button_text = str(item_pointer) + ". " + item.get_name()
             # Button pressed for BASE sword form
-            CURRENT_ITEM = Button(image=None, pos=(320, y_axis),
-                                  text_input=button_text, font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
-            y_axis += 120
+            CURRENT_ITEM = setup_button(coords=(320, y_axis), text=button_text)
             item_displayed = False
             item_buttons.append([CURRENT_ITEM, item_displayed])
+            y_axis += 120
             item_pointer += 1
-
-        BACK_BUTTON = Button(image=None, pos=(150, 650),
-                             text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        BACK_BUTTON = setup_button(coords=(150, 650), text="BACK")
         back_displayed = False
 
         for i in range(len(item_buttons)):
-            item_buttons[i][0].changeColor(PLAY_MOUSE_POSITION)
-            item_buttons[i][0].update(SCREEN)
-            item_buttons[i][1] = True
-        BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
-        BACK_BUTTON.update(SCREEN)
-        back_displayed = True
+            item_buttons[i][1] = enable_button(item_buttons[i][0], PLAY_MOUSE_POSITION)
+        back_displayed = enable_button(BACK_BUTTON, PLAY_MOUSE_POSITION)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,42 +82,25 @@ def sword_menu(player):
         SCREEN.fill("black")
 
         # Button pressed for BASE sword form
-        SWORD_BASE = Button(image=None, pos=(320, 220),
-                            text_input="BASE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        SWORD_BASE = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
         base_displayed = False
         # Button pressed for FIRE sword form
-        SWORD_FIRE = Button(image=None, pos=(320, 340),
-                            text_input="FIRE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF0000")
+        SWORD_FIRE = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
         fire_displayed = False
         # Button pressed for ICE sword form
-        SWORD_ICE = Button(image=None, pos=(320, 460),
-                           text_input="ICE", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#0000FF")
+        SWORD_ICE = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
         ice_displayed = False
         # Button pressed for DARK sword form
-        SWORD_DARK = Button(image=None, pos=(320, 580),
-                            text_input="DARK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FF00FF")
+        SWORD_DARK = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
         dark_displayed = False
-
-        BACK_BUTTON = Button(image=None, pos=(150, 650),
-                             text_input="BACK", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#FFCC40")
+        BACK_BUTTON = setup_button(coords=(150, 650), text="BACK")
         back_displayed = False
 
-        SWORD_BASE.changeColor(PLAY_MOUSE_POSITION)
-        SWORD_BASE.update(SCREEN)
-        base_displayed = True
-        SWORD_FIRE.changeColor(PLAY_MOUSE_POSITION)
-        SWORD_FIRE.update(SCREEN)
-        fire_displayed = True
-        SWORD_ICE.changeColor(PLAY_MOUSE_POSITION)
-        SWORD_ICE.update(SCREEN)
-        ice_displayed = True
-        SWORD_DARK.changeColor(PLAY_MOUSE_POSITION)
-        SWORD_DARK.update(SCREEN)
-        dark_displayed = True
-
-        BACK_BUTTON.changeColor(PLAY_MOUSE_POSITION)
-        BACK_BUTTON.update(SCREEN)
-        back_displayed = True
+        base_displayed = enable_button(SWORD_BASE, PLAY_MOUSE_POSITION)
+        fire_displayed = enable_button(SWORD_FIRE, PLAY_MOUSE_POSITION)
+        ice_displayed = enable_button(SWORD_ICE, PLAY_MOUSE_POSITION)
+        dark_displayed = enable_button(SWORD_DARK, PLAY_MOUSE_POSITION)
+        back_displayed = enable_button(BACK_BUTTON, PLAY_MOUSE_POSITION)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -115,22 +111,27 @@ def sword_menu(player):
                     WIN.game_exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if base_displayed and SWORD_BASE.checkForInput(PLAY_MOUSE_POSITION):
+                    # Base Sword form selected
                     player.access_sword().shift_form("BASE")
                     in_menu = False
                     base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
                 if fire_displayed and SWORD_FIRE.checkForInput(PLAY_MOUSE_POSITION):
+                    # Fire Sword form selected
                     player.access_sword().shift_form("FIRE")
                     in_menu = False
                     base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
                 if ice_displayed and SWORD_ICE.checkForInput(PLAY_MOUSE_POSITION):
+                    # Ice Sword form selected
                     player.access_sword().shift_form("ICE")
                     in_menu = False
                     base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
                 if dark_displayed and SWORD_DARK.checkForInput(PLAY_MOUSE_POSITION):
+                    # Dark Sword form selected
                     player.access_sword().shift_form("DARK")
                     in_menu = False
                     base_displayed, fire_displayed, ice_displayed, dark_displayed = False, False, False, False
                 if back_displayed and BACK_BUTTON.checkForInput(PLAY_MOUSE_POSITION):
+                    # Back button selected
                     in_menu = False
         pygame.display.update()
     return player.access_sword().get_form()
@@ -171,59 +172,43 @@ class Battle:
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
             SCREEN.fill("black")
 
-            # Button pressed to "FIGHT"
-            BATTLE_FIGHT = Button(image=None, pos=(320, 460),
-                                  text_input="FIGHT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+            # Button pressed to attack the mob
+            BATTLE_FIGHT = setup_button(coords=(320, 460), text="FIGHT")
             fight_displayed = False
-            # Button pressed to "RUN" # 960, 460
-            BATTLE_RUN = Button(image=None, pos=(960, 580),
-                                text_input="RUN", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-            run_displayed = False
-            # Button pressed to exit combat menu after finishing the fight
-            BATTLE_NEXT = Button(image=None, pos=(960, 460),
-                                 text_input="NEXT", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
-            next_displayed = False
-            # Button pressed to access item menu # 320, 580
-            BATTLE_ITEM = Button(image=None, pos=(960, 460),
-                                  text_input="ITEM", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+            # Button pressed to access item menu
+            BATTLE_ITEM = setup_button(coords=(960, 460), text="ITEM")
             item_displayed = False
-            # Button pressed to access sword menu # 960, 580
-            BATTLE_SWORD = Button(image=None, pos=(320, 580),
-                                 text_input="SWORD", font=WIN.get_font(75), base_color="#FFFFFF", hovering_color="#A90505")
+            # Button pressed to escape combat
+            BATTLE_RUN = setup_button(coords=(960, 580), text="RUN")
+            run_displayed = False
+            # Button pressed to access sword menu
+            BATTLE_SWORD = setup_button(coords=(320, 580), text="SWORD")
             sword_displayed = False
+            # After combat is finished, button pressed to exit combat menu
+            BATTLE_NEXT = setup_button(coords=(960, 460), text="NEXT")
+            next_displayed = False
 
             if self.mob_living:
-                # Mobs are displayed as living
+                # Mob remains alive
                 # TODO Put visuals for mobs here
-                PLAY_TEXT = WIN.get_font(45).render("This is where the magic will happen.", True, "White")
-                PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
-                mob_hp_color = "Green"
+                display_text(text="This is where the magic will happen.",
+                             coords=(640, 260), font_size=45, font_color="White")
                 # The battle is ongoing. Show FIGHT, RUN, and ITEM buttons
-                BATTLE_FIGHT.changeColor(PLAY_MOUSE_POSITION)
-                BATTLE_FIGHT.update(SCREEN)
-                fight_displayed = True
-                BATTLE_RUN.changeColor(PLAY_MOUSE_POSITION)
-                BATTLE_RUN.update(SCREEN)
-                run_displayed = True
-                BATTLE_ITEM.changeColor(PLAY_MOUSE_POSITION)
-                BATTLE_ITEM.update(SCREEN)
-                item_displayed = True
+                fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
+                run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
+                item_displayed = enable_button(BATTLE_ITEM, PLAY_MOUSE_POSITION)
                 if self.player.access_sword() is not None:
-                    BATTLE_SWORD.changeColor(PLAY_MOUSE_POSITION)
-                    BATTLE_SWORD.update(SCREEN)
-                    sword_displayed = True
+                    # Player has SWORD, so show SWORD button
+                    sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
             else:
-                # Mobs are displayed as dead, the battle has ended.
-                PLAY_TEXT = WIN.get_font(45).render("The wraith is dead. :)", True, "Red")
-                PLAY_RECT = PLAY_TEXT.get_rect(center=(640, 260))
-                mob_hp_color = "Red"
+                # Mob is dead
+                display_text(text="The wraith is dead. :)",
+                             coords=(640, 260), font_size=45, font_color="Red", )
                 # Display exit button that appears as "NEXT"
-                BATTLE_NEXT.changeColor(PLAY_MOUSE_POSITION)
-                BATTLE_NEXT.update(SCREEN)
-                next_displayed = True
-            SCREEN.blit(PLAY_TEXT, PLAY_RECT)
+                next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
 
-            self.display_hp(mob_hp_color)
+            self.display_hp(entity=self.player, coords=(30, 30))
+            self.display_hp(entity=self.mob, coords=(640, 360))
 
             # Determine what happens for each event
             for event in pygame.event.get():
@@ -239,6 +224,7 @@ class Battle:
 
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
+                        # "FIGHT" Button: attack the mob
                         self.player_chosen_action = 1
                         player_decided = True
                     if item_displayed and BATTLE_ITEM.checkForInput(PLAY_MOUSE_POSITION):
@@ -260,26 +246,32 @@ class Battle:
                 enemy_decided = True
 
             if player_decided and enemy_decided:
-                player_speed = self.player.get_stats()["SPD"]
-                mob_speed = self.mob.get_stats()["SPD"]
-                if player_speed > mob_speed:
-                    # Player is faster, so player goes first.
+                # Calculate the outcomes of the Player and Enemy attacks
+                if self.player_chosen_action == 2:
+                    # Player ALWAYS goes first if using item
                     first_turn = self.player_turn
                     second_turn = self.enemy_turn
-                elif player_speed < mob_speed:
-                    # Mob is faster, so mob goes first.
-                    first_turn = self.enemy_turn
-                    second_turn = self.player_turn
                 else:
-                    # Speed is tied. Randomly decide who goes first this turn.
-                    random_order = WIN.random.sample([self.player_turn, self.enemy_turn], 2)
-                    first_turn = random_order[0]
-                    second_turn = random_order[1]
+                    player_speed = self.player.get_stats()["SPD"]
+                    mob_speed = self.mob.get_stats()["SPD"]
+                    if player_speed > mob_speed:
+                        # Player is faster, so player goes first.
+                        first_turn = self.player_turn
+                        second_turn = self.enemy_turn
+                    elif player_speed < mob_speed:
+                        # Mob is faster, so mob goes first.
+                        first_turn = self.enemy_turn
+                        second_turn = self.player_turn
+                    else:
+                        # Speed is tied. Randomly decide who goes first this turn.
+                        random_order = WIN.random.sample([self.player_turn, self.enemy_turn], 2)
+                        first_turn = random_order[0]
+                        second_turn = random_order[1]
                 first_turn()
                 # TODO check if participants are alive
                 second_turn()
                 # TODO check if participants are alive
-                if not self.mob_living and self.player_living:
+                if self.player_living and not self.mob_living:
                     # Player gains EXP for killing Mob
                     exp_gained = self.player.gain_exp(self.mob.drop_exp())
 
@@ -352,8 +344,7 @@ class Battle:
             else:
                 # Enemy's turn to attack
                 enemy_turn = True
-        if self.player_chosen_action == 2:
-            # TODO change so player items are always used first in combat
+        elif self.player_chosen_action == 2:
             self.selected_item.use_item()
             self.selected_item = None
         self.player_chosen_action = 0
@@ -386,17 +377,15 @@ class Battle:
             print("Mob is FROZEN")
         return 0
 
-    def display_hp(self, mob_hp_color):
-        # Mob HP display
-        mob_hp_text = WIN.get_font(30).render(str(self.mob.get_stats()["HP"]) + "/" +
-                                              str(self.mob.get_stats()["HP Max"]), True, mob_hp_color)
-        mob_hp_rect = mob_hp_text.get_rect(center=(640, 360))
-        SCREEN.blit(mob_hp_text, mob_hp_rect)
+    def display_hp(self, entity, coords):
+        current_hp = entity.get_stats()["HP"]
+        max_hp = entity.get_stats()["HP Max"]
+        hp_text_color = "Green"
+        if current_hp <= 0:
+            hp_text_color = "Red"
+        hp_text = str(current_hp) + "/" + str(max_hp)
+        display_text(text=hp_text, font_size=30, font_color=hp_text_color, coords=coords)
+        return current_hp
 
-        # Player HP display
-        player_hp_text = WIN.get_font(30).render(str(self.player.get_stats()["HP"]) + "/" +
-                                                 str(self.player.get_stats()["HP Max"]), True, "Green")
-        player_hp_rect = mob_hp_text.get_rect(center=(30, 30))
-        SCREEN.blit(player_hp_text, player_hp_rect)
 
 
