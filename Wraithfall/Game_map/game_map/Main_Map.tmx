@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="65" height="54" tilewidth="20" tileheight="20" infinite="0" nextlayerid="24" nextobjectid="57">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="65" height="54" tilewidth="20" tileheight="20" infinite="0" nextlayerid="24" nextobjectid="63">
  <tileset firstgid="1" source="ground_level.tsx"/>
  <tileset firstgid="6241" source="../game_tiles/tree.tsx"/>
  <tileset firstgid="6242" source="../game_tiles/car.tsx"/>
@@ -66,16 +66,16 @@
  </layer>
  <objectgroup id="20" name="land_object">
   <object id="29" name="tree" type="tree" gid="6241" x="183.398" y="818.79" width="244" height="301"/>
-  <object id="32" gid="6241" x="563" y="472.5" width="244" height="301"/>
-  <object id="33" gid="6241" x="800" y="846.409" width="244" height="301"/>
-  <object id="34" gid="6241" x="356.818" y="293.682" width="244" height="301"/>
-  <object id="35" gid="6241" x="99.2121" y="337.379" width="244" height="301"/>
-  <object id="37" gid="6242" x="470.333" y="879.583" width="285.476" height="190.866"/>
-  <object id="42" gid="6243" x="401.551" y="570.246" width="194" height="126"/>
+  <object id="35" name="tree" gid="6241" x="116.212" y="301.379" width="244" height="301"/>
+  <object id="37" name="car" type="car" gid="6242" x="470.333" y="879.583" width="285.476" height="190.866"/>
+  <object id="42" name="wood" type="wood" gid="6243" x="377.551" y="543.246" width="194" height="126"/>
   <object id="43" gid="6243" x="576.913" y="1034.01" width="194" height="126"/>
-  <object id="44" gid="6243" x="27.6377" y="594.884" width="194" height="126"/>
-  <object id="45" gid="6243" x="598.71" y="168.014" width="194" height="126"/>
-  <object id="46" gid="6243" x="1048.77" y="788.977" width="194" height="126"/>
+  <object id="57" name="tree" gid="6241" x="623.333" y="528.167" width="244" height="301"/>
+  <object id="58" name="tree" gid="6241" x="415.667" y="315.5" width="244" height="301"/>
+  <object id="59" name="tree" type="tree" gid="6241" x="768.667" y="845.5" width="244" height="301"/>
+  <object id="60" name="wood" type="wood" gid="6243" x="5" y="489" width="194" height="126"/>
+  <object id="61" name="wood" type="wood" gid="6243" x="733.667" y="150.333" width="194" height="126"/>
+  <object id="62" name="wood" type="wood" gid="6243" x="1074" y="756" width="194" height="126"/>
  </objectgroup>
  <objectgroup id="23" name="next_level_chopper">
   <object id="48" gid="6244" x="1011.67" y="211.667" width="291.333" height="209"/>
