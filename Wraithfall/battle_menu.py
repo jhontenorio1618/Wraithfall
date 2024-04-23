@@ -10,6 +10,9 @@ pygame.display.set_caption("Battle")
 
 
 def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_color="#A90505"):
+    """ Uses parameters to create new button object.
+        "display_button" is a boolean used for telling code to make button clickable or not.
+            Can be ignored if unwanted."""
     NEW_BUTTON = Button(image=None, pos=stsc(coords),
                         text_input=text, font=get_font(stsc(font_size)),
                         base_color=base_color, hovering_color=hovering_color)
@@ -18,16 +21,21 @@ def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_colo
 
 
 def enable_button(button, PLAY_MOUSE_POSITION):
+    """ Assures the button appears on screen and color changes when mouse touches it.
+        Returns "True", which is intended to be used in combination with "display_button" in setup_button,
+            but also assures that the button has been setup. """
     button.changeColor(PLAY_MOUSE_POSITION)
     button.update(SCREEN)
     display = True
     return display
 
 
-def display_text(text, coords, font_size, font_color):
+def display_text(text, coords, font_size, font_color="White"):
+    """ Displays given text at given coordinates with given size and color of font."""
     text_to_display = get_font(stsc(font_size)).render(text, True, font_color)
     text_rect = text_to_display.get_rect(center=stsc(coords))
     SCREEN.blit(text_to_display, text_rect)
+
 
 def item_menu(player):
     in_menu = True

@@ -64,7 +64,6 @@ class Entity(pygame.sprite.Sprite):
         image_fill = color code for basic rectangle without sprite """
         pygame.sprite.Sprite.__init__(self)
         # Determining basic appearance of Sprite
-        # TODO add way to insert sprites in the hyperparameters
         self.image = pygame.Surface(stsc(bound_box_size))
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
