@@ -19,6 +19,19 @@ character_portraits = {
         "Excited": get_image(view_portraits.mc_sheet, 2, 104, 111, 2),
         "Sad": get_image(view_portraits.mc_sheet, 3, 104, 111, 2),
         "Angry": get_image(view_portraits.mc_sheet, 4, 104, 111, 2)
+    },
+    "Grandpa": {
+        "Neutral": get_image(view_portraits.gpa_sheet, 0, 104, 111, 2),
+        "Happy": get_image(view_portraits.gpa_sheet, 1, 104, 111, 2),
+        "Mad": get_image(view_portraits.gpa_sheet, 2, 104, 111, 2),
+        "Dead1": get_image(view_portraits.gpa_sheet, 3, 104, 111, 2),
+        "Dead2": get_image(view_portraits.gpa_sheet, 4, 104, 111, 2)
+    },
+    "Sword": {
+        "Neutral": get_image(view_portraits.sword_sheet, 0, 65, 111, 2),
+        "Happy": get_image(view_portraits.sword_sheet, 1, 65, 111, 2),
+        "Mad": get_image(view_portraits.sword_sheet, 2, 65, 111, 2),
+
     }
 }
 
