@@ -32,10 +32,10 @@ def get_font(size):
 
 
 class SceneManager:
-    def __init__(self, text_lines):
+    def __init__(self, text_lines, sound_file):
         # Load the sound file
         pygame.mixer.init()
-        self.sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
+        self.sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, sound_file))
         self.initial_sound = True
         self.current_line_index = 0
         self.text_lines = text_lines

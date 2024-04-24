@@ -51,7 +51,7 @@ clock = pygame.time.Clock()
 running = True
 
 # Initializes the scene as a SceneManager object which manages the Textbox objects
-scene1 = textbox.SceneManager(text_lines)
+scene1 = textbox.SceneManager(text_lines, "pencilwriting.wav")
 while running:
     SCREEN.fill("black")
 
