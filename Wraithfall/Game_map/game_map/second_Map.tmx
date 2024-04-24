@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="65" height="54" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="28">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="65" height="54" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="40">
  <tileset firstgid="1" source="../game_tiles/tree.tsx"/>
  <tileset firstgid="2" source="../game_tiles/spikes.tsx"/>
  <tileset firstgid="4" source="second_ground.tsx"/>
@@ -63,17 +63,22 @@
 </data>
  </layer>
  <objectgroup id="2" name="s_ground_objects">
-  <object id="12" gid="1804" x="598.714" y="350.286" width="224" height="272"/>
-  <object id="16" gid="1804" x="113" y="389.571" width="224" height="272"/>
-  <object id="17" gid="1804" x="4.07143" y="718.143" width="224" height="272"/>
-  <object id="18" gid="1804" x="1075.5" y="1077.07" width="224" height="272"/>
-  <object id="20" gid="1804" x="-3.07143" y="1059.21" width="224" height="272"/>
   <object id="21" name="spikes" gid="3" x="687.857" y="502.429" width="97.5" height="87.7857"/>
-  <object id="22" name="spikes" gid="3" x="265.536" y="822.179" width="97.5" height="87.7857"/>
+  <object id="22" name="spikes" gid="3" x="228.036" y="927.536" width="97.5" height="87.7857"/>
   <object id="23" name="spikes" gid="3" x="961.964" y="823.964" width="97.5" height="87.7857"/>
   <object id="24" name="spikes" gid="3" x="413.75" y="165.036" width="97.5" height="87.7857"/>
   <object id="25" name="spikes" gid="3" x="301.25" y="522.179" width="97.5" height="87.7857"/>
-  <object id="26" name="spikes" gid="3" x="1006.61" y="577.536" width="97.5" height="87.7857"/>
-  <object id="27" name="spikes" gid="3" x="704.821" y="790.036" width="97.5" height="87.7857"/>
+  <object id="26" name="spikes" gid="3" x="1036.96" y="640.036" width="97.5" height="87.7857"/>
+  <object id="27" name="spikes" gid="3" x="744.107" y="770.393" width="97.5" height="87.7857"/>
+  <object id="28" name="second_tree" gid="1804" x="386.214" y="1051.5" width="132.929" height="122"/>
+  <object id="29" name="second_tree" gid="1804" x="21.0355" y="1019.36" width="132.929" height="122"/>
+  <object id="30" name="second_tree" gid="1804" x="-3.9645" y="687.214" width="132.929" height="122"/>
+  <object id="31" name="second_tree" gid="1804" x="-2.17879" y="439" width="132.929" height="122"/>
+  <object id="32" name="second_tree" gid="1804" x="474.607" y="769.357" width="132.929" height="122"/>
+  <object id="33" name="second_tree" gid="1804" x="610.321" y="1047.93" width="132.929" height="122"/>
+  <object id="34" name="second_tree" gid="1804" x="1092.46" y="1039" width="132.929" height="122"/>
+  <object id="35" name="second_tree" gid="1804" x="1106.75" y="864" width="132.929" height="122"/>
+  <object id="36" name="second_tree" gid="1804" x="1108.54" y="689" width="132.929" height="122"/>
+  <object id="37" name="second_tree" gid="1804" x="704.964" y="246.143" width="132.929" height="122"/>
  </objectgroup>
 </map>
