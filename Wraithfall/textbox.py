@@ -57,23 +57,41 @@ class SceneManager:
 
     def next_textbox(self):
         # Check if we have reached the end of text_lines
-        if self.current_line_index == len(self.text_lines):
-            #If so, indicate that the scene has ended and return false
-            self.scene_ended = True
-            return False
-        
-        self.current_text_line = self.text_lines[self.current_line_index]
-        self.current_text_line.text_index = 0
-        # Stop sound before playing again
-        self.sound.stop()
-        # Play sound when text is displayed
-        self.sound.play()
-        
-        #Increment current_line_index
-        self.current_line_index += 1
-        
-        #Return true to indicate that there are more textboxes to display
-        return True
+
+        if not self.scene_ended:
+            if self.current_line_index + 1 >= len(self.text_lines):
+                #If so, indicate that the scene has ended and return false
+                self.scene_ended = True
+            else:
+                # Increment current_line_index
+                self.current_line_index += 1
+                print("Line index: " + str(self.current_line_index)
+                      + "\nMax Index: " + str(len(self.text_lines)))
+                self.current_text_line = self.text_lines[self.current_line_index]
+                self.current_text_line.text_index = 0
+                # Stop sound before playing again
+                self.sound.stop()
+                # Play sound when text is displayed
+                self.sound.play()
+            """else:
+                self.sound.play()
+            if self.current_line_index+1 >= len(self.text_lines):
+                #If so, indicate that the scene has ended and return false
+                self.scene_ended = True
+                return False
+            else:
+                self.current_text_line = self.text_lines[self.current_line_index]
+                self.current_text_line.text_index = 0
+                # Stop sound before playing again
+                self.sound.stop()
+                # Play sound when text is displayed
+                if self.current_line_index+1 >= len(self.text_lines):
+                    #If so, indicate that the scene has ended and return false
+                    self.scene_ended = True
+                    return False
+                else:
+                    self.sound.play()"""
+        return self.scene_ended
 
     def draw_textboxes(self, screen):
         #Check to see if the scene has ended
