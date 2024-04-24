@@ -204,7 +204,7 @@ class Player(Entity):
     def animate_walking(self):
         self.update()
 
-    def update(self):
+    def update(self, collision_check_function):
         """ Update the player's position and animation. """
         now = pygame.time.get_ticks()
         if now - self.last_update > self.animation_speed * 1000:
@@ -227,11 +227,24 @@ class Player(Entity):
         elif key_state[pygame.K_DOWN]:
             self.speed_y = 5
             self.direction = 'forward'
+        new_position = self.rect.move(self.speed_x, self.speed_y)
+
+
+        if collision_check_function(new_position):
+            # Testing collision
+            print("Collision detected, movement blocked.")
+
+            self.speed_x = 0
+            self.speed_y = 0
         else:
-            # No movement keys are pressed, reset the animation to the first frame
+            # Update position if no collision
+            self.rect = new_position
+
+
+        if not any([key_state[pygame.K_LEFT], key_state[pygame.K_RIGHT], key_state[pygame.K_UP],
+                    key_state[pygame.K_DOWN]]):
             self.current_frame = 0
             self.image = self.images[self.direction][self.current_frame]
-
         super(Player, self).update()
         # self.rect.x += self.speed_x
         # self.rect.y += self.speed_y
