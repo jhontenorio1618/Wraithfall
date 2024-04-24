@@ -4,6 +4,8 @@ import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
+from cutscenes import play_scene, get_scene
+from textbox import TextBox, SceneManager
 
 pygame.init()
 SCREEN = pygame.display.set_mode(WIN.window_size())
@@ -47,9 +49,16 @@ sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN
 for i in range(5):
     healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
 
+
+testentity_text_lines = [
+    TextBox("Let's practice safety training, Oliver. Press [ENTER] to start.", "Grandpa", "Happy"),
+]
+testentity_scene = SceneManager(testentity_text_lines, "text_sound.wav")
+
 # Game Loop
 looping = True
 combat_invul = False
+playing_cutscene = True
 while looping:
     clock.tick(WIN.get_fps())
     # Input Events
@@ -58,85 +67,94 @@ while looping:
             # Escape Key
             if event.key == pygame.K_ESCAPE:
                 WIN.game_exit()
-            # G key
-            if event.key == pygame.K_g:
-                # Access Sword Menu
-                if player.access_sword() is not None:
-                    sword_menu(player)
-            # Q key
-            if event.key == pygame.K_q:
-                player.scroll_inv(-1)
-                if player.inventory:
-                    # TODO printing to terminal is temp, only for debugging purposes
-                    print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
-            # E key
-            if event.key == pygame.K_e:
-                player.scroll_inv(1)
-                if player.inventory:
-                    # TODO printing to terminal is temp, only for debugging purposes
-                    print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
-            # F key
-            if event.key == pygame.K_f:
-                selected_item = player.access_item()
-                if selected_item is not None:
-                    selected_item.use_item()
+            if not playing_cutscene:
+                # Overworld Controls
+
+                # G key
+                if event.key == pygame.K_g:
+                    # Access Sword Menu
+                    if player.access_sword() is not None:
+                        sword_menu(player)
+                # Q key
+                if event.key == pygame.K_q:
+                    player.scroll_inv(-1)
+                    if player.inventory:
+                        # TODO printing to terminal is temp, only for debugging purposes
+                        print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+                # E key
+                if event.key == pygame.K_e:
+                    player.scroll_inv(1)
+                    if player.inventory:
+                        # TODO printing to terminal is temp, only for debugging purposes
+                        print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+                # F key
+                if event.key == pygame.K_f:
+                    selected_item = player.access_item()
+                    if selected_item is not None:
+                        selected_item.use_item()
+            else:
+                # Cutscene Controls
+                if event.key == pygame.K_RETURN:
+                    playing_cutscene = not testentity_scene.next_textbox()
+
         # check click on window exit button
         if event.type == pygame.QUIT:
             WIN.game_exit()
     # Update game sprites
-    game_sprites.update()
+    if not playing_cutscene:
+        game_sprites.update()
 
-    # Player and Mob collision
-    player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
-    if not combat_invul and player_mob_collide:
-        combat = Battle(player, player_mob_collide[0])
-        remaining_mob = combat.combat_screen()
-        if remaining_mob:
-            # Run away was chosen
-            combat_invul = True
-            start_invul_time = pygame.time.get_ticks()
-        else:
-            # Defeated mob, so remove mob from map
-            player_mob_collide[0].get_bb_anchor().kill()
-            player_mob_collide[0].kill()
-            # pygame.sprite.spritecollide(player, mob_sprites, True)
-            # mob_sprites[0]
-        # Recover HP at the end of combat
-        # player.set_stats({"HP": player.get_stats()["HP Max"]})
+        # Player and Mob collision
+        player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
+        if not combat_invul and player_mob_collide:
+            combat = Battle(player, player_mob_collide[0])
+            remaining_mob = combat.combat_screen()
+            if remaining_mob:
+                # Run away was chosen
+                combat_invul = True
+                start_invul_time = pygame.time.get_ticks()
+            else:
+                # Defeated mob, so remove mob from map
+                player_mob_collide[0].get_bb_anchor().kill()
+                player_mob_collide[0].kill()
+                # pygame.sprite.spritecollide(player, mob_sprites, True)
+                # mob_sprites[0]
+            # Recover HP at the end of combat
+            # player.set_stats({"HP": player.get_stats()["HP Max"]})
 
-    if combat_invul:
-        curr_time = pygame.time.get_ticks()
-        if curr_time - start_invul_time >= 5000:
-            combat_invul = False
+        if combat_invul:
+            curr_time = pygame.time.get_ticks()
+            if curr_time - start_invul_time >= 5000:
+                combat_invul = False
 
-    # Mob stops following Player if outside of detection bounding box
-    for mob in mob_sprites:
-        mob.set_target(None)
+        # Mob stops following Player if outside of detection bounding box
+        for mob in mob_sprites:
+            mob.set_target(None)
 
-    # Checks if Player is in Mob's detection bounding box
-    mob_detection_box = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
-    if mob_detection_box and not combat_invul:
-        for mob in mob_detection_box:
-            found_mob = mob.get_entity()
-            if found_mob:
-                found_mob.set_target(player)
+        # Checks if Player is in Mob's detection bounding box
+        mob_detection_box = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
+        if mob_detection_box and not combat_invul:
+            for mob in mob_detection_box:
+                found_mob = mob.get_entity()
+                if found_mob:
+                    found_mob.set_target(player)
 
-    # Player and Sword collision
-    player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
-    if player_sword_collide:
-        sword_ref = player_sword_collide[0]
-        if sword_ref.verify() is None:
-            # Player picks up the sword
-            sword_ref.pickup(player)
+        # Player and Sword collision
+        player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
+        if player_sword_collide:
+            sword_ref = player_sword_collide[0]
+            if sword_ref.verify() is None:
+                # Player picks up the sword
+                sword_ref.pickup(player)
 
-    # Player and Item collision
-    player_item_collide = pygame.sprite.spritecollide(player, item_sprites, False)
-    if player_item_collide:
-        item_ref = player_item_collide[0]
-        if item_ref.verify() is None:
-            # Player picks up item
-            if item_ref.pickup(player):
-                remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
+        # Player and Item collision
+        player_item_collide = pygame.sprite.spritecollide(player, item_sprites, False)
+        if player_item_collide:
+            item_ref = player_item_collide[0]
+            if item_ref.verify() is None:
+                # Player picks up item
+                if item_ref.pickup(player):
+                    remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
 
 
 
@@ -145,5 +163,9 @@ while looping:
     # TODO GUI code here
     item_display_overworld(player, game_sprites, gui_sprites, SCREEN)
     gui_sprites.draw(SCREEN)
+
+    playing_cutscene = play_scene(testentity_scene, playing_cutscene)
+    # print(playing_cutscene)
     # update the display window...
     pygame.display.update()
+
