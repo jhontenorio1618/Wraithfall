@@ -85,11 +85,26 @@ level_1_map = Map('Game_map/game_map/Main_Map.tmx')  # Ensure path and filename 
 
 
 def check_collision(new_rect):
-
     return level_1_map.check_collisions(new_rect)
 
+WIN_WIDTH = 1280
+WIN_HEIGHT = 720
 
 running = True
+def keep_player_in_bounds(player):
+   # Keep player within the horizontal bounds
+   if player.rect.left < 0:
+       player.rect.left = 0
+   elif player.rect.right > WIN_WIDTH:
+       player.rect.right = WIN_WIDTH
+
+
+   # Keep player within the vertical bounds
+   if player.rect.top < 0:
+       player.rect.top = 0
+   elif player.rect.bottom > WIN_HEIGHT:
+       player.rect.bottom = WIN_HEIGHT
+
 
 while running:
     for event in pygame.event.get():
@@ -103,7 +118,7 @@ while running:
 
     player.update(check_collision)
 
-
+    keep_player_in_bounds (player)  # Boundary check
     level_1_map.draw(screen)
     screen.blit(player.image, player.rect)
 
