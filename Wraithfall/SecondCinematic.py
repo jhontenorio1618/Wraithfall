@@ -13,7 +13,7 @@ pygame.display.set_caption("Menu")
 
 # Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
+sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "text_sound.wav"))
 # play sound and loop until text is finished
 sound.play(loops=-1)
 
@@ -50,6 +50,8 @@ while running:
                 current_line_index = (current_line_index + 1) % len(text_lines)
                 current_text_line = text_lines[current_line_index]
                 current_text_line.text_index = 0
+                #Stop the sound before it plays again.
+                sound.stop()
                 # Play sound when text is displayed
                 sound.play()
 
