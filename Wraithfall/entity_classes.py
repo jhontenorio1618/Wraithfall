@@ -462,7 +462,7 @@ class Sword(Entity):
                 offset = (-25, -30)
 
             # Interpolate the sword's position towards the target position
-            speed = 0.12
+            speed = 0.11
             self.rect.centerx += int((self.found_player.rect.centerx + offset[0] - self.rect.centerx) * speed)
             self.rect.centery += int((self.found_player.rect.centery + offset[1] - self.rect.centery) * speed)
 

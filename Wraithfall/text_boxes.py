@@ -2,38 +2,13 @@ import game_window as WIN
 import os
 import pygame
 import sys
-import MCportraitsheet
+from view_portraits import get_portrait_frames
 
 pygame.init()
 
 # Set screen size using the dimensions in the window_size function in game_window
 SCREEN = pygame.display.set_mode(WIN.window_size())
 pygame.display.set_caption("Menu")
-
-
-def get_image(sheet, frame, width, height, scale):
-    image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
-    image.blit(sheet, (0, 0), ((frame * width), 0, width, height))
-    image = pygame.transform.scale(image, (width * scale, height * scale))
-    return image
-
-
-# Dictionary mapping character names to portrait frames
-character_portraits = {
-    "MainCharacter": {
-        "Neutral": get_image(MCportraitsheet.sprite_sheet_image, 0, 104, 111, 2),
-        "Happy": get_image(MCportraitsheet.sprite_sheet_image, 1, 104, 111, 2),
-        "Excited": get_image(MCportraitsheet.sprite_sheet_image, 2, 104, 111, 2),
-        "Sad": get_image(MCportraitsheet.sprite_sheet_image, 3, 104, 111, 2),
-        "Angry": get_image(MCportraitsheet.sprite_sheet_image, 4, 104, 111, 2)
-    }
-}
-
-
-# Function to get the correct frame for a character's emotion
-def get_character_frame(character_name, emotion):
-    return character_portraits[character_name][emotion]
-
 
 # Load font
 def get_font(size):
@@ -67,6 +42,31 @@ sound.play(loops=-1)
 # Add a clock to control the frame rate
 clock = pygame.time.Clock()
 
+# Get character portraits
+character_portraits = get_portrait_frames()
+
+def display_portraits(portraits_to_print):
+    run = True
+    while run:
+        SCREEN.fill(WIN.BG)
+
+        x_ref, y_ref = 0, 0
+        for character, emotions in portraits_to_print.items():
+            SCREEN.blit(emotions["Neutral"], (x_ref, y_ref))
+            x_ref += 200
+            if x_ref > WIN.SCREEN_WIDTH:
+                x_ref = 0
+                y_ref += 200
+            y_ref += 200
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+        pygame.display.update()
+
+# Call the get_portrait_frames function from view_portraits.py to populate the portraits dictionary
+character_portraits = get_portrait_frames()
 
 def draw_text_box():
     # Define dimensions and position of the textbox
@@ -88,7 +88,7 @@ def draw_text_box():
         emotion = "Neutral"  # Default emotion
 
     # Get the character portrait for the current emotion
-    portrait = get_character_frame(character_name, emotion)
+    portrait = character_portraits[character_name][emotion]
     if portrait:
         portrait_rect = portrait.get_rect(topleft=(25, WIN.WIN_HEIGHT - text_box_height - 95))
         SCREEN.blit(portrait, portrait_rect)
