@@ -40,16 +40,27 @@ class SceneManager:
         self.current_line_index = 0
         self.text_lines = text_lines
         self.current_text_line = None
+        self.scene_ended = False #Keeps track scene ending
 
     def next_textbox(self):
-        # TODO Make the scene end instead of looping
-        self.current_line_index = (self.current_line_index + 1) % len(self.text_lines)
+        # Check if we have reached the end of text_lines
+        if self.current_line_index == len(self.text_lines):
+            #If so, indicate that the scene has ended and return false
+            self.scene_ended = True
+            return False
+        
         self.current_text_line = self.text_lines[self.current_line_index]
         self.current_text_line.text_index = 0
         # Stop sound before playing again
         self.sound.stop()
         # Play sound when text is displayed
         self.sound.play()
+        
+        #Increment current_line_index
+        self.current_line_index += 1
+        
+        #Return true to indicate that there are more textboxes to display
+        return True
 
     def draw_textboxes(self, screen):
         self.current_text_line = self.text_lines[self.current_line_index]
