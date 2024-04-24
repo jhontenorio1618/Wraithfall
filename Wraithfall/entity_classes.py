@@ -399,18 +399,72 @@ class Sword(Entity):
         self.form = "BASE"
         self.set_stats(sword_attack)
         self.EXP = 0
+        self.images = {'forward': [0, 1, 2, 3, 4, 5, 6, 7], 'backward': [8, 9, 10, 11, 12, 13, 14, 15]}
+        self.current_frame = 0
+        self.animation_speed = 0.13
+        self.last_update = pygame.time.get_ticks()
+        self.load_spritesheets()
+        self.direction = 'forward'
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+
+    def load_spritesheets(self):
+        sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
+        frame_width = 17
+        frame_height = 17
+        scale = 2
+
+        # Load all frames for each direction
+        all_frames = collect_frames(sword_sheet, 16, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:7]
+        self.images['backward'] = all_frames[8:]
+        self.images['right'] = all_frames[:7]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
 
     def update(self):
         """ When in Player's possession, track and follow movement of the Player. Otherwise, do not move. """
-        if self.found_player is None:
-            self.speed_x = 0
-            self.speed_y = 0
-        else:
-            # Hover beside player
-            self.rect.centerx, self.rect.centery = self.found_player.get_coord()
-            self.rect.centerx -= 25
-            self.rect.centery -= 25
-            # super(Sword, self).update()
+        now = pygame.time.get_ticks()
+        animation_interval = 100  # Constant factor for animation speed
+        if now - self.last_update > animation_interval:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.image = self.images[self.direction][self.current_frame]
+
+        if self.found_player is not None:
+            # Get the player's key presses to determine the sword's direction
+            player_key_state = pygame.key.get_pressed()
+            if player_key_state[pygame.K_LEFT] and player_key_state[pygame.K_UP]:
+                self.direction = 'backward'
+            elif player_key_state[pygame.K_RIGHT] and player_key_state[pygame.K_UP]:
+                self.direction = 'backward'
+            elif player_key_state[pygame.K_LEFT] and player_key_state[pygame.K_DOWN]:
+                self.direction = 'forward'
+            elif player_key_state[pygame.K_RIGHT] and player_key_state[pygame.K_DOWN]:
+                self.direction = 'forward'
+            elif player_key_state[pygame.K_LEFT]:
+                self.direction = 'left'
+            elif player_key_state[pygame.K_RIGHT]:
+                self.direction = 'right'
+            elif player_key_state[pygame.K_UP]:
+                self.direction = 'backward'
+            elif player_key_state[pygame.K_DOWN]:
+                self.direction = 'forward'
+
+            # Calculate the offset based on the player's direction
+            offset = (-30, -30)
+            if self.direction == 'left':
+                offset = (15, -30)
+            elif self.direction == 'backward':
+                offset = (-25, 40)
+            elif self.direction == 'right' or self.direction == 'forward':
+                offset = (-25, -30)
+
+            # Interpolate the sword's position towards the target position
+            speed = 0.12
+            self.rect.centerx += int((self.found_player.rect.centerx + offset[0] - self.rect.centerx) * speed)
+            self.rect.centery += int((self.found_player.rect.centery + offset[1] - self.rect.centery) * speed)
 
     def pickup(self, player):
         """ Establishes reference to Player Entity, then starts to follow Player. """
