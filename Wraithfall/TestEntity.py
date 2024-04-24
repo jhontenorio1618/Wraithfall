@@ -143,7 +143,7 @@ while looping:
     SCREEN.fill("#000000")
     game_sprites.draw(SCREEN)
     # TODO GUI code here
-    item_display_overworld(player, game_sprites, gui_sprites)
+    item_display_overworld(player, game_sprites, gui_sprites, SCREEN)
     gui_sprites.draw(SCREEN)
     # update the display window...
     pygame.display.update()

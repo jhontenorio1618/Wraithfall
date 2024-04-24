@@ -30,10 +30,14 @@ def enable_button(button, PLAY_MOUSE_POSITION):
     return display
 
 
-def display_text(text, coords, font_size, font_color="White"):
+def display_text(text, coords, font_size, font_color="White", align="left"):
     """ Displays given text at given coordinates with given size and color of font."""
     text_to_display = get_font(stsc(font_size)).render(text, True, font_color)
-    text_rect = text_to_display.get_rect(topleft=stsc(coords))
+    if align == "center":
+        text_rect = text_to_display.get_rect(center=stsc(coords))
+    else:
+        # Default to aligning left
+        text_rect = text_to_display.get_rect(topleft=stsc(coords))
     SCREEN.blit(text_to_display, text_rect)
 
 
@@ -52,22 +56,43 @@ def draw_rect(coords, size, fill=False, border=True, fill_color="#313131", borde
         pygame.draw.rect(SCREEN, fill_color, body_rect, stsc(border_size))"""
 
 
-def item_display_overworld(player, game_sprite_group, gui_sprite_group):
+def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
     success = False
     if player.check_inventory():
         # Only display if the player has items in their inventory
-        draw_rect(coords=(40, 525), size=(150, 150), fill=True)
+
+        # White outline for box
+        draw_rect(coords=(40, 525), size=(150, 150), fill=False, fill_color=(49, 49, 49, 128))
+        # Used for transparent effect of box
+        s = pygame.Surface((150, 150), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (40, 525))
+
+        # Indicates button player should press to use items
+        display_text(text="[ F ]", coords=(115, 648), font_size=16, font_color="White", align="center")
         current_item = player.access_item()
+        if len(player.inventory) > 1:
+            # Display only if player has multiple items
+            inv_position = player.inventory.index(current_item) + 1
+            inv_text = str(inv_position) + "/" + str(len(player.inventory))
+            # Print inventory position out of total in inventory
+            display_text(text=inv_text, coords=(115, 537), font_size=12, font_color="White", align="center")
+            # Show commands for navigating inventory
+            display_text(text="<- Q", coords=(44, 537), font_size=16, font_color="White")
+            display_text(text="E ->", coords=(154, 537), font_size=16, font_color="White")
         if current_item.found_player is not None:
+            item_name = current_item.get_name()
+            display_text(text=item_name, coords=(115, 626), font_size=16, font_color="White", align="center")
             if current_item not in gui_sprite_group:
                 gui_sprite_group.add(current_item)
             if current_item not in game_sprite_group:
                 game_sprite_group.add(current_item)
-            current_item.warp(x=stsc(115), y=stsc(603))
-            success = True
+            current_item.warp(x=stsc(115), y=stsc(600))
         else:
+            # Stop Item from appearing in GUI by killing it
             if current_item in gui_sprite_group:
                 current_item.kill()
+        success = True
     else:
         for item in gui_sprite_group:
             item.kill()
