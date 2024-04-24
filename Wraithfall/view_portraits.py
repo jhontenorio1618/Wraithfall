@@ -45,7 +45,7 @@ def get_portrait_frames():
             "Happy": mc_portraits[1],
             "Excited": mc_portraits[2],
             "Sad": mc_portraits[3],
-            "Angry": mc_portraits[4]
+            "Mad": mc_portraits[4]
         },
         "Grandpa": {
             "Neutral": gpa_portraits[0],
