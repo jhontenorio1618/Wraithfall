@@ -326,13 +326,15 @@ class Player(Entity):
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
-    def get_exp(self, for_next_lvl=False):
+    def get_exp(self, for_next_lvl=False, base_exp_of_lvl=False):
+        base_exp = level_dict[self.LVL]["BASE EXP"]
+        goal_exp = level_dict[self.LVL]["GOAL EXP"]
         if for_next_lvl:
-            base_exp = level_dict[self.LVL]["BASE EXP"]
-            goal_exp = level_dict[self.LVL]["GOAL EXP"]
             needed_exp = goal_exp - base_exp
             current_exp = self.EXP - base_exp
             return current_exp, needed_exp
+        elif base_exp_of_lvl:
+            return base_exp
         else:
             return self.EXP
 

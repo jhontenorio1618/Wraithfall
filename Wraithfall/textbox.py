@@ -53,7 +53,7 @@ class SceneManager:
         self.current_line_index = 0
         self.text_lines = text_lines
         self.current_text_line = None
-        self.scene_ended = False #Keeps track scene ending
+        self.scene_ended = False # Keeps track scene ending
 
     def next_textbox(self):
         # Check if we have reached the end of text_lines
@@ -97,10 +97,14 @@ class SceneManager:
     def reset_scene(self):
         """ Sets the scene back to the beginning. """
         self.current_line_index = 0
+        self.scene_ended = False
 
     def goto_scene(self, index):
         """ Allows access to a specific textbox. """
         self.current_line_index = index
+
+    def check_if_finished(self):
+        return self.scene_ended
 
 
 

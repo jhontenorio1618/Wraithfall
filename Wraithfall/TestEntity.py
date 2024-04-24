@@ -4,6 +4,8 @@ import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
+from overworld_functions import check_player_death, entity_collision
+
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
 
@@ -62,6 +64,7 @@ combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
 # Game Loop
 looping = True
 combat_invul = False
+invul_time = 0
 playing_cutscene = True
 first_battle = True
 while looping:
@@ -111,6 +114,10 @@ while looping:
     if not playing_cutscene:
         game_sprites.update()
 
+        combat_invul, invul_time = entity_collision(player, sprite_groups, combat_invul=combat_invul, invul_time=invul_time,
+                                                    combat_cutscene=combat_menu_scene)
+
+        """
         # Player and Mob collision
         player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
         if not combat_invul and player_mob_collide:
@@ -129,10 +136,10 @@ while looping:
                 # Defeated mob, so remove mob from map
                 player_mob_collide[0].get_bb_anchor().kill()
                 player_mob_collide[0].kill()
+                combat_invul = True
+                start_invul_time = pygame.time.get_ticks()
                 # pygame.sprite.spritecollide(player, mob_sprites, True)
                 # mob_sprites[0]
-            # Recover HP at the end of combat
-            # player.set_stats({"HP": player.get_stats()["HP Max"]})
 
         if combat_invul:
             curr_time = pygame.time.get_ticks()
@@ -167,8 +174,9 @@ while looping:
                 # Player picks up item
                 if item_ref.pickup(player):
                     remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
+        """
 
-
+    check_player_death(player)
 
     SCREEN.fill("#000000")
     game_sprites.draw(SCREEN)
