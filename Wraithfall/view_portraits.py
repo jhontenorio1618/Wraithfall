@@ -48,22 +48,25 @@ def print_frames(frames, x, y):
     return x, y
 
 
-run = True
-# currently, set to print main character, grandpa, and sword portraits
-portraits_to_print = [mc_portraits, gpa_portraits, sword_portraits]
-while run:
+def display_portraits():
+    run = True
+    # currently, set to print main character, grandpa, and sword portraits
+    portraits_to_print = [mc_portraits, gpa_portraits, sword_portraits]
+    while run:
 
-    # update background
-    screen.fill(BG)
+        # update background
+        screen.fill(BG)
 
-    # show frame image
-    x_ref, y_ref = 0, 0
-    for sprites in portraits_to_print:
-        x_ref, y_ref = print_frames(sprites, x_ref, y_ref)
+        # show frame image
+        x_ref, y_ref = 0, 0
+        for sprites in portraits_to_print:
+            x_ref, y_ref = print_frames(sprites, x_ref, y_ref)
 
-    # event handler
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            run = False
+        # event handler
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
 
-    pygame.display.update()
+        pygame.display.update()
+
+# display_portraits()

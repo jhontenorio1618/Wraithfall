@@ -1,15 +1,16 @@
 import pygame
-import game_window as WIN
+from game_window import random, WIN_WIDTH, DIR_SPRITES, WIN_HEIGHT, scale_to_screen as stsc
+import os
+from view_spritesheets import collect_frames
 
 
 class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
 
-    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN.WIN_WIDTH, WIN.WIN_HEIGHT)):
-        # TODO figure out transparency
+    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface(bound_box_size)
+        self.image = pygame.Surface(stsc(bound_box_size))
         trans_color = "#FF00FF"
         self.image.fill(trans_color)
         self.image.set_colorkey(trans_color)
@@ -36,11 +37,11 @@ class BoundingBox(pygame.sprite.Sprite):
         """ Move bounding box to given coordinates. Used for spawning and moving position on map.
         Returns the new coordinates of the bounding box. """
         if x is None:
-            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = random.randrange(WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = random.randrange(WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -63,15 +64,15 @@ class Entity(pygame.sprite.Sprite):
         image_fill = color code for basic rectangle without sprite """
         pygame.sprite.Sprite.__init__(self)
         # Determining basic appearance of Sprite
-        # TODO add way to insert sprites in the hyperparameters
-        self.image = pygame.Surface(bound_box_size)
+        self.image = pygame.Surface(stsc(bound_box_size))
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
-        self.rect.centerx = WIN.WIN_WIDTH
-        self.rect.centery = WIN.WIN_HEIGHT
+        self.rect.centerx = WIN_WIDTH
+        self.rect.centery = WIN_HEIGHT
         self.speed_x = 0
         self.speed_y = 0
         self.bb_anchor = None
+        self.name = ""
         # RPG Stats
         self.HP_Max = 1
         self.HP = 1
@@ -81,8 +82,8 @@ class Entity(pygame.sprite.Sprite):
 
     def update(self):
         """ Calculate movement of the Entity. """
-        self.rect.centerx += self.speed_x
-        self.rect.centery += self.speed_y
+        self.rect.centerx += stsc(self.speed_x)
+        self.rect.centery += stsc(self.speed_y)
 
     def get_speed(self):
         """ Return the current speed of the Entity. """
@@ -102,11 +103,11 @@ class Entity(pygame.sprite.Sprite):
         If no coordinates are given, then the Entity is spawned randomly on screen.
         Returns new coordinates of the Entity. """
         if x is None:
-            self.rect.centerx = WIN.random.randrange(WIN.WIN_WIDTH - self.rect.width)
+            self.rect.centerx = random.randrange(WIN_WIDTH - self.rect.width)
         else:
             self.rect.centerx = x
         if y is None:
-            self.rect.centery = WIN.random.randrange(WIN.WIN_HEIGHT - self.rect.height)
+            self.rect.centery = random.randrange(WIN_HEIGHT - self.rect.height)
         else:
             self.rect.centery = y
         return x, y
@@ -131,6 +132,9 @@ class Entity(pygame.sprite.Sprite):
         """ Returns a dictionary of the Entity's stats. """
         return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
+    def get_name(self):
+        return self.name
+
     def hp_update(self, val):
         """ Quickly modify HP. Used during combat. """
         # Quickly modify HP. Used for combat
@@ -153,18 +157,27 @@ class Entity(pygame.sprite.Sprite):
         GOAL EXP: Total EXP needed to reach next level
         STATS: Dictionary of stats for player's corresponding level """
 level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}},
-              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}}}
+              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              3: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              4: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
+              5: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
 
 
 class Player(Entity):
     def __init__(self, bound_box_size=(30, 30), image_fill="#FFFFFF", player_stats=None):
-        """ bound_box_size = size of the sprite
-        image_fill = color code for basic rectangle without sprite
-        player_stats = dictionary of RPG stats, where the keys are strings of the stats and values are ints """
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
+        self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
+        self.current_frame = 0
+        self.animation_speed = 0.1
+        self.last_update = pygame.time.get_ticks()
+        self.load_spritesheets(sprite_sheet="MCSPRITESHEET.png", dimensions=(14, 17, 2))
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+        self.direction = 'forward'
         if player_stats is None:
             # Default Player Stats if none are given to initialize.
             player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.name = "Oliver"
         self.found_sword = None
         self.inventory = []
         self.inventory_max = 3
@@ -174,21 +187,67 @@ class Player(Entity):
         self.EXP = 0
         self.hunger = 100
 
-    def update(self):
-        """ Calculate the movement of the player. """
+    def load_spritesheets(self, sprite_sheet, dimensions):
+        mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
+        frame_width = 14
+        frame_height = 17
+        scale = stsc(2)
+        # Load all frames for each direction
+        all_frames = collect_frames(mc_sheet, 12, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
+
+    def animate_walking(self):
+        self.update()
+
+    def update(self, collision_check_function):
+        """ Update the player's position and animation. """
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.animation_speed * 1000:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.image = self.images[self.direction][self.current_frame]
+
+        key_state = pygame.key.get_pressed()
         self.speed_x = 0
         self.speed_y = 0
-        key_state = pygame.key.get_pressed()
-        # TODO make player diagonal movements smooth & consistent
         if key_state[pygame.K_LEFT]:
             self.speed_x = -5
-        if key_state[pygame.K_RIGHT]:
+            self.direction = 'left'
+        elif key_state[pygame.K_RIGHT]:
             self.speed_x = 5
-        if key_state[pygame.K_UP]:
+            self.direction = 'right'
+        elif key_state[pygame.K_UP]:
             self.speed_y = -5
-        if key_state[pygame.K_DOWN]:
+            self.direction = 'backward'
+        elif key_state[pygame.K_DOWN]:
             self.speed_y = 5
+            self.direction = 'forward'
+        new_position = self.rect.move(self.speed_x, self.speed_y)
+
+
+        if collision_check_function(new_position):
+            # Testing collision
+            print("Collision detected, movement blocked.")
+
+            self.speed_x = 0
+            self.speed_y = 0
+        else:
+            # Update position if no collision
+            self.rect = new_position
+
+
+        if not any([key_state[pygame.K_LEFT], key_state[pygame.K_RIGHT], key_state[pygame.K_UP],
+                    key_state[pygame.K_DOWN]]):
+            self.current_frame = 0
+            self.image = self.images[self.direction][self.current_frame]
         super(Player, self).update()
+        # self.rect.x += self.speed_x
+        # self.rect.y += self.speed_y
 
     def access_sword(self):
         """ Returns Sword if the player has it. Otherwise, returns None. """
@@ -201,13 +260,26 @@ class Player(Entity):
     def access_item(self, pointer=None):
         """ Given inventory index (pointer),
         retrieve reference to the item in inventory as long as one exists. """
+        # print("inventory pointer check 0: " + str(self.inventory_pointer))
         if pointer is not None:
             self.inventory_pointer = 0
             self.scroll_inv(pointer)
+            # print("inventory pointer check 1: " + str(self.inventory_pointer))
         using_item = None
+        if self.inventory_pointer > len(self.inventory) - 1:
+            self.inventory_pointer = 0
+        if self.inventory_pointer < 0:
+            self.inventory_pointer = len(self.inventory) - 1
+        # print("inventory pointer check 2: " + str(self.inventory_pointer))
         if self.inventory and self.inventory[self.inventory_pointer]:
             using_item = self.inventory[self.inventory_pointer]
         return using_item
+
+    def check_inventory(self):
+        has_items = False
+        if self.inventory:
+            has_items = True
+        return has_items
 
     def scroll_inv(self, move):
         """ Scroll through indexes of inventory.
@@ -237,6 +309,16 @@ class Player(Entity):
         if self.found_sword is not None:
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
+
+    def get_exp(self, for_next_lvl=False):
+        if for_next_lvl:
+            base_exp = level_dict[self.LVL]["BASE EXP"]
+            goal_exp = level_dict[self.LVL]["GOAL EXP"]
+            needed_exp = goal_exp - base_exp
+            current_exp = self.EXP - base_exp
+            return current_exp, needed_exp
+        else:
+            return self.EXP
 
     def gain_exp(self, exp):
         """ Adds to EXP total. Returns new EXP total. """
@@ -270,8 +352,10 @@ class Player(Entity):
         STATS: Dictionary of stats {ATK, HP Max, HP, DEF, SPD} to set as Mob's stats
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
-mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0},
-                "EXP": 1, "SPRITE": ""}}
+mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": ""},
+            1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
+                "EXP": 50, "SPRITE": ""}}
 
 
 class Mob(Entity):
@@ -318,17 +402,36 @@ class Mob(Entity):
         return self.target
 
 
-class PassiveMob(Entity):
-    def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", mob_stats=None):
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"},}
+
+
+class NPC(Entity):
+    def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
         Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
-        if mob_stats is None:
-            mob_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
-        self.set_stats(mob_stats)
+        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.npc_id = npc_id
+        self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.set_stats(npc_stats)
 
     def update(self):
         """ Calculate movement of the Mob. """
-        super(PassiveMob, self).update()
+        super(NPC, self).update()
         # TODO write unique walking behaviors
+
+    def load_spritesheets(self, sprite_sheet, dimensions):
+        sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
+        frame_width = dimensions[0]
+        frame_height = dimensions[1]
+        scale = dimensions[2]
+        # Load all frames for each direction
+        all_frames = collect_frames(sheet, 12, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
 
 
 class Sword(Entity):
@@ -349,8 +452,8 @@ class Sword(Entity):
         else:
             # Hover beside player
             self.rect.centerx, self.rect.centery = self.found_player.get_coord()
-            self.rect.centerx -= 25
-            self.rect.centery -= 25
+            self.rect.centerx -= stsc(25)
+            self.rect.centery -= stsc(25)
             # super(Sword, self).update()
 
     def pickup(self, player):
@@ -414,7 +517,8 @@ class Sword(Entity):
 item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""}
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""},
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": ""}
              }
 
 
@@ -447,10 +551,4 @@ class Item(Entity):
         if self.type == "HP":
             self.found_player.hp_update(self.item_val["VALUE"])
         self.found_player.lose_item(self)
-
-    def get_name(self):
-        """ Returns String name of the item. """
-        return self.name
-
-
 

@@ -38,7 +38,7 @@ def game_exit():
 def get_font(size, font_file="grand9Kpixel.ttf"):
     """ size = size of the letters
         font_file = name of the font in assets/fonts"""
-    return pygame.font.Font(os.path.join(DIR_FONTS, font_file), size)
+    return pygame.font.Font(os.path.join(DIR_FONTS, font_file), scale_to_screen(size))
 
 
 def play_music(music_file, loop=-1):
@@ -61,12 +61,39 @@ def stop_music(abrupt=True):
 def play_sound(sound_file, loop=-1):
     """ sound_file = name of the sound file you want to play.
         loop = number of times audio should play. if -1, it will loop forever until stopped """
-    #Load the sound file
+    # Load the sound file
     pygame.mixer.init()
     sound = pygame.mixer.Sound(os.path.join(DIR_MUSIC, sound_file))
-    #play sound and loop until text is finished
+    # Play sound and loop until text is finished
     sound.play(loops=loop)
     return sound
+
+
+def scale_to_screen(unscaled_nums, encoded_scale=(1280, 720)):
+    """ Scale given numbers to current window size.
+    Battle Menu was made with a 1280 x 720 screen in mind. """
+    scale_to = window_size()
+    if encoded_scale[0] == scale_to[0] and encoded_scale[1] == scale_to[1]:
+        scaled_nums = unscaled_nums
+    else:
+        if isinstance(unscaled_nums, tuple):
+            # Scaling coordinates
+            adj_x = (unscaled_nums[0] / encoded_scale[0]) * scale_to[0]
+            adj_y = (unscaled_nums[1] / encoded_scale[1]) * scale_to[1]
+            scaled_nums = (adj_x, adj_y)
+            # print(str(unscaled_nums) + " vs. " + str(scaled_nums))
+        elif isinstance(unscaled_nums, list):
+            # Scaling a list of digits
+            scaled_nums = []
+            for nums in unscaled_nums:
+                scaling_ratio = scale_to[0] / encoded_scale[0]
+                rescaled = int(nums * scaling_ratio)
+                scaled_nums.append(rescaled)
+        else:
+            # Scaling a single digit
+            scaling_ratio = scale_to[0] / encoded_scale[0]
+            scaled_nums = int(unscaled_nums * scaling_ratio)
+    return scaled_nums
 
 
 def setup_window():
