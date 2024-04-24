@@ -156,6 +156,14 @@ scene11_text_lines = [
 scene1 = SceneManager(scene1_text_lines, "pencilwriting.wav")
 scene2 = SceneManager(scene2_text_lines, "text_sound.wav")
 scene3 = SceneManager(scene3_text_lines, "text_sound.wav")
+scene4 = SceneManager(scene4_text_lines, "text_sound.wav")
+scene5 = SceneManager(scene5_text_lines, "text_sound.wav")
+scene6 = SceneManager(scene6_text_lines, "text_sound.wav")
+scene7 = SceneManager(scene7_text_lines, "text_sound.wav")
+scene8 = SceneManager(scene8_text_lines, "text_sound.wav")
+scene9 = SceneManager(scene9_text_lines, "text_sound.wav")
+scene10 = SceneManager(scene10_text_lines, "text_sound.wav")
+scene11 = SceneManager(scene11_text_lines, "text_sound.wav")
 
 # TODO continue starting from Scene4.py
 
