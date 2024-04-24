@@ -490,16 +490,16 @@ class Sword(Entity):
         # TODO should change aspects of the sword here. For now, it's only visual
         if form == "BASE":
             self.form = "BASE"
-            self.image.fill("#FFCC40")
+            # self.image.fill("#FFCC40")
         if form == "FIRE":
             self.form = "FIRE"
-            self.image.fill("#FF0000")
+            # self.image.fill("#FF0000")
         if form == "ICE":
             self.form = "ICE"
-            self.image.fill("#0000FF")
+            # self.image.fill("#0000FF")
         if form == "DARK":
             self.form = "DARK"
-            self.image.fill("#FF00FF")
+            # self.image.fill("#FF00FF")
         return self.form
 
     def get_form(self):
