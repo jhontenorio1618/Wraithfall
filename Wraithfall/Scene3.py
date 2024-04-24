@@ -26,6 +26,11 @@ text_lines = [
     textbox.TextBox("Why don't you pick those up, Olive? They're a little bruised, but any food is good food...", "MainCharacter", "Neutral"), #Grandpa
     textbox.TextBox("That bit of wisdom's stuck with me since my army days.", "MainCharacter", "Neutral"), #Grandpa
     textbox.TextBox("...Quiet now", "MainCharacter", "Neutral"), #Grandpa
+    textbox.TextBox("Those things... if only someone could figure out what they are, why they're here terrorizing us.", "MainCharacter", "Neutral"), #Grandpa
+    textbox.TextBox("...Hold on.", "MainCharacter", "Neutral"), #Grandpa
+    textbox.TextBox("There we go... you can tag the next one, alright, Oliver?", "MainCharacter", "Neutral"), #Grandpa
+    textbox.TextBox("Now, go and fetch the carcass for me, please.", "MainCharacter", "Neutral"), #Grandpa
+    textbox.TextBox("Oliver!!", "MainCharacter", "Neutral"), #Grandpa
 ]
 
 #initialize variables
