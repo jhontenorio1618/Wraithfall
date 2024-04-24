@@ -4,6 +4,7 @@ import os
 import view_portraits
 import textbox
 import sys
+from game_window import get_font, scale_to_screen as stsc
 
 pygame.init()
 
@@ -30,6 +31,7 @@ running = True
 
 # Initializes the scene as a SceneManager object which manages the Textbox objects
 scene3 = textbox.SceneManager(text_lines, "text_sound.wav")
+
 while running:
     SCREEN.fill("black")
 
