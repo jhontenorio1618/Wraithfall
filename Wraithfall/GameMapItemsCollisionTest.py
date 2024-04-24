@@ -1,3 +1,8 @@
+import pygame, sys
+from pytmx import load_pygame
+from entity_classes import Player
+import pygame.event as EVENTS
+import game_window as WIN
 import pygame, sys, os
 from pytmx import load_pygame
 from entity_classes import Player, Entity
@@ -7,6 +12,18 @@ from battle_menu import Battle, item_menu, sword_menu
 import pygame.event as EVENTS
 import pytmx
 
+# Initialize pygame
+pygame.init()
+
+# Set screen dimensions
+WIN_WIDTH = 1280
+WIN_HEIGHT = 720
+screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+
+# Define the map class with collision checking
+def check_collision(new_rect):
+    return level_1_map.check_collisions(new_rect)
 
 class Map:
     def __init__(self, filename):
@@ -23,104 +40,72 @@ class Map:
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if obj.image:
-                        scale_factor = 1.0  # size for objects
+                        scale_factor = 1.0  # Default scaling
                         scaled_img = pygame.transform.scale(obj.image, (
                             int(obj.width * scale_factor), int(obj.height * scale_factor)))
                         screen.blit(scaled_img, (obj.x, obj.y))
 
     def check_collisions(self, player_rect):
-        """Checks for collisions between the player and objects in specified layers."""
         for layer_name in self.collision_layers:
             layer = self.tiled_map.get_layer_by_name(layer_name)
             if layer is None:
                 continue
 
             for obj in layer:
-                # Optional padding for fine-tuning collision accuracy
-                padding_x, padding_y = 10, 10  # Adjust these values based on your game's needs
+                padding_x, padding_y = 0, 0
                 obj_rect = pygame.Rect(obj.x + padding_x, obj.y + padding_y, obj.width - 2 * padding_x,
                                        obj.height - 2 * padding_y)
 
                 if player_rect.colliderect(obj_rect):
-                    print(f"Collision detected with: {obj.name}")
-                    return True
-        return False
+                    return obj_rect  # Return the colliding object's rectangle
+        return None
 
+# Create player and map objects
+player = Player(bound_box_size=(20, 10), image_fill="#FFFFFF")
+level_1_map = Map('Game_map/game_map/Main_Map.tmx')  # Ensure path is correct
 
-class SecondMap(Map):
-    def __init__(self, filename):
-        super().__init__(filename)
-        self.collision_layers = ["land_object", "second_land_objects"]
+# Boundary check function
+def keep_player_in_bounds(player):
+    if player.rect.left < 0:
+        player.rect.left = 0
+    elif player.rect.right > WIN_WIDTH:
+        player.rect.right = WIN_WIDTH
 
-    def check_collisions(self, player_rect):
-        """Checks for collisions between the player and objects in specified layers."""
-        for layer_name in self.collision_layers:
-            layer = self.tiled_map.get_layer_by_name(layer_name)
-            if layer is None:
-                continue
-
-            for obj in layer:
-                #
-                padding_x, padding_y = 10, 10
-                obj_rect = pygame.Rect(obj.x + padding_x, obj.y + padding_y, obj.width - 2 * padding_x,
-                                       obj.height - 2 * padding_y)
-
-                if player_rect.colliderect(obj_rect):
-                    print(f"Collision detected with: {obj.name}")
-                    return True
-        return False
-
-
-# level_1_map = Map('Game_map/game_map/Main_Map.tmx')
-level_2_map = SecondMap('Game_map/game_map/second_map.tmx')
-
-
-pygame.init()
-screen = pygame.display.set_mode((1280, 720))
-
-# Created and initialize player and level map objects
-player = Player(bound_box_size=(30, 30),
-                image_fill="#FFFFFF")
-level_1_map = Map('Game_map/game_map/Main_Map.tmx')  # Ensure path and filename are correct
-
-
-def check_collision(new_rect):
-    return level_1_map.check_collisions(new_rect)
-
-WIN_WIDTH = 1280
-WIN_HEIGHT = 720
+    if player.rect.top < 0:
+        player.rect.top = 0
+    elif player.rect.bottom > WIN_HEIGHT:
+        player.rect.bottom = WIN_HEIGHT
 
 running = True
-def keep_player_in_bounds(player):
-   # Keep player within the horizontal bounds
-   if player.rect.left < 0:
-       player.rect.left = 0
-   elif player.rect.right > WIN_WIDTH:
-       player.rect.right = WIN_WIDTH
-
-
-   # Keep player within the vertical bounds
-   if player.rect.top < 0:
-       player.rect.top = 0
-   elif player.rect.bottom > WIN_HEIGHT:
-       player.rect.bottom = WIN_HEIGHT
-
-
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
 
-
+    # Clear the screen
     screen.fill((0, 0, 0))
 
+    # Update player and check for collisions
+    player.update(check_collision)  # Assuming `update()` updates player's position
+    keep_player_in_bounds(player)  # Boundary check
 
-    player.update(check_collision)
-
-    keep_player_in_bounds (player)  # Boundary check
+    # Draw map and player
     level_1_map.draw(screen)
     screen.blit(player.image, player.rect)
 
+    # Check for collisions with map objects
+    collision_obj = level_1_map.check_collisions(player.rect)
 
-    pygame.display.update()
+    if collision_obj:
+        # Draw a circle on the object with which the player collides
+        circle_color = (255, 0, 0)  # Red color
+        circle_center = (collision_obj.centerx, collision_obj.centery)  # Center of the object
+        circle_radius = 30  # Radius of the circle
+
+        pygame.draw.circle(screen, circle_color, circle_center, circle_radius)
+
+    # Update the display
+    pygame.display.flip()
+
+pygame.quit()
