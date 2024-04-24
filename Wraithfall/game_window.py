@@ -38,7 +38,7 @@ def game_exit():
 def get_font(size, font_file="grand9Kpixel.ttf"):
     """ size = size of the letters
         font_file = name of the font in assets/fonts"""
-    return pygame.font.Font(os.path.join(DIR_FONTS, font_file), size)
+    return pygame.font.Font(os.path.join(DIR_FONTS, font_file), scale_to_screen(size))
 
 
 def play_music(music_file, loop=-1):
@@ -61,10 +61,10 @@ def stop_music(abrupt=True):
 def play_sound(sound_file, loop=-1):
     """ sound_file = name of the sound file you want to play.
         loop = number of times audio should play. if -1, it will loop forever until stopped """
-    #Load the sound file
+    # Load the sound file
     pygame.mixer.init()
     sound = pygame.mixer.Sound(os.path.join(DIR_MUSIC, sound_file))
-    #play sound and loop until text is finished
+    # Play sound and loop until text is finished
     sound.play(loops=loop)
     return sound
 

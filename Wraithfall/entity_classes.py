@@ -64,7 +64,6 @@ class Entity(pygame.sprite.Sprite):
         image_fill = color code for basic rectangle without sprite """
         pygame.sprite.Sprite.__init__(self)
         # Determining basic appearance of Sprite
-        # TODO add way to insert sprites in the hyperparameters
         self.image = pygame.Surface(stsc(bound_box_size))
         self.image.fill(image_fill)
         self.rect = self.image.get_rect()
@@ -73,6 +72,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed_x = 0
         self.speed_y = 0
         self.bb_anchor = None
+        self.name = ""
         # RPG Stats
         self.HP_Max = 1
         self.HP = 1
@@ -132,6 +132,9 @@ class Entity(pygame.sprite.Sprite):
         """ Returns a dictionary of the Entity's stats. """
         return {"ATK": self.ATK, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
+    def get_name(self):
+        return self.name
+
     def hp_update(self, val):
         """ Quickly modify HP. Used during combat. """
         # Quickly modify HP. Used for combat
@@ -174,6 +177,7 @@ class Player(Entity):
         if player_stats is None:
             # Default Player Stats if none are given to initialize.
             player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        self.name = "Oliver"
         self.found_sword = None
         self.inventory = []
         self.inventory_max = 3
@@ -251,6 +255,12 @@ class Player(Entity):
             using_item = self.inventory[self.inventory_pointer]
         return using_item
 
+    def check_inventory(self):
+        has_items = False
+        if self.inventory:
+            has_items = True
+        return has_items
+
     def scroll_inv(self, move):
         """ Scroll through indexes of inventory.
         When move is positive, go "right." When move is negative, go "left." """
@@ -279,6 +289,16 @@ class Player(Entity):
         if self.found_sword is not None:
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
+
+    def get_exp(self, for_next_lvl=False):
+        if for_next_lvl:
+            base_exp = level_dict[self.LVL]["BASE EXP"]
+            goal_exp = level_dict[self.LVL]["GOAL EXP"]
+            needed_exp = goal_exp - base_exp
+            current_exp = self.EXP - base_exp
+            return current_exp, needed_exp
+        else:
+            return self.EXP
 
     def gain_exp(self, exp):
         """ Adds to EXP total. Returns new EXP total. """
@@ -511,8 +531,4 @@ class Item(Entity):
         if self.type == "HP":
             self.found_player.hp_update(self.item_val["VALUE"])
         self.found_player.lose_item(self)
-
-    def get_name(self):
-        """ Returns String name of the item. """
-        return self.name
 
