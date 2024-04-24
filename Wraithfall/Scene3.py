@@ -19,7 +19,9 @@ text_lines = [
     textbox.TextBox("You know, I first taught your mom how to hunt in these mountains, too.", "Grandpa", "Happy"), #Grandpa
     textbox.TextBox("She'd be proud to see you out here today.", "Grandpa", "Happy"), #Grandpa
     textbox.TextBox("Here, this was hers. I've been using it as a good luck charm, but I want you to have it.", "Grandpa", "Happy"), #Grandpa
-    textbox.TextBox("*Looks at Grandpa's gift - a gun?*", "MainCharacter", "Neutral"), #Main Character
+    textbox.TextBox("*Retrieves Grandpa's Gift*", "MainCharacter", "Neutral"), #Main Character
+    textbox.TextBox("'...a gun?'", "MainCharacter", "Neutral"), #Main Character
+    textbox.TextBox("*Obtained GUN*", "MainCharacter", "Neutral"), #Main Character
     textbox.TextBox("Handle it with care, okay?", "Grandpa", "Neutral"), #Grandpa
     textbox.TextBox("Why don't you pick those up, Oliver? They're a little bruised, but any food is good food...", "Grandpa", "Neutral"), #Grandpa
     textbox.TextBox("That bit of wisdom's stuck with me since my army days.", "Grandpa", "Neutral"), #Grandpa
