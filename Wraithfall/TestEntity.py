@@ -1,7 +1,7 @@
 import pygame, sys, os
 import game_window as WIN
 import entity_classes as ENTITY
-from battle_menu import Battle, item_menu, sword_menu
+from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
 
@@ -16,8 +16,9 @@ mob_sprites = pygame.sprite.Group()
 mob_vision_sprites = pygame.sprite.Group()
 item_sprites = pygame.sprite.Group()
 sword_sprite = pygame.sprite.Group()
+gui_sprites = pygame.sprite.Group()
 sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
-                 "Item": item_sprites, "Sword": sword_sprite}
+                 "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites}
 
 
 def spawn_entity(new_entity, entity_type, spawn_xy=(None, None)):
@@ -137,7 +138,12 @@ while looping:
             if item_ref.pickup(player):
                 remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
 
+
+
     SCREEN.fill("#000000")
     game_sprites.draw(SCREEN)
+    # TODO GUI code here
+    item_display_overworld(player, game_sprites, gui_sprites)
+    gui_sprites.draw(SCREEN)
     # update the display window...
     pygame.display.update()

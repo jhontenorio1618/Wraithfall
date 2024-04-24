@@ -243,7 +243,7 @@ class Player(Entity):
                     key_state[pygame.K_DOWN]]):
             self.current_frame = 0
             self.image = self.images[self.direction][self.current_frame]
-        super(Player, self).update()
+        # super(Player, self).update()
         # self.rect.x += self.speed_x
         # self.rect.y += self.speed_y
 
@@ -549,4 +549,5 @@ class Item(Entity):
         if self.type == "HP":
             self.found_player.hp_update(self.item_val["VALUE"])
         self.found_player.lose_item(self)
+        self.found_player = None
 
