@@ -13,7 +13,7 @@ pygame.display.set_caption("Menu")
 
 # Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
+# sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
 # play sound and loop until text is finished
 # sound.play(loops=-1)
 
@@ -44,7 +44,7 @@ text_lines = [
 ]
 
 #initialize variables
-current_line_index = 0
+# current_line_index = 0
 clock = pygame.time.Clock()
 
 # Main loop
