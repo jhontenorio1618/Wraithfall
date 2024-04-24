@@ -74,8 +74,80 @@ scene3_text_lines = [
     TextBox("Now, go and fetch the carcass for me, please.", "Grandpa", "Neutral"), #Grandpa
     TextBox("Oliver!!", "Grandpa", "Neutral"), #Grandpa
 ]
+scene4_text_lines = [
+    TextBox("...You held your own, Oliver. Good.", "Grandpa", "Happy"), #grandpa
+    TextBox("'...What is this?'", "MainCharacter", "Neutral"), 
+    TextBox("*Retrieves an item from the wraiths corpse*", "MainCharacter", "Neutral"), 
+    TextBox("*Obtained WRAITH ESSENCE*", "MainCharacter", "Neutral"), 
+    TextBox("'This could be useful to my research...'", "MainCharacter", "Neutral"), 
+    TextBox("*Sigh*...That venison meat should be enough to keep us fed for the next week, at least.", "Grandpa", "Neutral"),
+    TextBox("Let's go home, kid.", "Grandpa", "Happy")
+]
+scene5_text_lines = [
+    TextBox("Now that was good...", "Grandpa", "Happy"), #grandpa
+    TextBox("Y'know...", "Grandpa", "Happy"), #grandpa
+    TextBox("We might not have fast food anymore, but nothing tastes better than meat you caught yourself.", "Grandpa", "Happy"), #grandpa
+    TextBox("...", "Grandpa", "Neutral"), #grandpa
+    TextBox("Hey, I'm really proud of you, Oliver.", "Grandpa", "Happy"), #grandpa
+    TextBox("I know things got hard after you lost your mom...", "Grandpa", "Neutral"), #grandpa
+    TextBox("And I know they got harder with this whole \"otherworldly apocalypse\" thing going on.", "Grandpa", "Neutral"), #grandpa
+    TextBox("You're really growning into your own out here.", "Grandpa", "Happy"), #grandpa
+    TextBox("...", "Grandpa", "Neutral"), #grandpa
+    TextBox("You know--", "Grandpa", "Happy"), #grandpa
+    TextBox("What the-?!", "MainCharacter", "Neutral"), #Maincharacter
+    TextBox("...Now, I've seen plenty of strange things these past few months, but that was new.", "Grandpa", "Neutral"), #grandpa
+    TextBox("Whatever came out of that rift just now, it landed on our mountain.", "Grandpa", "Mad"), #grandpa
+    TextBox("...", "Grandpa", "Neutral"), #grandpa
+    TextBox("...What, you want to go see what it is?", "Grandpa", "Neutral"), #grandpa
+    TextBox("Kid, I feel like I don't need to explain to you why that's too dangerous.", "Grandpa", "Mad"), #grandpa
+    TextBox("*Sigh*...Alright, fine. I know you're curious about the rift. ", "Grandpa", "Neutral"), #grandpa
+    TextBox("Whatever it is, we don't get close, got it?", "Grandpa", "Neutral"), #grandpa
+]
+scene6_text_lines = [
+    TextBox("I don't like the looks of this... stay quiet.", "Grandpa", "Mad"), #grandpa
+]
+scene7_text_lines = [
+    TextBox("Incredible... like it's straight out of a fantasy novel.", "Grandpa", "Neutral"), #grandpa
+]
+scene8_text_lines = [
+    TextBox("...We shouldn't touch it. Let's go, Oliver.", "Grandpa", "Mad"), #grandpa
+    TextBox("It would be best to call it a night.", "Grandpa", "Neutral"), #grandpa
+    TextBox("'Maybe I could use this for something...'", "MainCharacter", "Neutral"), #Maincharacter
+    TextBox("...Oliver, that isn't wise...", "Grandpa", "Mad"), #grandpa
+    TextBox("Oliver!!", "Grandpa", "Mad"), #grandpa
+]
+scene9_text_lines = [
+    TextBox("No!!", "MainCharacter", "Sad"), #MainCharacter
+]
+scene10_text_lines = [
+    TextBox("...", "Sword", "Neutral"), #sword
+    TextBox("'Hold on, this thing's... blinking at me!'", "MainCharacter", "Neutral"), #MC
+    TextBox("'Yeah, and this THING can hear you, too, kid.'", "Sword", "Mad"), #Sword
+    TextBox("'Y-You can hear my thoughts?!'", "MainCharacter", "Neutral"), #MC
+    TextBox("'Sure can. Call it a magical soul bond, if that floats your boat.'", "Sword", "Happy"), #Sword
+    TextBox("'We got psychologically linked when you picked me up.'", "Sword", "Neutral"), #Sword
+    TextBox("'Great... this isn't weird at all.'", "MainCharacter", "Neutral"), #MC
+    TextBox("'We don't have time for this - can you just kill that giant wraith for me?!'", "MainCharacter", "Neutral"), #MC
+    TextBox("'Woah, too good for introductions are we?'", "Sword", "Mad"), #Sword
+    TextBox("'I'm Acheron, and you are...?'", "Sword", "Happy"), #Sword
+    TextBox("'Oliver - now hurry up and do something! I've gotta help my Grandpa!'", "MainCharacter", "Angry"), #MC
+    TextBox("'Sheesh - pushy are we?'", "Sword", "Mad"), #Sword
+    TextBox("'Fine, fine. But we've gotta work together to get this done, alright?'", "Sword", "Neutral") #Sword
+]
+scene11_text_lines = [
+    TextBox("No... please, no!", "MainCharacter", "Neutral"), #MC
+    TextBox("He's all I have left!", "MainCharacter", "Sad"), #MC
+    TextBox("Ugh... Oliver", "Grandpa", "Dead1"), #Grandpa
+    TextBox("Kid...save your bandages...this is it for me...", "Grandpa", "Dead2"), #Grandpa
+    TextBox("I meant it when I said that I was proud of you...", "Grandpa", "Dead1"), #Grandpa
+    TextBox("...This world is dark and cruel, but keep pushing...", "Grandpa", "Dead2"), #Grandpa
+    TextBox("...for me, ok?", "Grandpa", "Dead1"), #Grandpa
+    TextBox("And for your mom...", "Grandpa", "Dead2"), #Grandpa
+    TextBox("I'll finally get to be with my little girl again...", "Grandpa", "Dead1"), #Grandpa
+    TextBox("Please...", "MainCharacter", "Sad"), #MC
+    TextBox("I'm sorry I can't be there for you...Oliver...", "Grandpa", "Dead2"), #Grandpa
+]
 
-# TODO continue starting from Scene4.py
 
 # ...
 
