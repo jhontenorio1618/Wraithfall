@@ -3,6 +3,8 @@ from button import Button
 import entity_classes as ENTITY
 from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc
 
+from cutscenes import play_scene, get_scene
+from textbox import TextBox, SceneManager
 
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
@@ -30,10 +32,14 @@ def enable_button(button, PLAY_MOUSE_POSITION):
     return display
 
 
-def display_text(text, coords, font_size, font_color="White"):
+def display_text(text, coords, font_size, font_color="White", align="left"):
     """ Displays given text at given coordinates with given size and color of font."""
     text_to_display = get_font(stsc(font_size)).render(text, True, font_color)
-    text_rect = text_to_display.get_rect(topleft=stsc(coords))
+    if align == "center":
+        text_rect = text_to_display.get_rect(center=stsc(coords))
+    else:
+        # Default to aligning left
+        text_rect = text_to_display.get_rect(topleft=stsc(coords))
     SCREEN.blit(text_to_display, text_rect)
 
 
@@ -50,6 +56,52 @@ def draw_rect(coords, size, fill=False, border=True, fill_color="#313131", borde
         pygame.draw.rect(SCREEN, fill_color, body_rect)
     else:
         pygame.draw.rect(SCREEN, fill_color, body_rect, stsc(border_size))"""
+
+
+def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
+    success = False
+    if player.check_inventory():
+        # Only display if the player has items in their inventory
+
+        # White outline for box
+        draw_rect(coords=(40, 525), size=(150, 150), fill=False, fill_color=(49, 49, 49, 128))
+        # Used for transparent effect of box
+        s = pygame.Surface((150, 150), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (40, 525))
+
+        # Indicates button player should press to use items
+        display_text(text="[ F ]", coords=(115, 648), font_size=16, font_color="White", align="center")
+        current_item = player.access_item()
+        if len(player.inventory) > 1:
+            # Display only if player has multiple items
+            inv_position = player.inventory.index(current_item) + 1
+            inv_text = str(inv_position) + "/" + str(len(player.inventory))
+            # Print inventory position out of total in inventory
+            display_text(text=inv_text, coords=(115, 537), font_size=12, font_color="White", align="center")
+            # Show commands for navigating inventory
+            display_text(text="<- Q", coords=(44, 532), font_size=16, font_color="White")
+            display_text(text="E ->", coords=(154, 532), font_size=16, font_color="White")
+        if current_item.found_player is not None:
+            item_name = current_item.get_name()
+            # Print item name
+            display_text(text=item_name, coords=(115, 626), font_size=16, font_color="White", align="center")
+            # Assure current_item is in proper sprite groups
+            if current_item not in gui_sprite_group:
+                gui_sprite_group.add(current_item)
+            if current_item not in game_sprite_group:
+                game_sprite_group.add(current_item)
+            # Display item appearance (coords are center of item)
+            current_item.warp(x=stsc(115), y=stsc(600))
+        else:
+            # Stop Item from appearing in GUI by killing it
+            if current_item in gui_sprite_group:
+                current_item.kill()
+        success = True
+    else:
+        for item in gui_sprite_group:
+            item.kill()
+    return success
 
 
 def item_menu(player):
@@ -158,7 +210,7 @@ def sword_menu(player):
 
 
 class Battle:
-    def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black"):
+    def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black", scene=None):
         self.player = player
         self.mob = mob
         self.background_color = bg
@@ -170,6 +222,11 @@ class Battle:
         self.status_effects = {"Normal": 0, "Burning": 1, "Frozen": 2}
         self.mob_effect = 0
         self.player_effect = 0
+        if scene is not None:
+            self.playing_cutscene = True
+        else:
+            self.playing_cutscene = False
+        self.scene = scene
 
     def combat_screen(self):
         open_sword_menu = False
@@ -243,23 +300,26 @@ class Battle:
                 draw_rect(coords=(720, 288), size=(20, 20),
                           fill=True, fill_color=sword_color, border_size=1)
 
-            # Command Box
-            draw_rect(coords=(20, 480), size=(1240, 220), fill=True, border_size=2)
-            if self.mob_living and self.player_living:
-                # Mob remains alive
-                # TODO Put visuals for mobs here
-                # The battle is ongoing. Show FIGHT, RUN, ITEM buttons
-                fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
-                item_displayed = enable_button(BATTLE_ITEM, PLAY_MOUSE_POSITION)
-                sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
-                run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
+            if not self.playing_cutscene:
+                # Command Box
+                draw_rect(coords=(20, 480), size=(1240, 220), fill=True, border_size=2)
+                if self.mob_living and self.player_living:
+                    # Mob remains alive
+                    # TODO Put visuals for mobs here
+                    # The battle is ongoing. Show FIGHT, RUN, ITEM buttons
+                    fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
+                    item_displayed = enable_button(BATTLE_ITEM, PLAY_MOUSE_POSITION)
+                    sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
+                    run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
+                else:
+                    # Mob is dead
+                    # Display exit button that appears as "NEXT"
+                    next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
+                    new_exp = current_exp + exp_gained
+                    self.draw_status_bar(coords=(430, 610), size=(420, 30),
+                                         curr_val=new_exp, max_val=goal_exp, type="EXP")
             else:
-                # Mob is dead
-                # Display exit button that appears as "NEXT"
-                next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
-                new_exp = current_exp + exp_gained
-                self.draw_status_bar(coords=(430, 610), size=(420, 30),
-                                     curr_val=new_exp, max_val=goal_exp, type="EXP")
+                self.playing_cutscene = play_scene(self.scene, self.playing_cutscene)
 
             # self.display_hp(entity=self.player, coords=(30, 30), font_size=30)
             # self.display_hp(entity=self.mob, coords=(640, 360), font_size=30)
@@ -275,8 +335,10 @@ class Battle:
                     if next_displayed and event.key == pygame.K_SPACE:
                         # "NEXT" Button Shortcut
                         self.in_combat = False
+                    if self.playing_cutscene and event.key == pygame.K_RETURN:
+                        self.playing_cutscene = not self.scene.next_textbox()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if not self.playing_cutscene and event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
                         # "FIGHT" Button: attack the mob
                         self.player_chosen_action = 1
@@ -348,6 +410,7 @@ class Battle:
 
                 player_decided = False
                 enemy_decided = False
+
 
             pygame.display.update()
         return self.mob_living

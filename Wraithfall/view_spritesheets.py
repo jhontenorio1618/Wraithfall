@@ -14,6 +14,8 @@ gpa_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "GRANDPAspritesheet.
 sword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
 wraithsoul_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITHSOULSPRITESHEET.png")).convert_alpha()
 wraith1_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH1SPRITESHEET.png")).convert_alpha()
+wraith2_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
+wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
 
 def get_image(sheet, frame, width, height, scale):
     image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
@@ -39,6 +41,8 @@ sword_sprites = collect_frames(sword_sheet, 16, 17, 20, 3)
 # Mob Frames
 wraithsoul_sprites = collect_frames(wraithsoul_sheet, 12, 17, 17, 3)
 wraith1_sprites = collect_frames(wraith1_sheet, 24, 18, 20, 3)
+wraith2_sprites = collect_frames(wraith2_sheet, 10, 17, 20, 3)
+wraith3_sprites = collect_frames(wraith3_sheet, 8, 15, 20, 3)
 
 def print_frames(frames, x, y):
     for i in range(len(frames)):
@@ -55,7 +59,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [mc_sprites, gpa_sprites, sword_sprites, wraithsoul_sprites, wraith1_sprites]
+    sprites_to_print = [mc_sprites, gpa_sprites, sword_sprites, wraithsoul_sprites, wraith1_sprites, wraith2_sprites, wraith3_sprites]
     while run:
 
         # update background
