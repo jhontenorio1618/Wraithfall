@@ -62,6 +62,8 @@ while running:
                 current_line_index = (current_line_index + 1) % len(text_lines)
                 current_text_line = text_lines[current_line_index]
                 current_text_line.text_index = 0
+                #Stop sound before playing again
+                sound.stop()
                 # Play sound when text is displayed
                 sound.play()
 
@@ -73,7 +75,7 @@ while running:
     current_text_line.update()
 
     # Stop sound once all text is displayed
-    if current_line_index >= len(current_text_line.text):
+    if current_text_line.text_index >= len(current_text_line.text):
         sound.stop()
 
     # Update the display
