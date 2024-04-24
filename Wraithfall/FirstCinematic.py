@@ -75,7 +75,7 @@ while running:
     current_text_line.update()
 
     # Stop sound once all text is displayed
-    if current_line_index >= len(current_text_line.text):
+    if current_text_line.text_index >= len(current_text_line.text):
         sound.stop()
 
     # Update the display
