@@ -167,7 +167,8 @@ scene11 = SceneManager(scene11_text_lines, "text_sound.wav")
 
 # TODO continue starting from Scene4.py
 
-scene_dict = {1: scene1, 2: scene2, 3: scene3}
+scene_dict = {1: scene1, 2: scene2, 3: scene3, 4: scene4, 5: scene5, 6: scene6, 7: scene7, 
+              8: scene8, 9: scene9, 10: scene10, 11: scene11}
 
 most_recent_scene_index = -1
 next_scene_index = 1
