@@ -15,7 +15,7 @@ pygame.display.set_caption("Menu")
 pygame.mixer.init()
 sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
 # play sound and loop until text is finished
-sound.play(loops=-1)
+# sound.play(loops=-1)
 
 #Text lines
 text_lines = [
@@ -49,6 +49,9 @@ clock = pygame.time.Clock()
 
 # Main loop
 running = True
+
+# Initializes the scene as a SceneManager object which manages the Textbox objects
+scene1 = textbox.SceneManager(text_lines)
 while running:
     SCREEN.fill("black")
 
@@ -59,6 +62,8 @@ while running:
         elif event.type == pygame.KEYDOWN:
             # If enter key is pressed move to the next line
             if event.key == pygame.K_RETURN:
+                scene1.next_textbox()
+                """
                 current_line_index = (current_line_index + 1) % len(text_lines)
                 current_text_line = text_lines[current_line_index]
                 current_text_line.text_index = 0
@@ -66,7 +71,10 @@ while running:
                 sound.stop()
                 # Play sound when text is displayed
                 sound.play()
+                """
 
+    scene1.draw_textboxes(SCREEN)
+    """
     #draw text box
     current_text_line = text_lines[current_line_index]
     current_text_line.draw(SCREEN)
@@ -77,10 +85,12 @@ while running:
     # Stop sound once all text is displayed
     if current_text_line.text_index >= len(current_text_line.text):
         sound.stop()
+    """
 
     # Update the display
     pygame.display.flip()
     clock.tick(WIN.get_fps())
+
 
 pygame.quit()
 sys.exit()

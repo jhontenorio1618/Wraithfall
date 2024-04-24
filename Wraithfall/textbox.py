@@ -30,6 +30,52 @@ def get_character_frame(character_name, emotion):
 def get_font(size):
     return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9kpixel.ttf"), size)
 
+
+class SceneManager:
+    def __init__(self, text_lines):
+        # Load the sound file
+        pygame.mixer.init()
+        self.sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "pencilwriting.wav"))
+        self.initial_sound = True
+        self.current_line_index = 0
+        self.text_lines = text_lines
+        self.current_text_line = None
+
+    def next_textbox(self):
+        # TODO Make the scene end instead of looping
+        self.current_line_index = (self.current_line_index + 1) % len(self.text_lines)
+        self.current_text_line = self.text_lines[self.current_line_index]
+        self.current_text_line.text_index = 0
+        # Stop sound before playing again
+        self.sound.stop()
+        # Play sound when text is displayed
+        self.sound.play()
+
+    def draw_textboxes(self, screen):
+        self.current_text_line = self.text_lines[self.current_line_index]
+        if self.initial_sound:
+            # play sound and loop until text is finished
+            self.sound.play()
+            self.initial_sound = False
+        self.current_text_line.draw(screen)
+
+        # Update text index base on time
+        self.current_text_line.update()
+
+        # Stop sound once all text is displayed
+        if self.current_text_line.text_index >= len(self.current_text_line.text):
+            self.sound.stop()
+
+    def reset_scene(self):
+        """ Sets the scene back to the beginning. """
+        self.current_line_index = 0
+
+    def goto_scene(self, index):
+        """ Allows access to a specific textbox. """
+        self.current_line_index = index
+
+
+
 class TextBox:
     def __init__(self, text, character, emotion):
         self.text = text
