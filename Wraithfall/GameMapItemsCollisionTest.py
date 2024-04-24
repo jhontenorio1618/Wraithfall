@@ -1,154 +1,126 @@
-import pygame
-import pygame.event as EVENTS
-import pytmx
-from pytmx.util_pygame import load_pygame
+import pygame, sys, os
+from pytmx import load_pygame
+from entity_classes import Player, Entity
 import game_window as WIN
 import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu
-
-# Initialize Pygame
-pygame.init ()
-SCREEN = pygame.display.set_mode (WIN.window_size ())
-pygame.display.set_caption ("Wraithfall")
-clock = pygame.time.Clock ()
+import pygame.event as EVENTS
+import pytmx
 
 
-# Load the game map
-def load_map(filename):
-    return load_pygame (filename)
+class Map:
+    def __init__(self, filename):
+        self.tiled_map = load_pygame(filename)
+        self.collision_layers = ["land_object", "next_level_chopper"]
 
+    def draw(self, screen):
+        for layer in self.tiled_map.visible_layers:
+            if isinstance(layer, pytmx.TiledTileLayer):
+                for x, y, gid in layer:
+                    tile = self.tiled_map.get_tile_image_by_gid(gid)
+                    if tile:
+                        screen.blit(tile, (x * self.tiled_map.tilewidth, y * self.tiled_map.tileheight))
+            elif isinstance(layer, pytmx.TiledObjectGroup):
+                for obj in layer:
+                    if obj.image:
+                        scale_factor = 1.0  # size for objects
+                        scaled_img = pygame.transform.scale(obj.image, (
+                            int(obj.width * scale_factor), int(obj.height * scale_factor)))
+                        screen.blit(scaled_img, (obj.x, obj.y))
 
-# Draw the game map
-def draw_map(screen, tiled_map):
-    for layer in tiled_map.visible_layers:
-        if isinstance (layer, pytmx.TiledTileLayer):
-            for x, y, gid in layer:
-                tile = tiled_map.get_tile_image_by_gid (gid)
-                if tile:
-                    screen.blit (tile, (x * tiled_map.tilewidth, y * tiled_map.tileheight))
-        elif isinstance (layer, pytmx.TiledObjectGroup):
+    def check_collisions(self, player_rect):
+        """Checks for collisions between the player and objects in specified layers."""
+        for layer_name in self.collision_layers:
+            layer = self.tiled_map.get_layer_by_name(layer_name)
+            if layer is None:
+                continue
+
             for obj in layer:
-                if obj.image:
-                    scale_factor = 0.45
-                    scaled_img = pygame.transform.scale (obj.image, (
-                    int (obj.width * scale_factor), int (obj.height * scale_factor)))
-                    screen.blit (scaled_img, (obj.x, obj.y))
+                # Optional padding for fine-tuning collision accuracy
+                padding_x, padding_y = 10, 10  # Adjust these values based on your game's needs
+                obj_rect = pygame.Rect(obj.x + padding_x, obj.y + padding_y, obj.width - 2 * padding_x,
+                                       obj.height - 2 * padding_y)
+
+                if player_rect.colliderect(obj_rect):
+                    print(f"Collision detected with: {obj.name}")
+                    return True
+        return False
 
 
-# Function to check collision with a specified layer
-def check_collision(player, layer):
-    if not isinstance (layer, pytmx.TiledObjectGroup):
-        return None  # Return None if the layer is not a TiledObjectGroup
+class SecondMap(Map):
+    def __init__(self, filename):
+        super().__init__(filename)
+        self.collision_layers = ["land_object", "second_land_objects"]
 
-    collision_obj = None  # Initialize to store the object causing the collision
-    for obj in layer:
-        padding_x = 125
-        padding_y = 125
-        obj_rect = pygame.Rect (
-            obj.x + padding_x,
-            obj.y + padding_y,
-            obj.width - 2 * padding_x,
-            obj.height - 2 * padding_y
-        )
-        if player.rect.colliderect (obj_rect):
-            collision_obj = obj  # Store the object causing the collision
-            break  # No need to check further once a collision is detected
+    def check_collisions(self, player_rect):
+        """Checks for collisions between the player and objects in specified layers."""
+        for layer_name in self.collision_layers:
+            layer = self.tiled_map.get_layer_by_name(layer_name)
+            if layer is None:
+                continue
 
-    return collision_obj  # Return the object that caused the collision
+            for obj in layer:
+                #
+                padding_x, padding_y = 10, 10
+                obj_rect = pygame.Rect(obj.x + padding_x, obj.y + padding_y, obj.width - 2 * padding_x,
+                                       obj.height - 2 * padding_y)
 
-
-# Function to handle collisions and block entity movement
-def handle_collisions(player, tiled_map):
-    # Check collision with land_object layer
-    land_object_layer = tiled_map.get_layer_by_name ("land_object")
-    collision_obj = check_collision (player, land_object_layer)
-    if collision_obj:
-        # Determine the direction of collision and adjust player's position accordingly
-        padding_x = 45
-        padding_y = 45
-        obj_rect = pygame.Rect (
-            collision_obj.x + padding_x,
-            collision_obj.y + padding_y,
-            collision_obj.width - 2 * padding_x,
-            collision_obj.height - 2 * padding_y
-        )
-        if player.speed_x > 0:  # Moving right
-            player.rect.right = obj_rect.left  # Block on the left
-        elif player.speed_x < 0:  # Moving left
-            player.rect.left = obj_rect.right  # Block on the right
-        if player.speed_y > 0:  # Moving down
-            player.rect.bottom = obj_rect.top  # Block from above
-        elif player.speed_y < 0:  # Moving up
-            player.rect.top = obj_rect.bottom  # Block from below
-
-        # Reset the speed after collision
-        player.speed_x = 1
-        player.speed_y = 1
-
-        print ("Collision with an object in land_object layer!")
-
-    # Check collision with next_level_chopper layer
-    chopper_layer = tiled_map.get_layer_by_name ("next_level_chopper")
-    if chopper_layer and check_collision (player, chopper_layer):
-        print ("Level change trigger!")
+                if player_rect.colliderect(obj_rect):
+                    print(f"Collision detected with: {obj.name}")
+                    return True
+        return False
 
 
-tiled_map = load_map ("Game_map/game_map/Main_Map.tmx")
+# level_1_map = Map('Game_map/game_map/Main_Map.tmx')
+level_2_map = SecondMap('Game_map/game_map/second_map.tmx')
 
-game_sprites = pygame.sprite.Group ()
-mob_sprites = pygame.sprite.Group ()
-mob_vision_sprites = pygame.sprite.Group ()
-item_sprites = pygame.sprite.Group ()
-sword_sprite = pygame.sprite.Group ()
-sprite_groups = {
-    "Game": game_sprites,
-    "Mob": mob_sprites,
-    "Mob Vision": mob_vision_sprites,
-    "Item": item_sprites,
-    "Sword": sword_sprite
-}
 
-# Initialize the player sprite
-player = ENTITY.Player ()
-player.warp (WIN.WIN_WIDTH / 2, WIN.WIN_HEIGHT / 2)
-game_sprites.add (player)
+pygame.init()
+screen = pygame.display.set_mode((1280, 720))
 
-# Main game loop
-looping = True
-while looping:
-    clock.tick (WIN.get_fps ())
+# Created and initialize player and level map objects
+player = Player(bound_box_size=(30, 30),
+                image_fill="#FFFFFF")
+level_1_map = Map('Game_map/game_map/Main_Map.tmx')  # Ensure path and filename are correct
 
-    # Handle events
-    for event in EVENTS.get ():
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_ESCAPE:
-                WIN.game_exit ()
-            if event.key == pygame.K_LEFT:
-                player.speed_x = -5
-            elif event.key == pygame.K_RIGHT:
-                player.speed_x = 5
-            elif event.key == pygame.K_UP:
-                player.speed_y = -5
-            elif event.key == pygame.K_DOWN:
-                player.speed_y = 5
 
-        elif event.type == pygame.KEYUP:
-            if event.key in [pygame.K_LEFT, pygame.K_RIGHT]:
-                player.speed_x = 0
-            if event.key in [pygame.K_UP, pygame.K_DOWN]:
-                player.speed_y = 0
+def check_collision(new_rect):
+    return level_1_map.check_collisions(new_rect)
 
-        elif event.type == pygame.QUIT:
-            WIN.game_exit ()
+WIN_WIDTH = 1280
+WIN_HEIGHT = 720
 
-    # Handle collisions to prevent walking through tiles
-    handle_collisions (player, tiled_map)
+running = True
+def keep_player_in_bounds(player):
+   # Keep player within the horizontal bounds
+   if player.rect.left < 0:
+       player.rect.left = 0
+   elif player.rect.right > WIN_WIDTH:
+       player.rect.right = WIN_WIDTH
 
-    # Update and draw sprites
-    game_sprites.update ()
-    SCREEN.fill ("#000000")
-    draw_map (SCREEN, tiled_map)
-    game_sprites.draw (SCREEN)
-    pygame.display.update ()
 
-pygame.quit ()
+   # Keep player within the vertical bounds
+   if player.rect.top < 0:
+       player.rect.top = 0
+   elif player.rect.bottom > WIN_HEIGHT:
+       player.rect.bottom = WIN_HEIGHT
+
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+
+
+    screen.fill((0, 0, 0))
+
+
+    player.update(check_collision)
+
+    keep_player_in_bounds (player)  # Boundary check
+    level_1_map.draw(screen)
+    screen.blit(player.image, player.rect)
+
+
+    pygame.display.update()
