@@ -23,29 +23,30 @@ text_lines = [
 #initialize variables
 clock = pygame.time.Clock()
 
-# Main loop
-running = True
-
 # Initializes the scene as a SceneManager object which manages the Textbox objects
 scene3 = textbox.SceneManager(text_lines, "text_sound.wav")
-while running:
-    SCREEN.fill("black")
+def play_cutscene_6_4YES():
+    # Main loop
+    running = True
+    while running:
+        SCREEN.fill("black")
 
-    for event in pygame.event.get():
-        # If user closes the window exit the loop
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            # If enter key is pressed move to the next line
-            if event.key == pygame.K_RETURN:
-                scene3.next_textbox()
+        for event in pygame.event.get():
+            # If user closes the window exit the loop
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                # If enter key is pressed move to the next line
+                if event.key == pygame.K_RETURN:
+                    scene3.next_textbox()
 
-    scene3.draw_textboxes(SCREEN)
+        scene3.draw_textboxes(SCREEN)
 
-    # Update the display
-    pygame.display.flip()
-    clock.tick(WIN.get_fps())
+        # Update the display
+        pygame.display.flip()
+        clock.tick(WIN.get_fps())
+    pygame.quit()
+    sys.exit()
 
+# play_cutscene_6_4YES()
 
-pygame.quit()
-sys.exit()
