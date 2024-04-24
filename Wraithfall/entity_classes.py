@@ -255,6 +255,12 @@ class Player(Entity):
             using_item = self.inventory[self.inventory_pointer]
         return using_item
 
+    def check_inventory(self):
+        has_items = False
+        if self.inventory:
+            has_items = True
+        return has_items
+
     def scroll_inv(self, move):
         """ Scroll through indexes of inventory.
         When move is positive, go "right." When move is negative, go "left." """
@@ -283,6 +289,16 @@ class Player(Entity):
         if self.found_sword is not None:
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
+
+    def get_exp(self, for_next_lvl=False):
+        if for_next_lvl:
+            base_exp = level_dict[self.LVL]["BASE EXP"]
+            goal_exp = level_dict[self.LVL]["GOAL EXP"]
+            needed_exp = goal_exp - base_exp
+            current_exp = self.EXP - base_exp
+            return current_exp, needed_exp
+        else:
+            return self.EXP
 
     def gain_exp(self, exp):
         """ Adds to EXP total. Returns new EXP total. """
