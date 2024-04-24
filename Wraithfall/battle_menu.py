@@ -52,6 +52,28 @@ def draw_rect(coords, size, fill=False, border=True, fill_color="#313131", borde
         pygame.draw.rect(SCREEN, fill_color, body_rect, stsc(border_size))"""
 
 
+def item_display_overworld(player, game_sprite_group, gui_sprite_group):
+    success = False
+    if player.check_inventory():
+        # Only display if the player has items in their inventory
+        draw_rect(coords=(40, 525), size=(150, 150), fill=True)
+        current_item = player.access_item()
+        if current_item.found_player is not None:
+            if current_item not in gui_sprite_group:
+                gui_sprite_group.add(current_item)
+            if current_item not in game_sprite_group:
+                game_sprite_group.add(current_item)
+            current_item.warp(x=stsc(115), y=stsc(603))
+            success = True
+        else:
+            if current_item in gui_sprite_group:
+                current_item.kill()
+    else:
+        for item in gui_sprite_group:
+            item.kill()
+    return success
+
+
 def item_menu(player):
     in_menu = True
     selected_item = None
