@@ -78,15 +78,18 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
             # Print inventory position out of total in inventory
             display_text(text=inv_text, coords=(115, 537), font_size=12, font_color="White", align="center")
             # Show commands for navigating inventory
-            display_text(text="<- Q", coords=(44, 537), font_size=16, font_color="White")
-            display_text(text="E ->", coords=(154, 537), font_size=16, font_color="White")
+            display_text(text="<- Q", coords=(44, 532), font_size=16, font_color="White")
+            display_text(text="E ->", coords=(154, 532), font_size=16, font_color="White")
         if current_item.found_player is not None:
             item_name = current_item.get_name()
+            # Print item name
             display_text(text=item_name, coords=(115, 626), font_size=16, font_color="White", align="center")
+            # Assure current_item is in proper sprite groups
             if current_item not in gui_sprite_group:
                 gui_sprite_group.add(current_item)
             if current_item not in game_sprite_group:
                 game_sprite_group.add(current_item)
+            # Display item appearance (coords are center of item)
             current_item.warp(x=stsc(115), y=stsc(600))
         else:
             # Stop Item from appearing in GUI by killing it
