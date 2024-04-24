@@ -403,7 +403,7 @@ class Battle:
                 enemy_turn = True
         elif self.player_chosen_action == 2:
             self.selected_item.use_item()
-            self.selected_item = None
+            # self.selected_item = None
         self.player_chosen_action = 0
         return 0
 

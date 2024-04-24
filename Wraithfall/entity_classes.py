@@ -247,10 +247,17 @@ class Player(Entity):
     def access_item(self, pointer=None):
         """ Given inventory index (pointer),
         retrieve reference to the item in inventory as long as one exists. """
+        # print("inventory pointer check 0: " + str(self.inventory_pointer))
         if pointer is not None:
             self.inventory_pointer = 0
             self.scroll_inv(pointer)
+            # print("inventory pointer check 1: " + str(self.inventory_pointer))
         using_item = None
+        if self.inventory_pointer > len(self.inventory) - 1:
+            self.inventory_pointer = 0
+        if self.inventory_pointer < 0:
+            self.inventory_pointer = len(self.inventory) - 1
+        # print("inventory pointer check 2: " + str(self.inventory_pointer))
         if self.inventory and self.inventory[self.inventory_pointer]:
             using_item = self.inventory[self.inventory_pointer]
         return using_item
@@ -333,7 +340,7 @@ class Player(Entity):
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
-                "EXP": 1, "SPRITE": ""},
+                "EXP": 2, "SPRITE": ""},
             1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
                 "EXP": 50, "SPRITE": ""}}
 
