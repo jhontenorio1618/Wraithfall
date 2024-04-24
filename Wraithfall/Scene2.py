@@ -13,9 +13,6 @@ pygame.display.set_caption("Menu")
 
 # Load the sound file
 pygame.mixer.init()
-sound = pygame.mixer.Sound(os.path.join(WIN.DIR_MUSIC, "text_sound.wav"))
-# play sound and loop until text is finished
-sound.play(loops=-1)
 
 #Text lines
 text_lines = [
@@ -32,11 +29,13 @@ text_lines = [
 ]
 
 #initialize variables
-current_line_index = 0
 clock = pygame.time.Clock()
 
 # Main loop
 running = True
+
+# Initializes the scene as a SceneManager object which manages the Textbox objects
+scene2 = textbox.SceneManager(text_lines)
 while running:
     SCREEN.fill("black")
 
@@ -47,28 +46,14 @@ while running:
         elif event.type == pygame.KEYDOWN:
             # If enter key is pressed move to the next line
             if event.key == pygame.K_RETURN:
-                current_line_index = (current_line_index + 1) % len(text_lines)
-                current_text_line = text_lines[current_line_index]
-                current_text_line.text_index = 0
-                #Stop the sound before it plays again.
-                sound.stop()
-                # Play sound when text is displayed
-                sound.play()
+                scene2.next_textbox()
 
-    #draw text box
-    current_text_line = text_lines[current_line_index]
-    current_text_line.draw(SCREEN)
-    
-    # Update text index base on time
-    current_text_line.update()
-
-    # Stop sound once all text is displayed
-    if current_text_line.text_index >= len(current_text_line.text):
-        sound.stop()
+    scene2.draw_textboxes(SCREEN)
 
     # Update the display
     pygame.display.flip()
     clock.tick(WIN.get_fps())
+
 
 pygame.quit()
 sys.exit()

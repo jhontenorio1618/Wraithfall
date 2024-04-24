@@ -63,7 +63,11 @@ class SceneManager:
         return True
 
     def draw_textboxes(self, screen):
-        self.current_text_line = self.text_lines[self.current_line_index]
+        #Check to see if the scene has ended
+        if self.scene_ended:
+            return
+        if self.current_line_index < len(self.text_lines):  #Add condition to prevent index out of range
+            self.current_text_line = self.text_lines[self.current_line_index]
         if self.initial_sound:
             # play sound and loop until text is finished
             self.sound.play()
