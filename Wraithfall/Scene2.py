@@ -16,16 +16,16 @@ pygame.mixer.init()
 
 #Text lines
 text_lines = [
-    textbox.TextBox("Up and at'em, eh, Oliver?", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("Finally - it's already past dawn!", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("Not that anyone can tell anymore...", "MainCharacter", "Sad"), #Grandpa
-    textbox.TextBox("The wraiths have been quiet since last night.", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("They left another pile of drained deer carcasses by the treeline.", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("It's a shame, all that tainted meat...", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("...Listen, Oliver.", "MainCharacter", "Sad"), #Grandpa
-    textbox.TextBox("While I've got no desire to let you anywhere near those abominations...", "MainCharacter", "Neutral"), #Grandpa
-    textbox.TextBox("...I'm getting old, and hunting is hard on my bones. ", "MainCharacter", "Sad"), #Grandpa
-    textbox.TextBox("Come out with me right now - I can show you the ropes, yeah?", "MainCharacter", "Sad"), #Grandpa
+    textbox.TextBox("Up and at'em, eh, Oliver?", "Grandpa", "Happy"), #Grandpa
+    textbox.TextBox("Finally - it's already past dawn!", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("Not that anyone can tell anymore...", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("The wraiths have been quiet since last night.", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("They left another pile of drained deer carcasses by the treeline.", "Grandpa", "Mad"), #Grandpa
+    textbox.TextBox("It's a shame, all that tainted meat...", "Grandpa", "Mad"), #Grandpa
+    textbox.TextBox("...Listen, Oliver.", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("While I've got no desire to let you anywhere near those abominations...", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("...I'm getting old, and hunting is hard on my bones. ", "Grandpa", "Neutral"), #Grandpa
+    textbox.TextBox("Come out with me right now - I can show you the ropes, yeah?", "Grandpa", "Happy"), #Grandpa
 ]
 
 #initialize variables
