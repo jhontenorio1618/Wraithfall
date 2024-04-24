@@ -14,20 +14,19 @@ pygame.display.set_caption("Menu")
 def get_font(size):
     return pygame.font.Font(os.path.join(WIN.DIR_FONTS, "grand9Kpixel.ttf"), size)
 
-
 # Font size
 font_size = 20
 font = WIN.get_font(font_size)
 
 # Display test text
 text_lines = [
-    "Welcome to Wraithfall...",
-    "Press Enter...",
-    "New line of text test..."
+    ("MainCharacter", "Happy", "Welcome to Wraithfall..."),
+    ("Grandpa", "Mad", "Press Enter..."),
+    ("Sword", "Happy", "New line of text test...")
 ]
 # Index to keep track of the characters
 current_line_index = 0
-text_to_display = text_lines[current_line_index]
+character, emotion, text_to_display = text_lines[current_line_index]
 # index to keep track of the characters
 text_index = 0
 # Time delay between the display of each character (in seconds)
@@ -45,29 +44,6 @@ clock = pygame.time.Clock()
 # Get character portraits
 character_portraits = get_portrait_frames()
 
-def display_portraits(portraits_to_print):
-    run = True
-    while run:
-        SCREEN.fill(WIN.BG)
-
-        x_ref, y_ref = 0, 0
-        for character, emotions in portraits_to_print.items():
-            SCREEN.blit(emotions["Neutral"], (x_ref, y_ref))
-            x_ref += 200
-            if x_ref > WIN.SCREEN_WIDTH:
-                x_ref = 0
-                y_ref += 200
-            y_ref += 200
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-
-        pygame.display.update()
-
-# Call the get_portrait_frames function from view_portraits.py to populate the portraits dictionary
-character_portraits = get_portrait_frames()
-
 def draw_text_box():
     # Define dimensions and position of the textbox
     text_box_width = WIN.WIN_WIDTH - 40
@@ -76,19 +52,11 @@ def draw_text_box():
 
     pygame.draw.rect(SCREEN, "white", text_box_rect, 2)
 
-    # Get the character name
-    character_name = "MainCharacter"
-
-    # Get the emotion based on the current line of text
-    if "Welcome" in text_to_display:
-        emotion = "Happy"
-    elif "Press Enter" in text_to_display:
-        emotion = "Excited"
-    else:
-        emotion = "Neutral"  # Default emotion
+    # Get the character name and emotion
+    character, emotion, _ = text_lines[current_line_index]
 
     # Get the character portrait for the current emotion
-    portrait = character_portraits[character_name][emotion]
+    portrait = character_portraits[character][emotion]
     if portrait:
         portrait_rect = portrait.get_rect(topleft=(25, WIN.WIN_HEIGHT - text_box_height - 95))
         SCREEN.blit(portrait, portrait_rect)
@@ -115,7 +83,7 @@ while running:
             if event.key == pygame.K_RETURN:
                 text_index = 0
                 current_line_index = (current_line_index + 1) % len(text_lines)
-                text_to_display = text_lines[current_line_index]
+                character, emotion, text_to_display = text_lines[current_line_index]
                 # Play sound when text is displayed
                 sound.play()
 
