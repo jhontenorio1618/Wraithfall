@@ -3,6 +3,8 @@ from button import Button
 import entity_classes as ENTITY
 from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc
 
+from cutscenes import play_scene, get_scene
+from textbox import TextBox, SceneManager
 
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
@@ -208,7 +210,7 @@ def sword_menu(player):
 
 
 class Battle:
-    def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black"):
+    def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black", scene=None):
         self.player = player
         self.mob = mob
         self.background_color = bg
@@ -220,6 +222,11 @@ class Battle:
         self.status_effects = {"Normal": 0, "Burning": 1, "Frozen": 2}
         self.mob_effect = 0
         self.player_effect = 0
+        if scene is not None:
+            self.playing_cutscene = True
+        else:
+            self.playing_cutscene = False
+        self.scene = scene
 
     def combat_screen(self):
         open_sword_menu = False
@@ -293,23 +300,26 @@ class Battle:
                 draw_rect(coords=(720, 288), size=(20, 20),
                           fill=True, fill_color=sword_color, border_size=1)
 
-            # Command Box
-            draw_rect(coords=(20, 480), size=(1240, 220), fill=True, border_size=2)
-            if self.mob_living and self.player_living:
-                # Mob remains alive
-                # TODO Put visuals for mobs here
-                # The battle is ongoing. Show FIGHT, RUN, ITEM buttons
-                fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
-                item_displayed = enable_button(BATTLE_ITEM, PLAY_MOUSE_POSITION)
-                sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
-                run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
+            if not self.playing_cutscene:
+                # Command Box
+                draw_rect(coords=(20, 480), size=(1240, 220), fill=True, border_size=2)
+                if self.mob_living and self.player_living:
+                    # Mob remains alive
+                    # TODO Put visuals for mobs here
+                    # The battle is ongoing. Show FIGHT, RUN, ITEM buttons
+                    fight_displayed = enable_button(BATTLE_FIGHT, PLAY_MOUSE_POSITION)
+                    item_displayed = enable_button(BATTLE_ITEM, PLAY_MOUSE_POSITION)
+                    sword_displayed = enable_button(BATTLE_SWORD, PLAY_MOUSE_POSITION)
+                    run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
+                else:
+                    # Mob is dead
+                    # Display exit button that appears as "NEXT"
+                    next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
+                    new_exp = current_exp + exp_gained
+                    self.draw_status_bar(coords=(430, 610), size=(420, 30),
+                                         curr_val=new_exp, max_val=goal_exp, type="EXP")
             else:
-                # Mob is dead
-                # Display exit button that appears as "NEXT"
-                next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
-                new_exp = current_exp + exp_gained
-                self.draw_status_bar(coords=(430, 610), size=(420, 30),
-                                     curr_val=new_exp, max_val=goal_exp, type="EXP")
+                self.playing_cutscene = play_scene(self.scene, self.playing_cutscene)
 
             # self.display_hp(entity=self.player, coords=(30, 30), font_size=30)
             # self.display_hp(entity=self.mob, coords=(640, 360), font_size=30)
@@ -325,8 +335,10 @@ class Battle:
                     if next_displayed and event.key == pygame.K_SPACE:
                         # "NEXT" Button Shortcut
                         self.in_combat = False
+                    if self.playing_cutscene and event.key == pygame.K_RETURN:
+                        self.playing_cutscene = not self.scene.next_textbox()
 
-                if event.type == pygame.MOUSEBUTTONDOWN:
+                if not self.playing_cutscene and event.type == pygame.MOUSEBUTTONDOWN:
                     if fight_displayed and BATTLE_FIGHT.checkForInput(PLAY_MOUSE_POSITION):
                         # "FIGHT" Button: attack the mob
                         self.player_chosen_action = 1
@@ -398,6 +410,7 @@ class Battle:
 
                 player_decided = False
                 enemy_decided = False
+
 
             pygame.display.update()
         return self.mob_living

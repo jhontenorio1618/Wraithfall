@@ -50,15 +50,20 @@ for i in range(5):
     healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
 
 
-testentity_text_lines = [
+test_entity_text_lines = [
     TextBox("Let's practice safety training, Oliver. Press [ENTER] to start.", "Grandpa", "Happy"),
 ]
-testentity_scene = SceneManager(testentity_text_lines, "text_sound.wav")
+combat_menu_text_lines = [
+    TextBox("Careful, Oliver.", "Grandpa", "Neutral"),
+]
+test_entity_scene = SceneManager(test_entity_text_lines, "text_sound.wav")
+combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
 
 # Game Loop
 looping = True
 combat_invul = False
 playing_cutscene = True
+first_battle = True
 while looping:
     clock.tick(WIN.get_fps())
     # Input Events
@@ -94,8 +99,10 @@ while looping:
                         selected_item.use_item()
             else:
                 # Cutscene Controls
+
+                # Enter key
                 if event.key == pygame.K_RETURN:
-                    playing_cutscene = not testentity_scene.next_textbox()
+                    playing_cutscene = not test_entity_scene.next_textbox()
 
         # check click on window exit button
         if event.type == pygame.QUIT:
@@ -107,7 +114,12 @@ while looping:
         # Player and Mob collision
         player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
         if not combat_invul and player_mob_collide:
-            combat = Battle(player, player_mob_collide[0])
+            if first_battle:
+                battle_scene = combat_menu_scene
+                first_battle = False
+            else:
+                battle_scene = None
+            combat = Battle(player, player_mob_collide[0], scene=battle_scene)
             remaining_mob = combat.combat_screen()
             if remaining_mob:
                 # Run away was chosen
@@ -164,7 +176,7 @@ while looping:
     item_display_overworld(player, game_sprites, gui_sprites, SCREEN)
     gui_sprites.draw(SCREEN)
 
-    playing_cutscene = play_scene(testentity_scene, playing_cutscene)
+    playing_cutscene = play_scene(test_entity_scene, playing_cutscene)
     # print(playing_cutscene)
     # update the display window...
     pygame.display.update()
