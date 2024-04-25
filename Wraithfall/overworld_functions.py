@@ -1,5 +1,6 @@
 import pygame, sys, os
-from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIGHT, game_exit, scale_to_screen as stsc
+from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIGHT, game_exit, \
+    scale_to_screen as stsc, DIR_MUSIC
 import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld as item_display
 import pygame.event as EVENTS
@@ -11,8 +12,27 @@ pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Overworld Code")
 clock = pygame.time.Clock()
+# pygame.mixer.music.load(os.path.join(DIR_MUSIC, "backgroundmusic1.wav"))
+# pygame.mixer.music.play(-1) #makes music continue to loop
 
 """ Functions below are intended to be inserted BEFORE the Game Loop. """
+
+def load_mixer(audio_file):
+    pygame.mixer.music.load(os.path.join(DIR_MUSIC, audio_file))
+    return True
+
+def play_mixer(loops=-1):
+    pygame.mixer.music.play(loops)
+
+def pause_mixer():
+    pygame.mixer.music.pause()
+
+def unpause_mixer():
+    pygame.mixer.music.unpause()
+
+def stop_mixer():
+    pygame.mixer.music.stop()
+
 
 # Sprite Groups
 def setup_sprite_groups():
@@ -132,8 +152,10 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             battle_scene = None
         else:
             battle_scene = combat_cutscene
+        stop_mixer()
         combat = Battle(player, player_mob_collide[0], scene=battle_scene)
         remaining_mob = combat.combat_screen()
+        play_mixer()
         if remaining_mob:
             # Run away was chosen
             combat_invul = True
@@ -150,7 +172,7 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
         # player.set_stats({"HP": player.get_stats()["HP Max"]})
         
         #pause music when entering battle
-        pygame.mixer.music.pause()
+        # pygame.mixer.music.pause()
         music_paused = True
 
     if combat_invul:
