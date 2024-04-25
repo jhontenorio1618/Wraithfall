@@ -272,10 +272,12 @@ class Battle:
         animation_sprite_group = pygame.sprite.Group()
         battle_anim = BattleAnimation()
         if self.player.access_sword() is not None:
+            #If player has the sword equipped load sword spritesheet
             battle_anim.shift_form(self.player.access_sword().get_form())
-        #If player doesnt have access to the sword use the knnife spritesheet
-        battle_anim = BattleAnimation()
-        battle_anim.load_spritesheets("KNIFEBATTLEspritesheet.png")
+        else:
+            #If player doesnt have access to the sword use the knife spritesheet
+            battle_anim = BattleAnimation()
+            battle_anim.load_spritesheets("KNIFEBATTLEspritesheet.png")
         
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
