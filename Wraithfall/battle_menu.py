@@ -278,6 +278,11 @@ class Battle:
         # Load background image
         background_image = pygame.image.load(os.path.join(DIR_IMAGES, "BATTLEBG.png")).convert_alpha()
         scaled_background_image = pygame.transform.scale(background_image, (1280, 720))
+        
+        #Load mob image  # Load mob image
+        mob_image = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITHSINGLEFRAME.png")).convert_alpha()
+        mob_image = pygame.transform.scale(mob_image, (100, 100))  # Adjust size as needed
+
 
         while self.in_combat:
             if open_sword_menu:
@@ -332,6 +337,9 @@ class Battle:
                                  curr_val=self.mob.get_stats()["HP"], max_val=self.mob.get_stats()["HP Max"])
             display_text(text=self.mob.get_name(), coords=(95, 63), font_size=40, font_color="White")
 
+            #Blit mob image unnderneath mobs status bar
+            SCREEN.blit(mob_image,(200,200))
+            
             # Player Data Box
             player_stats = self.player.get_stats()
             draw_rect(coords=(705, 275), size=(500, 150), fill=False, border_size=2)
