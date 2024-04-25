@@ -1,7 +1,7 @@
 import pygame, sys, os, game_window as WIN
 from button import Button
 import entity_classes as ENTITY
-from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc, DIR_SPRITES
+from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc, DIR_SPRITES, DIR_IMAGES
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -11,7 +11,6 @@ from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Battle")
-
 
 def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_color="#A90505"):
     """ Uses parameters to create new button object.
@@ -275,6 +274,11 @@ class Battle:
             battle_anim.shift_form(self.player.access_sword().get_form())
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
+
+        # Load background image
+        background_image = pygame.image.load(os.path.join(DIR_IMAGES, "BATTLEBG.png")).convert_alpha()
+        scaled_background_image = pygame.transform.scale(background_image, (1280, 720))
+
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
@@ -290,7 +294,9 @@ class Battle:
                 open_item_menu = False
 
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-            SCREEN.fill(self.background_color)
+
+            # Blit background image
+            SCREEN.blit(scaled_background_image, (0, 0))
 
             animation_sprite_group.draw(SCREEN)
 
