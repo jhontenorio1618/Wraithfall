@@ -5,7 +5,8 @@ from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
 from overworld_functions import check_player_death, entity_collision, \
-    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, input_events
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, \
+    load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -75,8 +76,10 @@ combat_menu_text_lines = [
 test_entity_scene = SceneManager(test_entity_text_lines, "text_sound.wav")
 combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
 
-pygame.mixer.music.load(os.path.join(WIN.DIR_MUSIC, "backgroundmusic1.wav"))
-pygame.mixer.music.play(-1) #makes music continue to loop
+load_mixer("backgroundmusic1.wav")
+play_mixer(-1)
+# pygame.mixer.music.load(os.path.join(WIN.DIR_MUSIC, "backgroundmusic1.wav"))
+# pygame.mixer.music.play(-1) #makes music continue to loop
 
 
 # Game Loop
@@ -210,9 +213,9 @@ while looping:
         current_cutscene = None
         
     if playing_cutscene or current_cutscene is not None:
-        pygame.mixer.music.pause()
+        pause_mixer()
     else:
-        pygame.mixer.music.unpause()
+        unpause_mixer()
         
         
     # print(playing_cutscene)
@@ -221,5 +224,5 @@ while looping:
     pygame.display.update()
     
     
-pygame.mixer.music.stop()
+stop_mixer()
 
