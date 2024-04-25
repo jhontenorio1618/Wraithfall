@@ -6,7 +6,7 @@ from pytmx.util_pygame import load_pygame
 class Object(pygame.sprite.Sprite):
     def __init__(self,pos,group):
         super().__init__(group)
-        self.image = pygame.image.load('insert map file').convert_alpha()
+        self.image = pygame.image.load('cabin room map.tmx').convert_alpha()
         self.rect = self.image.get_rect(topleft = pos)
 
 class Player(pygame.sprite.Sprite):
@@ -121,6 +121,7 @@ player = Player((640,360)),camera_group)
 for i in range(20):
     random_x = randint(0,1000)
     random_y = randint(0,1000)
+    #populates objects randomly
     Objects((random_x,random_y), camera_group)
 
 while True:
