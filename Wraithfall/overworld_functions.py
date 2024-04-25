@@ -119,13 +119,14 @@ def check_player_death(player, SCREEN, is_dead=False):
     """ Goes into the game loop. """
     player_hp = player.get_stats()["HP"]
     death = False
+    game_over = False
     game_over_displayed = False  # Flag to track if "GAME OVER" screen is displayed
     if player_hp <= 0 or is_dead:
-        death = True
+        game_over = True
         game_over_displayed = True  # Set flag to True to display "GAME OVER" screen
 
     # Main game loop
-    while True:
+    while game_over:
         # Fill the screen with black color if "GAME OVER" screen is displayed
         if game_over_displayed:
             SCREEN.fill((0, 0, 0))
@@ -145,8 +146,11 @@ def check_player_death(player, SCREEN, is_dead=False):
                 if event.type == KEYDOWN and event.key == K_RETURN:
                     # Teleport player to (0,0)
                     player.warp(x=0, y=0)
+                    player.hp_update(player.get_stats()["HP Max"])
                     game_over_displayed = False  # Set flag to False to hide "GAME OVER" screen
-                    return death  # Exit the function when Enter key is pressed
+                    game_over = False  # Exit the function when Enter key is pressed
+                if event.type == pygame.QUIT:
+                    game_exit()
 
 music_pause = False
 
