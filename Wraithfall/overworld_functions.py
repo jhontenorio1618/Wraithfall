@@ -18,15 +18,18 @@ def setup_sprite_groups():
     game_sprites = pygame.sprite.Group()
     mob_sprites = pygame.sprite.Group()
     mob_vision_sprites = pygame.sprite.Group()
+    npc_spites = pygame.sprite.Group()
     item_sprites = pygame.sprite.Group()
     sword_sprite = pygame.sprite.Group()
     gui_sprites = pygame.sprite.Group()
     sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
-                     "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites}
+                     "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites,
+                     "NPC": npc_spites}
     return sprite_groups
 
 
 sprite_groups = setup_sprite_groups()
+
 def get_sprite_groups():
     return sprite_groups
 
