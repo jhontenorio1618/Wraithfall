@@ -58,7 +58,7 @@ def draw_rect(coords, size, fill=False, border=True, fill_color="#313131", borde
         pygame.draw.rect(SCREEN, fill_color, body_rect, stsc(border_size))"""
 
 
-def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
+def item_display_overworld(player, game_sprite_group, gui_sprite_group):
     success = False
     if player.check_inventory():
         # Only display if the player has items in their inventory
@@ -111,6 +111,16 @@ def item_menu(player):
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
+        draw_rect(coords=(100, 50), size=(1080, 500))
+        s = pygame.Surface((1080, 500), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (100, 50))
+
+        draw_rect(coords=(530, 575), size=(220, 100))
+        s = pygame.Surface((220, 100), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (530, 575))
+
         item_buttons = []
         item_pointer = 1
         x_axis = 370
@@ -127,7 +137,7 @@ def item_menu(player):
                 y_axis = 130
                 x_axis += 520
 
-        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+        BACK_BUTTON, back_displayed = setup_button(coords=(645, 620), text="BACK", font_size=52)
         # back_displayed = False
 
         for i in range(len(item_buttons)):

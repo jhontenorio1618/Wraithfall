@@ -102,7 +102,7 @@ def input_events(player, events, playing_cutscene=False, cutscene=None):
             game_exit()
 
 
-def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
+def item_display_overworld(player, game_sprite_group, gui_sprite_group):
     """ Goes into the game loop. Calls the function from battle_menu. """
     success = item_display(player, game_sprite_group, gui_sprite_group, SCREEN)
     return success

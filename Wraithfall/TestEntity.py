@@ -197,7 +197,7 @@ while looping:
     SCREEN.fill("#000000")
     sprite_groups["Game"].draw(SCREEN)
     # TODO GUI code here
-    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"], SCREEN)
+    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"])
     sprite_groups["GUI"].draw(SCREEN)
 
     playing_cutscene = play_scene(current_cutscene, playing_cutscene)
