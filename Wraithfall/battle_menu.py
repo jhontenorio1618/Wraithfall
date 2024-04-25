@@ -281,7 +281,7 @@ class Battle:
         
         #Load mob image  # Load mob image
         mob_image = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITHSINGLEFRAME.png")).convert_alpha()
-        mob_image = pygame.transform.scale(mob_image, (100, 100))  # Adjust size as needed
+        mob_image = pygame.transform.scale(mob_image, (200, 200))  # Adjust size as needed
 
 
         while self.in_combat:
@@ -338,7 +338,7 @@ class Battle:
             display_text(text=self.mob.get_name(), coords=(95, 63), font_size=40, font_color="White")
 
             #Blit mob image unnderneath mobs status bar
-            SCREEN.blit(mob_image,(200,200))
+            SCREEN.blit(mob_image,(250,200))
             
             # Player Data Box
             player_stats = self.player.get_stats()
