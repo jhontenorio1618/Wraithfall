@@ -78,6 +78,7 @@ combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
 pygame.mixer.music.load(os.path.join(WIN.DIR_MUSIC, "backgroundmusic1.wav"))
 pygame.mixer.music.play(-1) #makes music continue to loop
 
+
 # Game Loop
 looping = True
 combat_invul = False
@@ -216,7 +217,9 @@ while looping:
         
     # print(playing_cutscene)
     # update the display window...
+    
     pygame.display.update()
+    
     
 pygame.mixer.music.stop()
 

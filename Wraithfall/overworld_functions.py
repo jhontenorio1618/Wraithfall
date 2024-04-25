@@ -121,6 +121,7 @@ def check_player_death(player, is_dead=False):
         player.warp(x=WIN_WIDTH/2, y=WIN_HEIGHT/2)
     return death
 
+music_pause = False
 
 def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, combat_cutscene=None):
     """ Goes into the game loop. """
@@ -147,6 +148,10 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             # mob_sprites[0]
         # Recover HP at the end of combat
         # player.set_stats({"HP": player.get_stats()["HP Max"]})
+        
+        #pause music when entering battle
+        pygame.mixer.music.pause()
+        music_paused = True
 
     if combat_invul:
         curr_time = pygame.time.get_ticks()
