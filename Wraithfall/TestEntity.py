@@ -207,6 +207,12 @@ while looping:
     playing_cutscene = play_scene(current_cutscene, playing_cutscene)
     if not playing_cutscene and current_cutscene is not None:
         current_cutscene = None
+        
+    if playing_cutscene or current_cutscene is not None:
+        pygame.mixer.music.pause()
+    else:
+        pygame.mixer.music.unpause()
+        
     # print(playing_cutscene)
     # update the display window...
     pygame.display.update()
