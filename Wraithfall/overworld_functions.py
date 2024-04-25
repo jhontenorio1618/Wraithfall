@@ -28,9 +28,10 @@ def setup_sprite_groups():
     item_sprites = pygame.sprite.Group()  # Item sprites
     sword_sprite = pygame.sprite.Group()  # Sword sprite
     gui_sprites = pygame.sprite.Group()  # GUI sprites (items to be observed not touched)
+    scene_trigger_sprites = pygame.sprite.Group() # Collision sprite groups for warps
     all_sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
                      "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites,
-                     "NPC": npc_spites}
+                     "NPC": npc_spites, "Scene": scene_trigger_sprites}
     return all_sprite_groups
 
 
