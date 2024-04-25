@@ -6,9 +6,7 @@ from game_window import random, math, get_font, window_size, game_exit, scale_to
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
 
-from overworld_functions import check_player_death, entity_collision, \
-    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, \
-    load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
+from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer, unload_mixer
 
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
@@ -240,9 +238,6 @@ def sword_menu(player):
         pygame.display.update()
     return player.access_sword().get_form()
 
-#load music
-load_mixer("battlemusic.wav")
-play_mixer(-1)
 
 class Battle:
     def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black", scene=None):
@@ -270,6 +265,9 @@ class Battle:
         exp_gained = 0
         player_decided = False
         enemy_decided = False
+        # Load music
+        load_mixer("battlemusic.wav")
+        play_mixer(-1)
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
@@ -348,6 +346,8 @@ class Battle:
                     run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
                 else:
                     # Mob is dead
+                    stop_mixer()
+                    unload_mixer()
                     # Display exit button that appears as "NEXT"
                     next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
                     new_exp = current_exp + exp_gained
@@ -448,7 +448,7 @@ class Battle:
 
 
             pygame.display.update()
-        pause_mixer()
+
         return self.mob_living
 
     def run_state(self):

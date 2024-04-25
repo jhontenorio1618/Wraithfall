@@ -4,6 +4,7 @@ from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIG
 import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld as item_display
 import pygame.event as EVENTS
+from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -16,23 +17,6 @@ clock = pygame.time.Clock()
 # pygame.mixer.music.play(-1) #makes music continue to loop
 
 """ Functions below are intended to be inserted BEFORE the Game Loop. """
-
-def load_mixer(audio_file):
-    pygame.mixer.music.load(os.path.join(DIR_MUSIC, audio_file))
-    return True
-
-def play_mixer(loops=-1):
-    pygame.mixer.music.play(loops)
-
-def pause_mixer():
-    pygame.mixer.music.pause()
-
-def unpause_mixer():
-    pygame.mixer.music.unpause()
-
-def stop_mixer():
-    pygame.mixer.music.stop()
-
 
 # Sprite Groups
 def setup_sprite_groups():
@@ -155,6 +139,7 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
         stop_mixer()
         combat = Battle(player, player_mob_collide[0], scene=battle_scene)
         remaining_mob = combat.combat_screen()
+        load_mixer("backgroundmusic1.wav")
         play_mixer()
         if remaining_mob:
             # Run away was chosen

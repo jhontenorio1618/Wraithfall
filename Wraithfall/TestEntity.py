@@ -5,8 +5,9 @@ from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
 from overworld_functions import check_player_death, entity_collision, \
-    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, \
-    load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups
+
+from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -75,6 +76,7 @@ combat_menu_text_lines = [
 ]
 test_entity_scene = SceneManager(test_entity_text_lines, "text_sound.wav")
 combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
+
 
 load_mixer("backgroundmusic1.wav")
 play_mixer(-1)
