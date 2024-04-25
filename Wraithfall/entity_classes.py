@@ -420,7 +420,7 @@ class Mob(Entity):
         return self.target
 
 
-npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"},}
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"}}
 
 
 class NPC(Entity):
@@ -596,23 +596,39 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
-             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
-             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": ""}
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "ITEMspritesheet.png"},
+             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "ITEMspritesheet.png"}
              }
 
 
 class Item(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        #Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         self.found_player = None
         if item_id not in item_dict:
             item_id = 0
         self.item_val = item_dict[item_id]
         self.name = self.item_val["NAME"]
         self.type = self.item_val["TYPE"]
+        self.load_spritesheet()
+
+    def load_spritesheet(self):
+        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "ITEMspritesheet.png")).convert_alpha()
+        frame_width = 17  # Width of each item frame
+        frame_height = 17  # Height of each item frame
+        scale = stsc(2)  # Scale factor
+        # Load all frames for the item
+        all_frames = collect_frames(item_sheet, 5, frame_width, frame_height, scale)
+        # Store the frames for each item
+        self.frames = {"Bandage": all_frames[0], "Dirty Bandage": all_frames[1], "Fire Essence": all_frames[2],
+                       "Ice Essence": all_frames[3], "Dark Essence": all_frames[4]}
+
+    def draw(self, screen):
+        screen.blit(self.frames[self.name][0], (self.rect.x, self.rect.y))
+
 
     def pickup(self, player):
         """ Checks if Player has room in inventory for item. If yes, set reference to Player. """
