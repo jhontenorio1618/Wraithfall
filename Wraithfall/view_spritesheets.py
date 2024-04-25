@@ -23,6 +23,7 @@ wraithsoul_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITHSOULSP
 wraith1_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH1SPRITESHEET.png")).convert_alpha()
 wraith2_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
 wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
+deer_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DEERSPRITESHEET.png")).convert_alpha()
 
 # Battle Sprites
 battlesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BATTLESWORDspritesheet.png")).convert_alpha()
@@ -70,6 +71,7 @@ wraithsoul_sprites = collect_frames(wraithsoul_sheet, 12, 17, 17, 3)
 wraith1_sprites = collect_frames(wraith1_sheet, 24, 18, 20, 3)
 wraith2_sprites = collect_frames(wraith2_sheet, 10, 17, 20, 3)
 wraith3_sprites = collect_frames(wraith3_sheet, 8, 17, 20, 3)
+deer_sprites = collect_frames(deer_sheet, 6, 23, 20, 3)
 
 # Item Frames
 bandage_sprite = collect_frames(bandage_sheet, 1, 19, 12, 2)
@@ -103,7 +105,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [apple_sprite, deermeat_sprite]
+    sprites_to_print = [apple_sprite, deermeat_sprite, deer_sprites]
     while run:
 
         # update background
