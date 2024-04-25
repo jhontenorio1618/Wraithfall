@@ -67,7 +67,11 @@ for i in range(10):
     index = i % 7
     healing_item = spawn_entity(ENTITY.Item(item_id=index), "Item", spawn_xy=(WIN.WIN_WIDTH/2 + 30 + i*15, WIN.WIN_HEIGHT/2))
 
+all_warps = pygame.sprite.Group()
+
+
 sprite_groups = get_sprite_groups()
+
 
 
 test_entity_text_lines = [
@@ -93,6 +97,34 @@ invul_time = 0
 playing_cutscene = True
 current_cutscene = test_entity_scene
 first_battle = True
+
+""" Make trigger for cutscenes using collision. """
+collide_to_cutscenes = []
+cutscene_coordinates = [(50, 10), (100, 10), (150, 10), (200, 10), (250, 10),
+                        (300, 10), (350, 10), (400, 10), (450, 10), (500, 10),
+                        (550, 10)]
+for i in range(11):
+    cutscene_zone = spawn_entity(ENTITY.BoundingBox(bound_box_size=(10,10), fill_color="#FFFFFF"),
+                                 "Scene", spawn_xy=cutscene_coordinates[i])
+    scene_trigger = pygame.sprite.Group()
+    scene_trigger.add(cutscene_zone)
+    scene_id = i + 1
+    collide_to_cutscenes.append([scene_trigger, scene_id])
+
+
+def check_cutscene_trigger(player, collision_box_list):
+    # scene_id = 1
+    current_scene = None
+    playing_cutscene = False
+    for scene_collide, scene_index in collision_box_list:
+        player_scene_collide = pygame.sprite.spritecollide(player, scene_collide, True)
+        if player_scene_collide:
+            current_scene = get_scene(scene_index)
+            playing_cutscene = True
+    return current_scene, playing_cutscene
+
+
+
 while looping:
     # Updating reference to sprite groups
     sprite_groups = get_sprite_groups()
@@ -145,72 +177,18 @@ while looping:
         combat_invul, invul_time = entity_collision(player, sprite_groups, combat_invul=combat_invul, invul_time=invul_time,
                                                     combat_cutscene=combat_menu_scene)
 
-        """
-        # Player and Mob collision
-        player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
-        if not combat_invul and player_mob_collide:
-            if first_battle:
-                battle_scene = combat_menu_scene
-                first_battle = False
-            else:
-                battle_scene = None
-            combat = Battle(player, player_mob_collide[0], scene=battle_scene)
-            remaining_mob = combat.combat_screen()
-            if remaining_mob:
-                # Run away was chosen
-                combat_invul = True
-                start_invul_time = pygame.time.get_ticks()
-            else:
-                # Defeated mob, so remove mob from map
-                player_mob_collide[0].get_bb_anchor().kill()
-                player_mob_collide[0].kill()
-                combat_invul = True
-                start_invul_time = pygame.time.get_ticks()
-                # pygame.sprite.spritecollide(player, mob_sprites, True)
-                # mob_sprites[0]
-
-        if combat_invul:
-            curr_time = pygame.time.get_ticks()
-            if curr_time - start_invul_time >= 5000:
-                combat_invul = False
-
-        # Mob stops following Player if outside of detection bounding box
-        for mob in mob_sprites:
-            mob.set_target(None)
-
-        # Checks if Player is in Mob's detection bounding box
-        mob_detection_box = pygame.sprite.spritecollide(player, mob_vision_sprites, False)
-        if mob_detection_box and not combat_invul:
-            for mob in mob_detection_box:
-                found_mob = mob.get_entity()
-                if found_mob:
-                    found_mob.set_target(player)
-
-        # Player and Sword collision
-        player_sword_collide = pygame.sprite.spritecollide(player, sword_sprite, False)
-        if player_sword_collide:
-            sword_ref = player_sword_collide[0]
-            if sword_ref.verify() is None:
-                # Player picks up the sword
-                sword_ref.pickup(player)
-
-        # Player and Item collision
-        player_item_collide = pygame.sprite.spritecollide(player, item_sprites, False)
-        if player_item_collide:
-            item_ref = player_item_collide[0]
-            if item_ref.verify() is None:
-                # Player picks up item
-                if item_ref.pickup(player):
-                    remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
-        """
-
     check_player_death(player)
 
     SCREEN.fill("#483b46")
     sprite_groups["Game"].draw(SCREEN)
-    # TODO GUI code here
-    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"])
-    sprite_groups["GUI"].draw(SCREEN)
+    if not playing_cutscene:
+        # TODO GUI code here
+        item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"])
+        sprite_groups["GUI"].draw(SCREEN)
+
+        # Seeing if player found a cutscene zone
+        current_cutscene, playing_cutscene = check_cutscene_trigger(player, collide_to_cutscenes)
+
 
     playing_cutscene = play_scene(current_cutscene, playing_cutscene)
     if not playing_cutscene and current_cutscene is not None:
