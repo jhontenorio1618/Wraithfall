@@ -5,7 +5,7 @@ from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
 from overworld_functions import check_player_death, entity_collision, \
-    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, input_events
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -79,6 +79,7 @@ looping = True
 combat_invul = False
 invul_time = 0
 playing_cutscene = True
+current_cutscene = test_entity_scene
 first_battle = True
 while looping:
     # Updating reference to sprite groups
@@ -120,7 +121,7 @@ while looping:
 
                 # Enter key
                 if event.key == pygame.K_RETURN:
-                    playing_cutscene = not test_entity_scene.next_textbox()
+                    playing_cutscene = not current_cutscene.next_textbox()
 
         # check click on window exit button
         if event.type == pygame.QUIT:
@@ -199,7 +200,9 @@ while looping:
     item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"], SCREEN)
     sprite_groups["GUI"].draw(SCREEN)
 
-    playing_cutscene = play_scene(test_entity_scene, playing_cutscene)
+    playing_cutscene = play_scene(current_cutscene, playing_cutscene)
+    if not playing_cutscene and current_cutscene is not None:
+        current_cutscene = None
     # print(playing_cutscene)
     # update the display window...
     pygame.display.update()

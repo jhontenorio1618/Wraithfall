@@ -193,7 +193,7 @@ def play_scene(scene, playing):
                 # If enter key is pressed move to the next line
                 if event.key == pygame.K_RETURN:
                     ongoing_scene = not scene.next_textbox()
-                    print(ongoing_scene)
+                    # print(ongoing_scene)
 
         scene.draw_textboxes(SCREEN)
 
