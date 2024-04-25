@@ -558,6 +558,8 @@ class NPC(Entity):
         self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
 
 
+# swords_dict = {"BASE"}
+
 class Sword(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#FFCC40", sword_attack=None):
         # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
@@ -572,13 +574,13 @@ class Sword(Entity):
         self.current_frame = 0
         self.animation_speed = 0.13
         self.last_update = pygame.time.get_ticks()
-        self.load_spritesheets()
+        self.load_spritesheets("SWORDspritesheet.png")
         self.direction = 'forward'
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
 
-    def load_spritesheets(self):
-        sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
+    def load_spritesheets(self, sprite_sheet):
+        sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = 17
         frame_height = 17
         scale = get_universal_scale()
@@ -659,15 +661,19 @@ class Sword(Entity):
         # TODO should change aspects of the sword here. For now, it's only visual
         if form == "BASE":
             self.form = "BASE"
+            self.load_spritesheets("SWORDspritesheet.png")
             # self.image.fill("#FFCC40")
         if form == "FIRE":
             self.form = "FIRE"
+            self.load_spritesheets("FIRESWORDspritesheet.png")
             # self.image.fill("#FF0000")
         if form == "ICE":
             self.form = "ICE"
+            self.load_spritesheets("ICESWORDspritesheet.png")
             # self.image.fill("#0000FF")
         if form == "DARK":
             self.form = "DARK"
+            self.load_spritesheets("DARKSWORDspritesheet.png")
             # self.image.fill("#FF00FF")
         return self.form
 
@@ -693,11 +699,12 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "BANDAGEsprite.png"},
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 10, "SPRITE": "BANDAGEsprite.png"},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "FIREESSENCEsprite.png"},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"}
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"},
+             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"} # TODO apple sprite
              }
 
 item_sprite_data = {"BANDAGEsprite.png":
@@ -710,6 +717,8 @@ item_sprite_data = {"BANDAGEsprite.png":
                         {'dimensions': [14, 15], 'total': 1},
                    "DARKESSENCEsprite.png":
                         {'dimensions': [14, 17], 'total': 1},
+                    "APPLEsprite.png":
+                        {'dimensions': [19, 12], 'total': 1}, # TODO apple sprite dimensions
                    }
 
 class Item(Entity):
