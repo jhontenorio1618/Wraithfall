@@ -164,7 +164,7 @@ level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5,
               2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
               3: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
               4: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
-              5: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
+              5: {"BASE EXP": 5, "GOAL EXP": 9999999999, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
 
 
 class Player(Entity):
@@ -376,8 +376,8 @@ class Player(Entity):
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 2, "SPRITE": "WRAITH1SPRITESHEET.png"},
-            1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
-                "EXP": 50, "SPRITE": ""},
+            1: {"NAME": "[Boss Wraith]", "STATS": {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 10, "SPD": 0},
+                "EXP": 50, "SPRITE": "BOSSWRAITHSPRITESHEET.png"},
             2: {"NAME": "Wraithsoul", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.png"},
             3: {"NAME": "[Med Wraith 2]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
@@ -399,7 +399,11 @@ mob_sprite_data = {"WRAITH1SPRITESHEET.png":
                    "WRAITH2SPRITESHEET.png":
                          {'f': [0, 4], 'b': [5, 9],
                           # 'r': [5, 9], 'l': [0, 4],
-                          'dimensions': [17, 20], 'total': 10}
+                          'dimensions': [17, 20], 'total': 10},
+                   "BOSSWRAITHSPRITESHEET.png":
+                       {'f': [0, 5], 'b': [0, 5],
+                        # 'r': [5, 9], 'l': [0, 4],
+                        'dimensions': [59, 52], 'total': 5},
                    }
 
 

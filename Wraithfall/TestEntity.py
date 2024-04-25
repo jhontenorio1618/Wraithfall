@@ -53,6 +53,7 @@ for i in range(5):
     # dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(225, 225)), "Mob Vision")
     # dummy_box.set_entity(dummy_wraith)
     dummy_wraith.set_speed(0, 0)
+BOSS_wraith = spawn_entity(ENTITY.Mob(mob_id=1), "Mob", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT - 150), override_mob_vision=True)
 
 # Sword Entity
 sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 75))

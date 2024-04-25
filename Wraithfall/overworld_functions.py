@@ -147,7 +147,8 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             invul_time = pygame.time.get_ticks()
         else:
             # Defeated mob, so remove mob from map
-            player_mob_collide[0].get_bb_anchor().kill()
+            if player_mob_collide[0].get_bb_anchor() is not None:
+                player_mob_collide[0].get_bb_anchor().kill()
             player_mob_collide[0].kill()
             combat_invul = True
             invul_time = pygame.time.get_ticks()
