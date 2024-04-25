@@ -616,11 +616,11 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "ITEMspritesheet.png"},
-             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
-             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "ITEMspritesheet.png"}
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "BANDAGEsprite.png"},
+             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "FIREESSENCEsprite.png"},
+             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGE.png"}
              }
 
 
@@ -637,15 +637,10 @@ class Item(Entity):
         self.load_spritesheet()
 
     def load_spritesheet(self):
-        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "ITEMspritesheet.png")).convert_alpha()
+        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
         frame_width = 17  # Width of each item frame
         frame_height = 17  # Height of each item frame
         scale = stsc(2)  # Scale factor
-        # Load all frames for the item
-        all_frames = collect_frames(item_sheet, 5, frame_width, frame_height, scale)
-        # Store the frames for each item
-        self.frames = {"Bandage": all_frames[0], "Dirty Bandage": all_frames[1], "Fire Essence": all_frames[2],
-                       "Ice Essence": all_frames[3], "Dark Essence": all_frames[4]}
 
     def draw(self, screen):
         screen.blit(self.frames[self.name][0], (self.rect.x, self.rect.y))
