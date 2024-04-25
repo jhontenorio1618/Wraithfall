@@ -607,6 +607,7 @@ item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "ITEMspr
 class Item(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
         #Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()
         self.found_player = None
         if item_id not in item_dict:
             item_id = 0
