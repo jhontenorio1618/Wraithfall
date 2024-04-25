@@ -1,15 +1,16 @@
 import pygame, sys, os, game_window as WIN
 from button import Button
 import entity_classes as ENTITY
-from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc
+from game_window import random, math, get_font, window_size, game_exit, scale_to_screen as stsc, DIR_SPRITES, DIR_IMAGES
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
+from view_spritesheets import collect_frames
+from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer, unload_mixer
 
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Battle")
-
 
 def setup_button(coords, text, font_size=75, base_color="#FFFFFF", hovering_color="#A90505"):
     """ Uses parameters to create new button object.
@@ -84,6 +85,9 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
             display_text(text="E ->", coords=(154, 532), font_size=16, font_color="White")
         if current_item.found_player is not None:
             item_name = current_item.get_name()
+            for item in gui_sprite_group:
+                # Stops any sprite overlapping
+                item.kill()
             # Print item name
             display_text(text=item_name, coords=(115, 626), font_size=16, font_color="White", align="center")
             # Assure current_item is in proper sprite groups
@@ -92,7 +96,7 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
             if current_item not in game_sprite_group:
                 game_sprite_group.add(current_item)
             # Display item appearance (coords are center of item)
-            current_item.warp(x=stsc(115), y=stsc(600))
+            current_item.warp(x=stsc(115), y=stsc(590))
         else:
             # Stop Item from appearing in GUI by killing it
             if current_item in gui_sprite_group:
@@ -172,16 +176,26 @@ def sword_menu(player):
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
+        draw_rect(coords=(100, 50), size=(1080, 500))
+        s = pygame.Surface((1080, 500), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (100, 50))
+
+        draw_rect(coords=(530, 575), size=(220, 100))
+        s = pygame.Surface((220, 100), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (530, 575))
+
         # Button pressed for BASE sword form
-        SWORD_BASE, base_displayed = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
+        SWORD_BASE, base_displayed = setup_button(coords=(345, 180), text="BASE", font_size=80, hovering_color="#FFCC40")
         # Button pressed for FIRE sword form
-        SWORD_FIRE, fire_displayed = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
+        SWORD_FIRE, fire_displayed = setup_button(coords=(327, 420), text="FIRE", font_size=80,hovering_color="#FF0000")
         # Button pressed for ICE sword form
-        SWORD_ICE, ice_displayed = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
+        SWORD_ICE, ice_displayed = setup_button(coords=(976, 180), text="ICE", font_size=80,hovering_color="#0000FF")
         # Button pressed for DARK sword form
-        SWORD_DARK, dark_displayed = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
+        SWORD_DARK, dark_displayed = setup_button(coords=(926, 420), text="DARK", font_size=80,hovering_color="#FF00FF")
         # Button pressed to exit Sword menu without making a selection
-        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+        BACK_BUTTON, back_displayed = setup_button(coords=(645, 620), text="BACK", font_size=52)
 
         base_displayed = enable_button(SWORD_BASE, PLAY_MOUSE_POSITION)
         fire_displayed = enable_button(SWORD_FIRE, PLAY_MOUSE_POSITION)
@@ -250,10 +264,26 @@ class Battle:
         exp_gained = 0
         player_decided = False
         enemy_decided = False
+        loot_id = 1
+        # Load music
+        load_mixer("battlemusic.wav")
+        play_mixer(-1)
+        animation_sprite_group = pygame.sprite.Group()
+        battle_anim = BattleAnimation()
+        if self.player.access_sword() is not None:
+            battle_anim.shift_form(self.player.access_sword().get_form())
+        battle_anim.move()
+        animation_sprite_group.add(battle_anim)
+
+        # Load background image
+        background_image = pygame.image.load(os.path.join(DIR_IMAGES, "BATTLEBG.png")).convert_alpha()
+        scaled_background_image = pygame.transform.scale(background_image, (1280, 720))
+
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
-                sword_menu(self.player)
+                sword_form = sword_menu(self.player)
+                battle_anim.shift_form(sword_form)
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
@@ -264,7 +294,11 @@ class Battle:
                 open_item_menu = False
 
             PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-            SCREEN.fill(self.background_color)
+
+            # Blit background image
+            SCREEN.blit(scaled_background_image, (0, 0))
+
+            animation_sprite_group.draw(SCREEN)
 
             # Button pressed to attack the mob
             BATTLE_FIGHT, fight_displayed = setup_button(coords=(360, 533), text="FIGHT")
@@ -289,15 +323,21 @@ class Battle:
 
             # Mob Data Box
             mob_border_status = {0: "White", 1: "Red", 2: "Blue"}
-            draw_rect(coords=(75, 50), size=(500, 150), fill=True,
+            draw_rect(coords=(75, 50), size=(500, 150), fill=False,
                       border_color=mob_border_status[self.mob_effect], border_size=2)
+            s = pygame.Surface((500, 150), pygame.SRCALPHA)
+            s.fill((49, 49, 49, 128))  # "#313131" with transparency
+            SCREEN.blit(s, (75, 50))
             self.draw_status_bar(coords=(115, 135), size=(420, 30),
                                  curr_val=self.mob.get_stats()["HP"], max_val=self.mob.get_stats()["HP Max"])
             display_text(text=self.mob.get_name(), coords=(95, 63), font_size=40, font_color="White")
 
             # Player Data Box
             player_stats = self.player.get_stats()
-            draw_rect(coords=(705, 275), size=(500, 150), fill=True, border_size=2)
+            draw_rect(coords=(705, 275), size=(500, 150), fill=False, border_size=2)
+            s = pygame.Surface((500, 150), pygame.SRCALPHA)
+            s.fill((49, 49, 49, 128))  # "#313131" with transparency
+            SCREEN.blit(s, (705, 275))
             self.draw_status_bar(coords=(745, 360), size=(420, 30),
                                  curr_val=player_stats["HP"], max_val=player_stats["HP Max"])
             player_hp_text = str(player_stats["HP"]) + "/" + str(player_stats["HP Max"])
@@ -317,7 +357,10 @@ class Battle:
 
             if not self.playing_cutscene:
                 # Command Box
-                draw_rect(coords=(20, 480), size=(1240, 220), fill=True, border_size=2)
+                draw_rect(coords=(20, 480), size=(1240, 220), fill=False, border_size=2)
+                s = pygame.Surface((1240, 220), pygame.SRCALPHA)
+                s.fill((49, 49, 49, 128))  # "#313131" with transparency
+                SCREEN.blit(s, (20, 480))
                 if self.mob_living and self.player_living:
                     # Mob remains alive
                     # TODO Put visuals for mobs here
@@ -328,6 +371,11 @@ class Battle:
                     run_displayed = enable_button(BATTLE_RUN, PLAY_MOUSE_POSITION)
                 else:
                     # Mob is dead
+                    stop_mixer()
+                    unload_mixer()
+                    # Essence for Sword is dropped
+                    possible_loot_ids = [1, 2, 3]
+                    loot_id = random.choice(possible_loot_ids)
                     # Display exit button that appears as "NEXT"
                     next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
                     new_exp = current_exp + exp_gained
@@ -427,8 +475,10 @@ class Battle:
                 enemy_decided = False
 
 
+            animation_sprite_group.update()
             pygame.display.update()
-        return self.mob_living
+
+        return self.mob_living, loot_id
 
     def run_state(self):
         # Clicked RUN Button
@@ -548,6 +598,71 @@ class Battle:
         hp_text = str(current_hp) + "/" + str(max_hp)
         display_text(text=hp_text, font_size=font_size, font_color=hp_text_color, coords=coords)
         return current_hp
+
+
+
+class BattleAnimation(pygame.sprite.Sprite):
+    def __init__(self, id=0):
+        """ id = 0 for Player animations.
+            id = 1 for Mob animations. """
+        pygame.sprite.Sprite.__init__(self)
+        self.images = {'forward': [0, 1, 2, 3, 4, 5], 'backward': [0, 1, 2, 3, 4, 5]}
+        self.current_frame = 0
+        self.animation_speed = 0.13
+        self.last_update = pygame.time.get_ticks()
+        self.load_spritesheets("BATTLESWORDspritesheet.png")
+        self.direction = 'forward'
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+
+    def load_spritesheets(self, sprite_sheet):
+        battlesword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
+        frame_width = 110
+        frame_height = 120
+        scale = stsc(6)
+
+        # Load all frames for each direction
+        all_frames = collect_frames(battlesword_sheet, 6, frame_width, frame_height, scale)
+
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[:5]
+        #self.images['backward'] = all_frames[8:]
+        #self.images['right'] = all_frames[:7]
+        #self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        animation_interval = 250  # Constant factor for animation speed
+        if now - self.last_update > animation_interval:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.image = self.images[self.direction][self.current_frame]
+
+    def move(self, x=WIN.WIN_WIDTH/2+100, y=WIN.WIN_HEIGHT/2):
+
+        """ Move bounding box to given coordinates. Used for spawning and moving position on map.
+        Returns the new coordinates of the bounding box. """
+        self.rect.centerx = x
+        self.rect.centery = y
+        return x, y
+
+    def shift_form(self, form):
+        """ Given a string of a specified form, changes the sword to that form.
+        Used in combination of the SWORD menu. """
+        # TODO should change aspects of the sword here. For now, it's only visual
+        if form == "BASE":
+            self.load_spritesheets("BATTLESWORDspritesheet.png")
+            # self.image.fill("#FFCC40")
+        if form == "FIRE":
+            self.load_spritesheets("FIREBATTLEspritesheet.png")
+            # self.image.fill("#FF0000")
+        if form == "ICE":
+            self.load_spritesheets("ICEBATTLEspritesheet.png")
+            # self.image.fill("#0000FF")
+        if form == "DARK":
+            self.load_spritesheets("DARKBATTLEspritesheet.png")
+            # self.image.fill("#FF00FF")
+        return form
 
 
 

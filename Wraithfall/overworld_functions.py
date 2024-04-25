@@ -1,8 +1,10 @@
 import pygame, sys, os
-from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIGHT, game_exit, scale_to_screen as stsc
+from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIGHT, game_exit, \
+    scale_to_screen as stsc, DIR_MUSIC
 import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld as item_display
 import pygame.event as EVENTS
+from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -11,6 +13,8 @@ pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Overworld Code")
 clock = pygame.time.Clock()
+# pygame.mixer.music.load(os.path.join(DIR_MUSIC, "backgroundmusic1.wav"))
+# pygame.mixer.music.play(-1) #makes music continue to loop
 
 """ Functions below are intended to be inserted BEFORE the Game Loop. """
 
@@ -24,9 +28,10 @@ def setup_sprite_groups():
     item_sprites = pygame.sprite.Group()  # Item sprites
     sword_sprite = pygame.sprite.Group()  # Sword sprite
     gui_sprites = pygame.sprite.Group()  # GUI sprites (items to be observed not touched)
+    scene_trigger_sprites = pygame.sprite.Group() # Collision sprite groups for warps
     all_sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
                      "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites,
-                     "NPC": npc_spites}
+                     "NPC": npc_spites, "Scene": scene_trigger_sprites}
     return all_sprite_groups
 
 
@@ -121,6 +126,7 @@ def check_player_death(player, is_dead=False):
         player.warp(x=WIN_WIDTH/2, y=WIN_HEIGHT/2)
     return death
 
+music_pause = False
 
 def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, combat_cutscene=None):
     """ Goes into the game loop. """
@@ -131,26 +137,35 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             battle_scene = None
         else:
             battle_scene = combat_cutscene
+        stop_mixer()
         combat = Battle(player, player_mob_collide[0], scene=battle_scene)
-        remaining_mob = combat.combat_screen()
+        remaining_mob, loot_id = combat.combat_screen()
+        load_mixer("backgroundmusic1.wav")
+        play_mixer()
         if remaining_mob:
             # Run away was chosen
             combat_invul = True
             invul_time = pygame.time.get_ticks()
         else:
             # Defeated mob, so remove mob from map
-            player_mob_collide[0].get_bb_anchor().kill()
+            if player_mob_collide[0].get_bb_anchor() is not None:
+                player_mob_collide[0].get_bb_anchor().kill()
             player_mob_collide[0].kill()
             combat_invul = True
             invul_time = pygame.time.get_ticks()
-            # pygame.sprite.spritecollide(player, mob_sprites, True)
-            # mob_sprites[0]
+            # Drop item loot
+            current_coords = player.get_coord()
+            new_loot = spawn_entity(ENTITY.Item(item_id=loot_id), "Item", spawn_xy=current_coords)
         # Recover HP at the end of combat
         # player.set_stats({"HP": player.get_stats()["HP Max"]})
+        
+        #pause music when entering battle
+        # pygame.mixer.music.pause()
+        music_paused = True
 
     if combat_invul:
         curr_time = pygame.time.get_ticks()
-        if curr_time - invul_time >= 5000:
+        if curr_time - invul_time >= 2000:
             combat_invul = False
 
     # Mob stops following Player if outside of detection bounding box

@@ -23,10 +23,16 @@ wraithsoul_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITHSOULSP
 wraith1_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH1SPRITESHEET.png")).convert_alpha()
 wraith2_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
 wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
+bosswraith_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BOSSWRAITHSPRITESHEET.png")).convert_alpha()
+deer_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DEERSPRITESHEET.png")).convert_alpha()
 
 # Battle Sprites
 battlesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BATTLESWORDspritesheet.png")).convert_alpha()
-
+firebattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIREBATTLEspritesheet.png")).convert_alpha()
+darkbattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKBATTLEspritesheet.png")).convert_alpha()
+icebattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICEBATTLEspritesheet.png")).convert_alpha()
+attacksword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ATTACKSWORDspritesheet.png")).convert_alpha()
+knifebattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "KNIFEBATTLEspritesheet.png")).convert_alpha()
 
 # Items
 bandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
@@ -34,6 +40,8 @@ dirtybandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DIRTYBANDA
 fireessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIREESSENCEsprite.png")).convert_alpha()
 iceessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICEESSENCEsprite.png")).convert_alpha()
 darkessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKESSENCEsprite.png")).convert_alpha()
+apple_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "APPLEsprite.png")).convert_alpha()
+deermeat_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DEERMEATsprite.png")).convert_alpha()
 
 def get_image(sheet, frame, width, height, scale):
     image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
@@ -66,6 +74,8 @@ wraithsoul_sprites = collect_frames(wraithsoul_sheet, 12, 17, 17, 3)
 wraith1_sprites = collect_frames(wraith1_sheet, 24, 18, 20, 3)
 wraith2_sprites = collect_frames(wraith2_sheet, 10, 17, 20, 3)
 wraith3_sprites = collect_frames(wraith3_sheet, 8, 17, 20, 3)
+bosswraith_sprites = collect_frames(bosswraith_sheet, 5, 59, 52, 2)
+deer_sprites = collect_frames(deer_sheet, 6, 23, 20, 3)
 
 # Item Frames
 bandage_sprite = collect_frames(bandage_sheet, 1, 19, 12, 2)
@@ -73,9 +83,19 @@ dirtybandage_sprite = collect_frames(dirtybandage_sheet, 1, 18, 12, 2)
 fireessence_sprite = collect_frames(fireessence_sheet, 1, 14, 17, 2)
 iceessence_sprite = collect_frames(iceessence_sheet, 1, 14, 15, 2)
 darkessence_sprite = collect_frames(darkessence_sheet, 1, 14, 17, 2)
+apple_sprite = collect_frames(apple_sheet, 1, 18, 12, 2)
+deermeat_sprite = collect_frames(deermeat_sheet, 1, 16, 17, 2)
 
 # Battle Frames
-battlesword_sprites = collect_frames(battlesword_sheet, 6, 315, 333, 1)
+battlesword_sprites = collect_frames(battlesword_sheet, 6, 850, 990, 1)
+firebattle_sprites = collect_frames(firebattle_sheet, 6, 315, 333, 1)
+darkbattle_sprites = collect_frames(darkbattle_sheet, 6, 315, 333, 1)
+icebattle_sprites = collect_frames(icebattle_sheet, 6, 315, 333, 1)
+attacksword_sprites = collect_frames(attacksword_sheet, 5, 1223, 1133, 1)
+knifebattle_sprites = knifebattle_sprites = collect_frames(knifebattle_sheet, 6, 850, 990, 1)
+
+
+
 
 def print_frames(frames, x, y):
     for i in range(len(frames)):
@@ -92,7 +112,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [battlesword_sprites]
+    sprites_to_print = [knifebattle_sprites]
     while run:
 
         # update background

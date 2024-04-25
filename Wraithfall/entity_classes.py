@@ -4,15 +4,19 @@ import os
 from view_spritesheets import collect_frames
 
 
+def get_universal_scale():
+    return stsc(3)
+
+
 class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
 
-    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
+    def __init__(self, bound_box_size=(100, 100), fill_color="#FF00FF", entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(stsc(bound_box_size))
         trans_color = "#FF00FF"
-        self.image.fill(trans_color)
+        self.image.fill(fill_color)
         self.image.set_colorkey(trans_color)
         self.rect = self.image.get_rect()
         self.speed_x = 0
@@ -160,7 +164,7 @@ level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5,
               2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
               3: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
               4: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
-              5: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
+              5: {"BASE EXP": 5, "GOAL EXP": 9999999999, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
 
 
 class Player(Entity):
@@ -191,7 +195,7 @@ class Player(Entity):
         mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
         frame_width = 14
         frame_height = 17
-        scale = stsc(2)
+        scale = get_universal_scale()
         # Load all frames for each direction
         all_frames = collect_frames(mc_sheet, 12, frame_width, frame_height, scale)
 
@@ -372,8 +376,8 @@ class Player(Entity):
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 2, "SPRITE": "WRAITH1SPRITESHEET.png"},
-            1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
-                "EXP": 50, "SPRITE": ""},
+            1: {"NAME": "[Boss Wraith]", "STATS": {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 10, "SPD": 0},
+                "EXP": 50, "SPRITE": "BOSSWRAITHSPRITESHEET.png"},
             2: {"NAME": "Wraithsoul", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.png"},
             3: {"NAME": "[Med Wraith 2]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
@@ -395,7 +399,11 @@ mob_sprite_data = {"WRAITH1SPRITESHEET.png":
                    "WRAITH2SPRITESHEET.png":
                          {'f': [0, 4], 'b': [5, 9],
                           # 'r': [5, 9], 'l': [0, 4],
-                          'dimensions': [17, 20], 'total': 10}
+                          'dimensions': [17, 20], 'total': 10},
+                   "BOSSWRAITHSPRITESHEET.png":
+                       {'f': [0, 5], 'b': [0, 5],
+                        # 'r': [5, 9], 'l': [0, 4],
+                        'dimensions': [59, 52], 'total': 5},
                    }
 
 
@@ -430,7 +438,7 @@ class Mob(Entity):
         wraith_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
-        scale = stsc(2)
+        scale = get_universal_scale()
         #Load all frames for each direction
         all_frames = collect_frames(wraith_sheet, sprite_data["total"], frame_width, frame_height, scale)
         # Splits the frames into forward, backward, right, and left directions
@@ -512,21 +520,26 @@ class Mob(Entity):
         return self.target
 
 
-npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"}}
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png",
+                "dimensions": (17, 17, get_universal_scale()), "total": 12},
+            1: {"NAME": "Deer", "SPRITE": "DEERSPRITEsheet.png",
+                "dimensions": (23, 20, get_universal_scale()), "total": 6}}
 
 
 class NPC(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
         # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         super().__init__()  # Initialize the base class (Entity)
+        if npc_id not in npc_dict:
+            npc_id = 0
         self.npc_id = npc_id
-
         self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
         self.current_frame = 0
         self.animation_speed = 0.1
         self.last_update = pygame.time.get_ticks()
         self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
-        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=npc_dict[self.npc_id]["dimensions"],
+                               sprite_total=npc_dict[self.npc_id]["total"])
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
         self.direction = 'forward'
@@ -536,16 +549,23 @@ class NPC(Entity):
 
     def update(self):
         """ Calculate movement of the Mob. """
+        if self.npc_id is 1:
+            now = pygame.time.get_ticks()
+            if now - self.last_update > self.animation_speed * 5000:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+                self.image = self.images[self.direction][self.current_frame]
+
         super(NPC, self).update()
         # TODO write unique walking behaviors
 
-    def load_spritesheets(self, sprite_sheet, dimensions):
+    def load_spritesheets(self, sprite_sheet, dimensions, sprite_total):
         sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
         scale = dimensions[2]
         # Load all frames for each direction
-        all_frames = collect_frames(sheet, 12, frame_width, frame_height, scale)
+        all_frames = collect_frames(sheet, sprite_total, frame_width, frame_height, scale)
 
         # Splits the frames into forward, backward, right, and left directions
         self.images['forward'] = all_frames[:3]
@@ -568,16 +588,16 @@ class Sword(Entity):
         self.current_frame = 0
         self.animation_speed = 0.13
         self.last_update = pygame.time.get_ticks()
-        self.load_spritesheets()
+        self.load_spritesheets("SWORDspritesheet.png")
         self.direction = 'forward'
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
 
-    def load_spritesheets(self):
-        sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
+    def load_spritesheets(self, sprite_sheet):
+        sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = 17
         frame_height = 17
-        scale = 2
+        scale = get_universal_scale()
 
         # Load all frames for each direction
         all_frames = collect_frames(sword_sheet, 16, frame_width, frame_height, scale)
@@ -655,15 +675,19 @@ class Sword(Entity):
         # TODO should change aspects of the sword here. For now, it's only visual
         if form == "BASE":
             self.form = "BASE"
+            self.load_spritesheets("SWORDspritesheet.png")
             # self.image.fill("#FFCC40")
         if form == "FIRE":
             self.form = "FIRE"
+            self.load_spritesheets("FIRESWORDspritesheet.png")
             # self.image.fill("#FF0000")
         if form == "ICE":
             self.form = "ICE"
+            self.load_spritesheets("ICESWORDspritesheet.png")
             # self.image.fill("#0000FF")
         if form == "DARK":
             self.form = "DARK"
+            self.load_spritesheets("DARKSWORDspritesheet.png")
             # self.image.fill("#FF00FF")
         return self.form
 
@@ -689,11 +713,13 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "BANDAGEsprite.png"},
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 10, "SPRITE": "BANDAGEsprite.png"},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "FIREESSENCEsprite.png"},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"}
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"},
+             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"}, # TODO apple sprite
+             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE": 15, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
              }
 
 item_sprite_data = {"BANDAGEsprite.png":
@@ -706,6 +732,10 @@ item_sprite_data = {"BANDAGEsprite.png":
                         {'dimensions': [14, 15], 'total': 1},
                    "DARKESSENCEsprite.png":
                         {'dimensions': [14, 17], 'total': 1},
+                    "APPLEsprite.png":
+                        {'dimensions': [18, 12], 'total': 1}, # TODO apple sprite dimensions
+                    "DEERMEATsprite.png":
+                        {'dimensions': [16, 17], 'total': 1}, # TODO deer meat sprite dimensions
                    }
 
 class Item(Entity):
@@ -733,7 +763,7 @@ class Item(Entity):
         item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
-        scale = stsc(2)
+        scale = get_universal_scale()
         #Load all frames for each direction
         all_frames = collect_frames(item_sheet, sprite_data["total"], frame_width, frame_height, scale)
         # Splits the frames into forward, backward, right, and left directions
