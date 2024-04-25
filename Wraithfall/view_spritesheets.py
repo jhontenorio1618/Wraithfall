@@ -36,6 +36,8 @@ dirtybandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DIRTYBANDA
 fireessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIREESSENCEsprite.png")).convert_alpha()
 iceessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICEESSENCEsprite.png")).convert_alpha()
 darkessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKESSENCEsprite.png")).convert_alpha()
+apple_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "APPLEsprite.png")).convert_alpha()
+deermeat_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DEERMEATsprite.png")).convert_alpha()
 
 def get_image(sheet, frame, width, height, scale):
     image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
@@ -75,6 +77,8 @@ dirtybandage_sprite = collect_frames(dirtybandage_sheet, 1, 18, 12, 2)
 fireessence_sprite = collect_frames(fireessence_sheet, 1, 14, 17, 2)
 iceessence_sprite = collect_frames(iceessence_sheet, 1, 14, 15, 2)
 darkessence_sprite = collect_frames(darkessence_sheet, 1, 14, 17, 2)
+apple_sprite = collect_frames(apple_sheet, 1, 18, 12, 2)
+deermeat_sprite = collect_frames(deermeat_sheet, 1, 16, 17, 2)
 
 # Battle Frames
 battlesword_sprites = collect_frames(battlesword_sheet, 6, 315, 333, 1)
@@ -99,7 +103,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [firebattle_sprites, darkbattle_sprites, icebattle_sprites]
+    sprites_to_print = [apple_sprite, deermeat_sprite]
     while run:
 
         # update background
@@ -117,4 +121,4 @@ def display_sprites():
 
         pygame.display.update()
 
-#display_sprites()
+display_sprites()
