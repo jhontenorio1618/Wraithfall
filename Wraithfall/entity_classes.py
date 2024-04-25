@@ -449,9 +449,8 @@ class Mob(Entity):
             self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
         else:
             self.images['left'] = all_frames[f[0]:f[1]]
-
         
-    def update(self):
+    def update(self, collision_check_function=None):
         """ Calculate movement of the Mob. """
         self.speed_x = 0
         self.speed_y = 0
@@ -464,9 +463,40 @@ class Mob(Entity):
             if distance != 0:
                 self.speed_x = 4 * distance_x/distance
                 self.speed_y = 4 * distance_y/distance
-
+        self.update_sprite(self.speed_x, self.speed_y)
         super(Mob, self).update()
         # TODO write unique walking behaviors
+
+    def update_sprite(self, speed_x, speed_y):
+        """ Update the player's position and animation. """
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.animation_speed * 1000:
+            self.last_update = now
+            self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+            self.image = self.images[self.direction][self.current_frame]
+
+        # Diagonal movement
+        move_sensitivity = 2
+        if speed_y <= -move_sensitivity:
+            # self.speed_x = -5
+            # self.speed_y = -5
+            self.direction = 'backward'
+        elif speed_y >= move_sensitivity:
+            # self.speed_x = 5
+            # self.speed_y = -5
+            self.direction = 'forward'
+        elif speed_x <= -move_sensitivity: # and speed_y > 1:
+            # self.speed_x = -5
+            # self.speed_y = 5
+            self.direction = 'left'
+        elif speed_x >= move_sensitivity: # and speed_y > 1:
+            # self.speed_x = 5
+            # self.speed_y = 5
+            self.direction = 'right'
+
+        if speed_x == 0 and speed_y == 0:
+            self.current_frame = 0
+            self.image = self.images[self.direction][self.current_frame]
 
     def drop_exp(self):
         """ Returns the number of EXP the mob will give player are dying. Used in combat menu. """
