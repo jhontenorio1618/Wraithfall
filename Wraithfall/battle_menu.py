@@ -257,6 +257,16 @@ class Battle:
         else:
             self.playing_cutscene = False
         self.scene = scene
+        self.load_mob_spritesheet()
+        
+    def load_mob_spritesheet(self):
+        if self.mob.get_name() in ENTITY.mob_dict:
+            sprite_sheet = ENTITY.mob_dict[self.mob.get_type()]["SpriteSheet"]
+            self.mob_sprite_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
+        else:
+            #Default spritesheet if type not found
+            self.mob_sprite_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH1SPRITESHEET.PNG")).convert_alpha()
+        
 
     def combat_screen(self):
         open_sword_menu = False

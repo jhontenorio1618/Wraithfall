@@ -374,7 +374,7 @@ class Player(Entity):
         STATS: Dictionary of stats {ATK, HP Max, HP, DEF, SPD} to set as Mob's stats
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
-mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0, },
                 "EXP": 2, "SPRITE": "WRAITH1SPRITESHEET.png"},
             1: {"NAME": "[Boss Wraith]", "STATS": {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 10, "SPD": 0},
                 "EXP": 50, "SPRITE": "BOSSWRAITHSPRITESHEET.png"},
