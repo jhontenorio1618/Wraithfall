@@ -1,18 +1,11 @@
 import pygame, sys
+import abc  # For abstract base classes
 from pytmx import load_pygame
 from entity_classes import Player
 import pygame.event as EVENTS
-import game_window as WIN
-import pygame, sys, os
-from pytmx import load_pygame
-from entity_classes import Player, Entity
-import game_window as WIN
-import entity_classes as ENTITY
-from battle_menu import Battle, item_menu, sword_menu
-import pygame.event as EVENTS
 import pytmx
 
-# Initialize pygame
+# Initialize Pygame
 pygame.init()
 
 # Set screen dimensions
@@ -21,50 +14,66 @@ WIN_HEIGHT = 720
 screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
 
-# Define the map class with collision checking
-def check_collision(new_rect):
-    return level_1_map.check_collisions(new_rect)
-
-class Map:
-    def __init__(self, filename):
+# Abstract base class for maps
+class AbstractMap(abc.ABC):
+    def __init__(self, filename, collision_layers=None):
         self.tiled_map = load_pygame(filename)
-        self.collision_layers = ["land_object", "next_level_chopper"]
+        if collision_layers:
+            self.collision_layers = collision_layers
+        else:
+            self.collision_layers = []  # Default empty collision layers
+
+    @abc.abstractmethod
+    def draw(self, screen):
+        pass
+
+    @abc.abstractmethod
+    def check_collisions(self, player_rect):
+        pass
+
+
+# Concrete map class with dynamic collision layers
+class DynamicCollisionMap(AbstractMap):
+    def __init__(self, filename, collision_layers=None):
+        super().__init__(filename, collision_layers)
 
     def draw(self, screen):
         for layer in self.tiled_map.visible_layers:
             if isinstance(layer, pytmx.TiledTileLayer):
+                tile_width = self.tiled_map.tilewidth
+                tile_height = self.tiled_map.tileheight
                 for x, y, gid in layer:
                     tile = self.tiled_map.get_tile_image_by_gid(gid)
                     if tile:
-                        screen.blit(tile, (x * self.tiled_map.tilewidth, y * self.tiled_map.tileheight))
+                        screen.blit(tile, (x * tile_width, y * tile_height))
             elif isinstance(layer, pytmx.TiledObjectGroup):
                 for obj in layer:
                     if obj.image:
-                        scale_factor = 1.0  # Default scaling
-                        scaled_img = pygame.transform.scale(obj.image, (
-                            int(obj.width * scale_factor), int(obj.height * scale_factor)))
-                        screen.blit(scaled_img, (obj.x, obj.y))
+                        scale_factor = 1.0  # size for objects
+                        scaled_img = pygame.transform.scale (obj.image, (
+                            int (obj.width * scale_factor), int (obj.height * scale_factor)))
+                        screen.blit (scaled_img, (obj.x, obj.y))
 
     def check_collisions(self, player_rect):
         for layer_name in self.collision_layers:
             layer = self.tiled_map.get_layer_by_name(layer_name)
             if layer is None:
                 continue
-
             for obj in layer:
                 padding_x, padding_y = 0, 0
-                obj_rect = pygame.Rect(obj.x + padding_x, obj.y + padding_y, obj.width - 2 * padding_x,
-                                       obj.height - 2 * padding_y)
+                obj_rect = pygame.Rect(
+                    obj.x + padding_x,
+                    obj.y + padding_y,
+                    obj.width - 2 * padding_x,
+                    obj.height - 2 * padding_y
+                )
 
                 if player_rect.colliderect(obj_rect):
                     return obj_rect  # Return the colliding object's rectangle
         return None
 
-# Create player and map objects
-player = Player(bound_box_size=(20, 10), image_fill="#FFFFFF")
-level_1_map = Map('Game_map/game_map/Main_Map.tmx')  # Ensure path is correct
 
-# Boundary check function
+# Boundary check function to keep the player within bounds
 def keep_player_in_bounds(player):
     if player.rect.left < 0:
         player.rect.left = 0
@@ -76,6 +85,34 @@ def keep_player_in_bounds(player):
     elif player.rect.bottom > WIN_HEIGHT:
         player.rect.bottom = WIN_HEIGHT
 
+
+# Create the player
+player = Player(bound_box_size=(20, 10), image_fill="#FFFFFF")
+
+# Create different map objects with dynamic collision layers
+level_1_map = DynamicCollisionMap(
+    'Game_map/game_map/Main_Map.tmx',
+    collision_layers=["land_object", "next_level_chopper"]
+)
+
+level_2_map = DynamicCollisionMap(
+    'Game_map/game_map/second_Map.tmx',
+    collision_layers=["s_ground_objects"]
+)
+
+# Set the current level, which determines which map is used
+current_level = 2  # Change this variable to switch between levels
+
+# Select the map based on the current level
+def select_map(level_number):
+    if level_number == 1:
+        return level_1_map
+    elif level_number == 2:
+        return level_2_map
+    else:
+        raise ValueError("Invalid level number")
+
+# Main game loop
 running = True
 while running:
     for event in pygame.event.get():
@@ -86,22 +123,25 @@ while running:
     # Clear the screen
     screen.fill((0, 0, 0))
 
+    # Select the appropriate map based on the current level
+    selected_map = select_map(current_level)
+
     # Update player and check for collisions
-    player.update(check_collision)  # Assuming `update()` updates player's position
+    player.update(lambda rect: selected_map.check_collisions(rect))  # Use lambda for map-based collision check
     keep_player_in_bounds(player)  # Boundary check
 
     # Draw map and player
-    level_1_map.draw(screen)
+    selected_map.draw(screen)
     screen.blit(player.image, player.rect)
 
     # Check for collisions with map objects
-    collision_obj = level_1_map.check_collisions(player.rect)
+    collision_obj = selected_map.check_collisions(player.rect)
 
     if collision_obj:
-        # Draw a circle on the object with which the player collides
+        # Draw a circle to indicate collision
         circle_color = (255, 0, 0)  # Red color
-        circle_center = (collision_obj.centerx, collision_obj.centery)  # Center of the object
-        circle_radius = 30  # Radius of the circle
+        circle_center = (collision_obj.centerx, circle_radius)  # Center of the object
+        circle_radius = 30
 
         pygame.draw.circle(screen, circle_color, circle_center, circle_radius)
 
