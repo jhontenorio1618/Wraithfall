@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="64" height="36" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="173">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="64" height="36" tilewidth="20" tileheight="20" infinite="0" nextlayerid="3" nextobjectid="174">
  <tileset firstgid="1" source="../game_tiles/tree.tsx"/>
  <tileset firstgid="2" source="../game_tiles/spikes.tsx"/>
  <tileset firstgid="4" source="second_ground.tsx"/>
@@ -50,11 +50,11 @@
  <objectgroup id="2" name="second_land_objects">
   <object id="66" name="tree" gid="1" x="309.41" y="223.968" width="108.304" height="109.457"/>
   <object id="105" name="thorny_bush" gid="2205" x="2.679" y="695.421" width="73.2143" height="62.5"/>
-  <object id="110" name="thorny_bush" gid="2205" x="225.893" y="563.393" width="36.1175" height="39.9194"/>
+  <object id="110" name="thorny_bush" gid="2205" x="233.016" y="603.759" width="36.1175" height="39.9194"/>
   <object id="114" name="cabin" type="cabin" gid="2206" x="1066.44" y="716.134" width="207.04" height="188.246"/>
   <object id="115" name="thorny_bush" gid="2205" x="995.19" y="226.238" width="284.505" height="231.855"/>
   <object id="116" name="thorny_bush" gid="2205" x="706.25" y="704.464" width="73.2143" height="62.5"/>
-  <object id="117" name="tree" gid="1" x="-10.9429" y="553.992" width="108.304" height="109.457"/>
+  <object id="117" name="tree" gid="1" x="-13.3174" y="549.243" width="108.304" height="109.457"/>
   <object id="118" name="tree" gid="1" x="73.2049" y="256.221" width="108.304" height="109.457"/>
   <object id="119" name="tree" gid="1" x="162.52" y="246.297" width="108.304" height="109.457"/>
   <object id="120" name="tree" gid="1" x="233.642" y="239.681" width="108.304" height="109.457"/>
@@ -82,7 +82,7 @@
   <object id="146" name="tree" gid="1" x="31.3319" y="242.046" width="108.304" height="109.457"/>
   <object id="147" name="tree" gid="1" x="-13.8294" y="238.82" width="108.304" height="109.457"/>
   <object id="148" name="tree" gid="1" x="-17.0552" y="335.594" width="108.304" height="109.457"/>
-  <object id="149" name="tree" gid="1" x="-7.37781" y="403.336" width="108.304" height="109.457"/>
+  <object id="149" name="tree" gid="1" x="-14.5012" y="404.523" width="108.304" height="109.457"/>
   <object id="150" name="tree" gid="1" x="13.5899" y="608.175" width="108.304" height="109.457"/>
   <object id="151" name="tree" gid="1" x="60.3641" y="692.046" width="108.304" height="109.457"/>
   <object id="152" name="tree" gid="1" x="155.525" y="713.013" width="108.304" height="109.457"/>
@@ -100,11 +100,12 @@
   <object id="164" name="tree" gid="1" x="1015.2" y="440.433" width="108.304" height="109.457"/>
   <object id="165" name="tree" gid="1" x="1032.94" y="567.852" width="108.304" height="109.457"/>
   <object id="166" name="tree" gid="1" x="1032.94" y="471.078" width="108.304" height="109.457"/>
-  <object id="167" name="thorny_bush" gid="2205" x="322.264" y="289.718" width="36.1175" height="39.9194"/>
-  <object id="168" name="thorny_bush" gid="2205" x="194.844" y="404.234" width="36.1175" height="39.9194"/>
+  <object id="167" name="thorny_bush" gid="2205" x="357.881" y="251.727" width="36.1175" height="39.9194"/>
+  <object id="168" name="thorny_bush" gid="2205" x="234.022" y="425.604" width="36.1175" height="39.9194"/>
   <object id="169" name="thorny_bush" gid="2205" x="473.877" y="517.137" width="36.1175" height="39.9194"/>
-  <object id="170" name="thorny_bush" gid="2205" x="802.909" y="578.427" width="36.1175" height="39.9194"/>
-  <object id="171" name="thorny_bush" gid="2205" x="972.264" y="594.556" width="36.1175" height="39.9194"/>
-  <object id="172" name="thorny_bush" gid="2205" x="759.361" y="331.653" width="36.1175" height="39.9194"/>
+  <object id="170" name="thorny_bush" gid="2205" x="836.151" y="514.317" width="36.1175" height="39.9194"/>
+  <object id="171" name="thorny_bush" gid="2205" x="1080.3" y="599.305" width="36.1175" height="39.9194"/>
+  <object id="172" name="thorny_bush" gid="2205" x="749.863" y="362.521" width="36.1175" height="39.9194"/>
+  <object id="173" name="thorny_bush" gid="2205" x="1032.64" y="644.887" width="36.1175" height="39.9194"/>
  </objectgroup>
 </map>
