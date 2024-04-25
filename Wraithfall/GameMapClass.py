@@ -69,9 +69,12 @@ class DynamicCollisionMap(AbstractMap):
                 )
 
                 if player_rect.colliderect(obj_rect):
-                    if obj.name.lower() == "spikes":  # Check if the object is a spike
+
+                    if obj.name.lower() == "thorny_bush":  # Check if the object is a spike
                         player.hp_update(-0.01)  # Decrease health by 1 (or more based on your game design)
-                        print(f"Player hit spikes! New HP: {player.HP}")
+                        print(f"Player hit bush! New HP: {player.HP}")
+                    if obj.name.lower() == "cave":  # Check for cave collision
+                        return True, "cave"
                     return obj_rect  # Return the colliding object's rectangle
         return None
 
@@ -125,10 +128,10 @@ while running:
             pygame.quit()
             sys.exit()
 
-    # Clear the screen
+
     screen.fill((0, 0, 0))
 
-    # Select the appropriate map based on the current level
+
     selected_map = select_map(current_level)
 
     # Update player and check for collisions
