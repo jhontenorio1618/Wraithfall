@@ -128,4 +128,4 @@ def display_sprites():
 
         pygame.display.update()
 
-display_sprites()
+# display_sprites()
