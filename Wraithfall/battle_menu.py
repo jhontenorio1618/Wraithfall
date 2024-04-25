@@ -293,6 +293,10 @@ class Battle:
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
         
+        #load mob image
+        mob_image = pygame.image.load(os.path.join(DIR_SPRITES,"WRAITH1SPRITESHEET.PNG")).convert_alpha()
+        mob_image = pygame.transform.scale(mob_image,(100,100))
+        
         '''
         #Load wraith sprite
         wraith_sprite = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH1SPRITESHEET.PNG")).convert_alpha()
@@ -351,6 +355,9 @@ class Battle:
             self.draw_status_bar(coords=(115, 135), size=(420, 30),
                                  curr_val=self.mob.get_stats()["HP"], max_val=self.mob.get_stats()["HP Max"])
             display_text(text=self.mob.get_name(), coords=(95, 63), font_size=40, font_color="White")
+            
+            #Blit mob image underneath mob's status bar
+            SCREEN.blit(mob_image,(200,200))
 
             # Player Data Box
             player_stats = self.player.get_stats()
