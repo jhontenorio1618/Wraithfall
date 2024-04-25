@@ -6,6 +6,10 @@ from game_window import random, math, get_font, window_size, game_exit, scale_to
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
 
+from overworld_functions import check_player_death, entity_collision, \
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, \
+    load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
+
 pygame.init()
 SCREEN = pygame.display.set_mode(window_size())
 pygame.display.set_caption("Battle")
@@ -226,6 +230,9 @@ def sword_menu(player):
         pygame.display.update()
     return player.access_sword().get_form()
 
+#load music
+load_mixer("battlemusic.wav")
+play_mixer(-1)
 
 class Battle:
     def __init__(self, player=ENTITY.Player(), mob=ENTITY.Mob(), bg="black", scene=None):
@@ -431,6 +438,7 @@ class Battle:
 
 
             pygame.display.update()
+        pause_mixer()
         return self.mob_living
 
     def run_state(self):
