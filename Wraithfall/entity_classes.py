@@ -516,7 +516,8 @@ class Mob(Entity):
         return self.target
 
 
-npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"}}
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png", "dimensions": (17, 17, get_universal_scale())},
+            1: {"NAME": "Deer", "SPRITE": "DEERspritesheet.png", "dimensions": (17, 17, get_universal_scale())}} # TODO adjust for actual sprite
 
 
 class NPC(Entity):
@@ -557,8 +558,6 @@ class NPC(Entity):
         self.images['right'] = all_frames[8:11]
         self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
 
-
-# swords_dict = {"BASE"}
 
 class Sword(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#FFCC40", sword_attack=None):
@@ -704,7 +703,8 @@ item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 10, "SPRITE": "BANDAG
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
              4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"},
-             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"} # TODO apple sprite
+             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"}, # TODO apple sprite
+             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE:": 15, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
              }
 
 item_sprite_data = {"BANDAGEsprite.png":
@@ -718,7 +718,9 @@ item_sprite_data = {"BANDAGEsprite.png":
                    "DARKESSENCEsprite.png":
                         {'dimensions': [14, 17], 'total': 1},
                     "APPLEsprite.png":
-                        {'dimensions': [19, 12], 'total': 1}, # TODO apple sprite dimensions
+                        {'dimensions': [18, 12], 'total': 1}, # TODO apple sprite dimensions
+                    "DEERMEATsprite.png":
+                        {'dimensions': [16, 17], 'total': 1}, # TODO deer meat sprite dimensions
                    }
 
 class Item(Entity):

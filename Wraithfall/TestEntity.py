@@ -61,7 +61,7 @@ grandpa = spawn_entity(ENTITY.NPC(), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_H
 
 # Item Entities
 for i in range(10):
-    index = i % 5
+    index = i % 7
     healing_item = spawn_entity(ENTITY.Item(item_id=index), "Item", spawn_xy=(WIN.WIN_WIDTH/2 + 30 + i*15, WIN.WIN_HEIGHT/2))
 
 sprite_groups = get_sprite_groups()
