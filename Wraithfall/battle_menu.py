@@ -179,16 +179,26 @@ def sword_menu(player):
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
         SCREEN.fill("black")
 
+        draw_rect(coords=(100, 50), size=(1080, 500))
+        s = pygame.Surface((1080, 500), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (100, 50))
+
+        draw_rect(coords=(530, 575), size=(220, 100))
+        s = pygame.Surface((220, 100), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (530, 575))
+
         # Button pressed for BASE sword form
-        SWORD_BASE, base_displayed = setup_button(coords=(320, 220), text="BASE", hovering_color="#FFCC40")
+        SWORD_BASE, base_displayed = setup_button(coords=(345, 180), text="BASE", font_size=80, hovering_color="#FFCC40")
         # Button pressed for FIRE sword form
-        SWORD_FIRE, fire_displayed = setup_button(coords=(320, 340), text="FIRE", hovering_color="#FF0000")
+        SWORD_FIRE, fire_displayed = setup_button(coords=(327, 420), text="FIRE", font_size=80,hovering_color="#FF0000")
         # Button pressed for ICE sword form
-        SWORD_ICE, ice_displayed = setup_button(coords=(320, 460), text="ICE", hovering_color="#0000FF")
+        SWORD_ICE, ice_displayed = setup_button(coords=(976, 180), text="ICE", font_size=80,hovering_color="#0000FF")
         # Button pressed for DARK sword form
-        SWORD_DARK, dark_displayed = setup_button(coords=(320, 580), text="DARK", hovering_color="#FF00FF")
+        SWORD_DARK, dark_displayed = setup_button(coords=(926, 420), text="DARK", font_size=80,hovering_color="#FF00FF")
         # Button pressed to exit Sword menu without making a selection
-        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+        BACK_BUTTON, back_displayed = setup_button(coords=(645, 620), text="BACK", font_size=52)
 
         base_displayed = enable_button(SWORD_BASE, PLAY_MOUSE_POSITION)
         fire_displayed = enable_button(SWORD_FIRE, PLAY_MOUSE_POSITION)
