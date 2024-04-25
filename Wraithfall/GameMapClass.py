@@ -50,9 +50,9 @@ class DynamicCollisionMap(AbstractMap):
                 for obj in layer:
                     if obj.image:
                         scale_factor = 1.0  # size for objects
-                        scaled_img = pygame.transform.scale (obj.image, (
-                            int (obj.width * scale_factor), int (obj.height * scale_factor)))
-                        screen.blit (scaled_img, (obj.x, obj.y))
+                        scaled_img = pygame.transform.scale(obj.image, (
+                            int(obj.width * scale_factor), int(obj.height * scale_factor)))
+                        screen.blit(scaled_img, (obj.x, obj.y))
 
     def check_collisions(self, player_rect):
         for layer_name in self.collision_layers:
@@ -69,6 +69,9 @@ class DynamicCollisionMap(AbstractMap):
                 )
 
                 if player_rect.colliderect(obj_rect):
+                    if obj.name.lower() == "spikes":  # Check if the object is a spike
+                        player.hp_update(-0.01)  # Decrease health by 1 (or more based on your game design)
+                        print(f"Player hit spikes! New HP: {player.HP}")
                     return obj_rect  # Return the colliding object's rectangle
         return None
 
@@ -97,11 +100,12 @@ level_1_map = DynamicCollisionMap(
 
 level_2_map = DynamicCollisionMap(
     'Game_map/game_map/second_Map.tmx',
-    collision_layers=["s_ground_objects"]
+    collision_layers=["second_land_objects"]
 )
 
 # Set the current level, which determines which map is used
 current_level = 2  # Change this variable to switch between levels
+
 
 # Select the map based on the current level
 def select_map(level_number):
@@ -111,6 +115,7 @@ def select_map(level_number):
         return level_2_map
     else:
         raise ValueError("Invalid level number")
+
 
 # Main game loop
 running = True
