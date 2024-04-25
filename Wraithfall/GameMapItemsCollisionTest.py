@@ -20,8 +20,9 @@ screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 # Set the current level, which determines which map is used
 current_level = 1  # Change this variable to switch between levels
 
+DEFAULT_START_POSITION = (20, 20)  # Adjust as needed
 
-
+is_collised = False
 
 # Abstract base class for maps
 class AbstractMap(abc.ABC):
@@ -99,14 +100,8 @@ class DynamicCollisionMap(AbstractMap):
                    print(obj.name)
                    if obj.name == "cave":
                        print ('you will be in the next level in 3 sec')
-                       time.sleep(3)
-                       running(2)
-
-
-
-
-
-
+                       time.sleep(1)
+                       running(2,True)
                    if obj.name.lower() == "thorny_bush":  # Check if the object is a spike
                        player.hp_update(-0.01)  # Decrease health by 1 (or more based on your game design)
                        print(f"Player hit bush! New HP: {player.HP}")
@@ -137,6 +132,7 @@ def keep_player_in_bounds(player):
 # Create the player
 player = Player(bound_box_size=(20, 10), image_fill="#FFFFFF")
 
+player.rect.x, player.rect.y = DEFAULT_START_POSITION  # Set the start position
 
 # Create different map objects with dynamic collision layers
 level_1_map = DynamicCollisionMap(
@@ -167,7 +163,7 @@ def select_map(level_number):
 
 
 
-def running(current_level):
+def running(current_level,is_collised):
 # Main game loop
    running = True
    while running:
@@ -181,7 +177,9 @@ def running(current_level):
 
        screen.fill((0, 0, 0))
 
-
+       if is_collised == True:
+           is_collised = False
+           player.rect.x, player.rect.y = DEFAULT_START_POSITION  # Reset position to start
 
 
        selected_map = select_map(current_level)
@@ -199,25 +197,13 @@ def running(current_level):
        screen.blit(player.image, player.rect)
 
 
-       # Check for collisions with map objects
-       collision_obj = selected_map.check_collisions(player.rect)
-       if collision_obj == "cave":  # Transition to the next map
-           print("You will go to next level!!")
-           time.sleep (1)  # Simulate delay before changing levels
-           current_level += 1  # Move to the next level
-           running (current_level)  # Re-run the loop with the new level
-           return  # Exit the current loop after starting a new one
-
-
-
-
        # Update the display
        pygame.display.flip()
 
 
 
 
-running(current_level)
+running(current_level,False)
 pygame.quit()
 
 
