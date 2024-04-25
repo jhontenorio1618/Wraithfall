@@ -326,13 +326,15 @@ class Player(Entity):
             ATK_mod = self.found_sword.get_stats()["ATK"]
         return {"ATK": self.ATK + ATK_mod, "HP Max": self.HP_Max, "HP": self.HP, "DEF": self.DEF, "SPD": self.SPD}
 
-    def get_exp(self, for_next_lvl=False):
+    def get_exp(self, for_next_lvl=False, base_exp_of_lvl=False):
+        base_exp = level_dict[self.LVL]["BASE EXP"]
+        goal_exp = level_dict[self.LVL]["GOAL EXP"]
         if for_next_lvl:
-            base_exp = level_dict[self.LVL]["BASE EXP"]
-            goal_exp = level_dict[self.LVL]["GOAL EXP"]
             needed_exp = goal_exp - base_exp
             current_exp = self.EXP - base_exp
             return current_exp, needed_exp
+        elif base_exp_of_lvl:
+            return base_exp
         else:
             return self.EXP
 
@@ -369,9 +371,15 @@ class Player(Entity):
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
-                "EXP": 2, "SPRITE": ""},
+                "EXP": 2, "SPRITE": "WRAITH1SPRITESHEET.png"},
             1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
-                "EXP": 50, "SPRITE": ""}}
+                "EXP": 50, "SPRITE": ""},
+            2: {"NAME": "Wraithsoul", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.png"},
+            3: {"NAME": "[Med Wraith 2]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITH3SPRITESHEET.png"},
+            4: {"NAME": "[Hard Wraith]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITH2SPRITESHEET.png"}}
 
 
 class Mob(Entity):
@@ -418,16 +426,26 @@ class Mob(Entity):
         return self.target
 
 
-npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"},}
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"}}
 
 
 class NPC(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
-        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
         self.npc_id = npc_id
+
+        self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
+        self.current_frame = 0
+        self.animation_speed = 0.1
+        self.last_update = pygame.time.get_ticks()
         self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
         self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+        self.direction = 'forward'
+
+        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
         self.set_stats(npc_stats)
 
     def update(self):
@@ -584,23 +602,40 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": ""},
-             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": ""},
-             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": ""},
-             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": ""},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": ""}
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "ITEMspritesheet.png"},
+             1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "ITEMspritesheet.png"},
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "ITEMspritesheet.png"}
              }
 
 
 class Item(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        #Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()
         self.found_player = None
         if item_id not in item_dict:
             item_id = 0
         self.item_val = item_dict[item_id]
         self.name = self.item_val["NAME"]
         self.type = self.item_val["TYPE"]
+        self.load_spritesheet()
+
+    def load_spritesheet(self):
+        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "ITEMspritesheet.png")).convert_alpha()
+        frame_width = 17  # Width of each item frame
+        frame_height = 17  # Height of each item frame
+        scale = stsc(2)  # Scale factor
+        # Load all frames for the item
+        all_frames = collect_frames(item_sheet, 5, frame_width, frame_height, scale)
+        # Store the frames for each item
+        self.frames = {"Bandage": all_frames[0], "Dirty Bandage": all_frames[1], "Fire Essence": all_frames[2],
+                       "Ice Essence": all_frames[3], "Dark Essence": all_frames[4]}
+
+    def draw(self, screen):
+        screen.blit(self.frames[self.name][0], (self.rect.x, self.rect.y))
+
 
     def pickup(self, player):
         """ Checks if Player has room in inventory for item. If yes, set reference to Player. """
