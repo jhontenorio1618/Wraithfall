@@ -387,16 +387,17 @@ mob_sprite_data = {"WRAITH1SPRITESHEET.png":
                           'right': [16, 17, 18, 19, 20, 21, 22, 23], 'dimensions': [18, 20]}"""
                      "WRAITHSOULSPRITESHEET.png":
                          {'f': [0, 3], 'b': [4, 7], 'r': [8, 11],
-                          'dimensions': [17, 17]},
+                          'dimensions': [17, 17], 'total': 12},
                      "WRAITH3SPRITESHEET.png":
                          {'f': [0, 3], 'b': [4, 7],
                           # 'r': [4, 7], 'l': [0, 3],
-                          'dimensions': [17, 20]},
+                          'dimensions': [17, 20], 'total': 8},
                    "WRAITH2SPRITESHEET.png":
                          {'f': [0, 4], 'b': [5, 9],
                           # 'r': [5, 9], 'l': [0, 4],
-                          'dimensions': [17, 20]}
+                          'dimensions': [17, 20], 'total': 10}
                    }
+
 
 class Mob(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#FF0000", mob_id=0):
@@ -416,9 +417,9 @@ class Mob(Entity):
         self.animation_speed = 0.1
         self.last_update = pygame.time.get_ticks()
         self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=sprite_data["dimensions"], sprite_data=sprite_data)
+        self.direction = 'forward'
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
-        self.direction = 'forward'
         self.mob_val = mob_dict[mob_id]
         self.name = self.mob_val["NAME"]
         self.set_stats(self.mob_val["STATS"])
@@ -555,7 +556,8 @@ class NPC(Entity):
 
 class Sword(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#FFCC40", sword_attack=None):
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
         if sword_attack is None:
             sword_attack = {"ATK": 0}
         self.found_player = None
@@ -691,9 +693,20 @@ item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "BANDAGE
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "FIREESSENCEsprite.png"},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGE.png"}
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"}
              }
 
+item_sprite_data = {"BANDAGEsprite.png":
+                       {'dimensions': [19, 12], 'total': 1},
+                    "DIRTYBANDAGEsprite.png":
+                        {'dimensions': [18, 12], 'total': 1},
+                   "FIREESSENCEsprite.png":
+                       {'dimensions': [14, 17], 'total': 1},
+                   "ICEESSENCEsprite.png":
+                        {'dimensions': [14, 15], 'total': 1},
+                   "DARKESSENCEsprite.png":
+                        {'dimensions': [14, 17], 'total': 1},
+                   }
 
 class Item(Entity):
     def __init__(self, bound_box_size=(15, 15), image_fill="#00FF00", item_id=0):
@@ -702,16 +715,33 @@ class Item(Entity):
         self.found_player = None
         if item_id not in item_dict:
             item_id = 0
+        self.item_id = item_id
+        self.sprite_sheet = item_dict[self.item_id]["SPRITE"]
+        self.images = {'forward': [0]}
+        sprite_data = item_sprite_data[self.sprite_sheet]
+        self.current_frame = 0
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=sprite_data["dimensions"], sprite_data=sprite_data)
+        self.direction = 'forward'
+        self.image = self.images['forward'][0]
+        self.rect = self.image.get_rect()
         self.item_val = item_dict[item_id]
         self.name = self.item_val["NAME"]
         self.type = self.item_val["TYPE"]
-        self.load_spritesheet()
+        # self.load_spritesheet()
 
-    def load_spritesheet(self):
-        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
-        frame_width = 17  # Width of each item frame
-        frame_height = 17  # Height of each item frame
-        scale = stsc(2)  # Scale factor
+    def load_spritesheets(self, sprite_sheet, dimensions, sprite_data):
+        item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
+        frame_width = dimensions[0]
+        frame_height = dimensions[1]
+        scale = stsc(2)
+        #Load all frames for each direction
+        all_frames = collect_frames(item_sheet, sprite_data["total"], frame_width, frame_height, scale)
+        # Splits the frames into forward, backward, right, and left directions
+        self.images['forward'] = all_frames[0:1]
+        self.images['backward'] = all_frames[0:1]
+        self.images['right'] = all_frames[0:1]
+        self.images['left'] = all_frames[0:1]
+
 
     def draw(self, screen):
         screen.blit(self.frames[self.name][0], (self.rect.x, self.rect.y))
