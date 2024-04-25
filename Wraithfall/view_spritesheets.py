@@ -2,8 +2,8 @@ import pygame, sys, os, game_window as WIN
 
 pygame.init()
 
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 500
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 900
 BG = (50, 50, 50)
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -23,6 +23,10 @@ wraithsoul_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITHSOULSP
 wraith1_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH1SPRITESHEET.png")).convert_alpha()
 wraith2_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
 wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
+
+# Battle Sprites
+battlesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BATTLESWORDspritesheet.png")).convert_alpha()
+
 
 # Items
 bandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
@@ -70,6 +74,8 @@ fireessence_sprite = collect_frames(fireessence_sheet, 1, 14, 17, 2)
 iceessence_sprite = collect_frames(iceessence_sheet, 1, 14, 15, 2)
 darkessence_sprite = collect_frames(darkessence_sheet, 1, 14, 17, 2)
 
+# Battle Frames
+battlesword_sprites = collect_frames(battlesword_sheet, 6, 315, 333, 1)
 
 def print_frames(frames, x, y):
     for i in range(len(frames)):
@@ -86,7 +92,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [firesword_sprites, darksword_sprites, icesword_sprites]
+    sprites_to_print = [battlesword_sprites]
     while run:
 
         # update background
