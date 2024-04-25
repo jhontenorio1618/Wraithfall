@@ -265,6 +265,7 @@ class Battle:
         exp_gained = 0
         player_decided = False
         enemy_decided = False
+        loot_id = 1
         # Load music
         load_mixer("battlemusic.wav")
         play_mixer(-1)
@@ -348,6 +349,9 @@ class Battle:
                     # Mob is dead
                     stop_mixer()
                     unload_mixer()
+                    # Essence for Sword is dropped
+                    possible_loot_ids = [1, 2, 3]
+                    loot_id = random.choice(possible_loot_ids)
                     # Display exit button that appears as "NEXT"
                     next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)
                     new_exp = current_exp + exp_gained
@@ -449,7 +453,7 @@ class Battle:
 
             pygame.display.update()
 
-        return self.mob_living
+        return self.mob_living, loot_id
 
     def run_state(self):
         # Clicked RUN Button

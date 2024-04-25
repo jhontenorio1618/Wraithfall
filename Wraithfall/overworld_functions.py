@@ -138,7 +138,7 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             battle_scene = combat_cutscene
         stop_mixer()
         combat = Battle(player, player_mob_collide[0], scene=battle_scene)
-        remaining_mob = combat.combat_screen()
+        remaining_mob, loot_id = combat.combat_screen()
         load_mixer("backgroundmusic1.wav")
         play_mixer()
         if remaining_mob:
@@ -151,8 +151,9 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             player_mob_collide[0].kill()
             combat_invul = True
             invul_time = pygame.time.get_ticks()
-            # pygame.sprite.spritecollide(player, mob_sprites, True)
-            # mob_sprites[0]
+            # Drop item loot
+            current_coords = player.get_coord()
+            new_loot = spawn_entity(ENTITY.Item(item_id=loot_id), "Item", spawn_xy=current_coords)
         # Recover HP at the end of combat
         # player.set_stats({"HP": player.get_stats()["HP Max"]})
         
@@ -162,7 +163,7 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
 
     if combat_invul:
         curr_time = pygame.time.get_ticks()
-        if curr_time - invul_time >= 5000:
+        if curr_time - invul_time >= 2000:
             combat_invul = False
 
     # Mob stops following Player if outside of detection bounding box
