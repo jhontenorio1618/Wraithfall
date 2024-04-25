@@ -4,6 +4,9 @@ import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
+from overworld_functions import check_player_death, entity_collision, \
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups
+
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
 
@@ -13,7 +16,9 @@ pygame.display.set_caption("debug: player actions")
 clock = pygame.time.Clock()
 
 # Sprite Groups
-game_sprites = pygame.sprite.Group()
+
+setup_sprite_groups()
+"""game_sprites = pygame.sprite.Group()
 mob_sprites = pygame.sprite.Group()
 mob_vision_sprites = pygame.sprite.Group()
 item_sprites = pygame.sprite.Group()
@@ -21,37 +26,43 @@ sword_sprite = pygame.sprite.Group()
 gui_sprites = pygame.sprite.Group()
 grandpa_sprites = pygame.sprite.Group()
 sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
-                 "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites, "Grandpa": grandpa_sprites}
+                 "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites, "Grandpa": grandpa_sprites}"""
 
-
+"""
 def spawn_entity(new_entity, entity_type, spawn_xy=(None, None)):
     sprite_groups[entity_type].add(new_entity)
     game_sprites.add(new_entity)
     new_entity.warp(x=spawn_xy[0], y=spawn_xy[1])
     return new_entity
+"""
 
+player = spawn_player()
 
+"""
 # Player Entity
 player = ENTITY.Player()
 player.warp(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2)
 game_sprites.add(player)
+"""
 
 # Mob Entities
 for i in range(5):
-    dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(225, 225)), "Mob Vision")
     dummy_wraith = spawn_entity(ENTITY.Mob(), "Mob")
-    dummy_box.set_entity(dummy_wraith)
+    # dummy_box = spawn_entity(ENTITY.BoundingBox(bound_box_size=(225, 225)), "Mob Vision")
+    # dummy_box.set_entity(dummy_wraith)
     dummy_wraith.set_speed(0, 0)
 
 # Sword Entity
 sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 75))
 
 # Grandpa
-#grandpa = spawn_entity(ENTITY.NPC(), "Grandpa", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
+grandpa = spawn_entity(ENTITY.NPC(), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
 
 # Item Entities
 for i in range(5):
     healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
+
+sprite_groups = get_sprite_groups()
 
 
 test_entity_text_lines = [
@@ -66,9 +77,12 @@ combat_menu_scene = SceneManager(combat_menu_text_lines, "text_sound.wav")
 # Game Loop
 looping = True
 combat_invul = False
+invul_time = 0
 playing_cutscene = True
 first_battle = True
 while looping:
+    # Updating reference to sprite groups
+    sprite_groups = get_sprite_groups()
     clock.tick(WIN.get_fps())
     # Input Events
     for event in EVENTS.get():
@@ -113,8 +127,12 @@ while looping:
             WIN.game_exit()
     # Update game sprites
     if not playing_cutscene:
-        game_sprites.update()
+        sprite_groups["Game"].update()
 
+        combat_invul, invul_time = entity_collision(player, sprite_groups, combat_invul=combat_invul, invul_time=invul_time,
+                                                    combat_cutscene=combat_menu_scene)
+
+        """
         # Player and Mob collision
         player_mob_collide = pygame.sprite.spritecollide(player, mob_sprites, False)
         if not combat_invul and player_mob_collide:
@@ -133,10 +151,10 @@ while looping:
                 # Defeated mob, so remove mob from map
                 player_mob_collide[0].get_bb_anchor().kill()
                 player_mob_collide[0].kill()
+                combat_invul = True
+                start_invul_time = pygame.time.get_ticks()
                 # pygame.sprite.spritecollide(player, mob_sprites, True)
                 # mob_sprites[0]
-            # Recover HP at the end of combat
-            # player.set_stats({"HP": player.get_stats()["HP Max"]})
 
         if combat_invul:
             curr_time = pygame.time.get_ticks()
@@ -171,14 +189,15 @@ while looping:
                 # Player picks up item
                 if item_ref.pickup(player):
                     remove_item = pygame.sprite.spritecollide(player, item_sprites, True)
+        """
 
-
+    check_player_death(player)
 
     SCREEN.fill("#000000")
-    game_sprites.draw(SCREEN)
+    sprite_groups["Game"].draw(SCREEN)
     # TODO GUI code here
-    item_display_overworld(player, game_sprites, gui_sprites, SCREEN)
-    gui_sprites.draw(SCREEN)
+    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"], SCREEN)
+    sprite_groups["GUI"].draw(SCREEN)
 
     playing_cutscene = play_scene(test_entity_scene, playing_cutscene)
     # print(playing_cutscene)

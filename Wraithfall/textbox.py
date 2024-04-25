@@ -53,7 +53,7 @@ class SceneManager:
         self.current_line_index = 0
         self.text_lines = text_lines
         self.current_text_line = None
-        self.scene_ended = False #Keeps track scene ending
+        self.scene_ended = False # Keeps track scene ending
 
     def next_textbox(self):
         # Check if we have reached the end of text_lines
@@ -65,8 +65,8 @@ class SceneManager:
             else:
                 # Increment current_line_index
                 self.current_line_index += 1
-                print("Line index: " + str(self.current_line_index)
-                      + "\nMax Index: " + str(len(self.text_lines)))
+                # print("Line index: " + str(self.current_line_index)
+                # + "\nMax Index: " + str(len(self.text_lines)))
                 self.current_text_line = self.text_lines[self.current_line_index]
                 self.current_text_line.text_index = 0
                 # Stop sound before playing again
@@ -76,10 +76,10 @@ class SceneManager:
         return self.scene_ended
 
     def draw_textboxes(self, screen):
-        #Check to see if the scene has ended
+        # Check to see if the scene has ended
         if self.scene_ended:
             return
-        if self.current_line_index < len(self.text_lines):  #Add condition to prevent index out of range
+        if self.current_line_index < len(self.text_lines):  # Add condition to prevent index out of range
             self.current_text_line = self.text_lines[self.current_line_index]
         if self.initial_sound:
             # play sound and loop until text is finished
@@ -97,10 +97,14 @@ class SceneManager:
     def reset_scene(self):
         """ Sets the scene back to the beginning. """
         self.current_line_index = 0
+        self.scene_ended = False
 
     def goto_scene(self, index):
         """ Allows access to a specific textbox. """
         self.current_line_index = index
+
+    def check_if_finished(self):
+        return self.scene_ended
 
 
 
