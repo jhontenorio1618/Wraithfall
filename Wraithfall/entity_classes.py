@@ -425,11 +425,21 @@ npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png"},}
 
 class NPC(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
-        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+        # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
         self.npc_id = npc_id
+
+        self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
+        self.current_frame = 0
+        self.animation_speed = 0.1
+        self.last_update = pygame.time.get_ticks()
         self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
         self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+        self.direction = 'forward'
+
+        npc_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
         self.set_stats(npc_stats)
 
     def update(self):
