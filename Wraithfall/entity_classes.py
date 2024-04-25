@@ -4,6 +4,10 @@ import os
 from view_spritesheets import collect_frames
 
 
+def get_universal_scale():
+    return stsc(3)
+
+
 class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
@@ -191,7 +195,7 @@ class Player(Entity):
         mc_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "MCSPRITESHEET.png")).convert_alpha()
         frame_width = 14
         frame_height = 17
-        scale = stsc(2)
+        scale = get_universal_scale()
         # Load all frames for each direction
         all_frames = collect_frames(mc_sheet, 12, frame_width, frame_height, scale)
 
@@ -430,7 +434,7 @@ class Mob(Entity):
         wraith_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
-        scale = stsc(2)
+        scale = get_universal_scale()
         #Load all frames for each direction
         all_frames = collect_frames(wraith_sheet, sprite_data["total"], frame_width, frame_height, scale)
         # Splits the frames into forward, backward, right, and left directions
@@ -526,7 +530,7 @@ class NPC(Entity):
         self.animation_speed = 0.1
         self.last_update = pygame.time.get_ticks()
         self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
-        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, 2))
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, get_universal_scale()))
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
         self.direction = 'forward'
@@ -577,7 +581,7 @@ class Sword(Entity):
         sword_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
         frame_width = 17
         frame_height = 17
-        scale = 2
+        scale = get_universal_scale()
 
         # Load all frames for each direction
         all_frames = collect_frames(sword_sheet, 16, frame_width, frame_height, scale)
@@ -733,7 +737,7 @@ class Item(Entity):
         item_sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
-        scale = stsc(2)
+        scale = get_universal_scale()
         #Load all frames for each direction
         all_frames = collect_frames(item_sheet, sprite_data["total"], frame_width, frame_height, scale)
         # Splits the frames into forward, backward, right, and left directions
