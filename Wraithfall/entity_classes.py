@@ -388,9 +388,22 @@ class Mob(Entity):
         image_fill = color code for basic rectangle without sprite
         mob_stats = dictionary of RPG stats, where the keys are strings of the stats and values are ints
         exp = the number of exp the mob entity gives player when killed """
-        Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
+        super().__init__()  # Initialize the base class (Entity)
         if mob_id not in mob_dict:
             mob_id = 0
+        self.mob_id = mob_id
+        self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11]}
+        self.current_frame = 0
+        self.animation_speed = 0.1
+        self.last_update = pygame.time.get_ticks()
+        self.sprite_sheet = mob_dict[self.mob_id]["SPRITE"]
+        self.load_spritesheet(sprite_sheet="MCSPRITESHEET.png", dimensions=(14, 17, 2))
+        self.image = self.images['forward'][self.current_frame]
+        self.rect = self.image.get_rect()
+        self.direction = 'forward'
+
+
         self.mob_val = mob_dict[mob_id]
         self.name = self.mob_val["NAME"]
         self.set_stats(self.mob_val["STATS"])
