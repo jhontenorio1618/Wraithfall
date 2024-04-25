@@ -59,8 +59,8 @@ sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN
 grandpa = spawn_entity(ENTITY.NPC(), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
 
 # Item Entities
-for i in range(5):
-    healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
+for i in range(10):
+    healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item", spawn_xy=(WIN.WIN_WIDTH/2 + 20 + i*10, WIN.WIN_HEIGHT/2))
 
 sprite_groups = get_sprite_groups()
 

@@ -180,7 +180,7 @@ class Player(Entity):
         self.name = "Oliver"
         self.found_sword = None
         self.inventory = []
-        self.inventory_max = 5
+        self.inventory_max = 10
         self.inventory_pointer = 0
         self.set_stats(player_stats)
         self.LVL = 1

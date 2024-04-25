@@ -113,15 +113,20 @@ def item_menu(player):
 
         item_buttons = []
         item_pointer = 1
-        y_axis = 100
+        x_axis = 370
+        y_axis = 130
         for item in player.inventory:
             button_text = str(item_pointer) + ". " + item.get_name()
             # Button pressed for BASE sword form
-            CURRENT_ITEM, item_displayed = setup_button(coords=(320, y_axis), text=button_text)
+            CURRENT_ITEM, item_displayed = setup_button(coords=(x_axis, y_axis), text=button_text, font_size=52)
             # item_displayed = False
             item_buttons.append([CURRENT_ITEM, item_displayed])
-            y_axis += 120
+            y_axis += 75
             item_pointer += 1
+            if item_pointer % 5 == 1:
+                y_axis = 130
+                x_axis += 520
+
         BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
         # back_displayed = False
 
