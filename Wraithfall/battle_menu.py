@@ -273,6 +273,10 @@ class Battle:
         battle_anim = BattleAnimation()
         if self.player.access_sword() is not None:
             battle_anim.shift_form(self.player.access_sword().get_form())
+        #If player doesnt have access to the sword use the knnife spritesheet
+        battle_anim = BattleAnimation()
+        battle_anim.load_spritesheets("KNIFEBATTLEspritesheet.png")
+        
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
         while self.in_combat:
