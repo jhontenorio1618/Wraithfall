@@ -12,11 +12,11 @@ class BoundingBox(pygame.sprite.Sprite):
     """ Bounding Boxes spawned in the game to allow for a particular effect to happen in specified location.
     For example: mob detection radius, area to apply particular effect, etc. """
 
-    def __init__(self, bound_box_size=(100, 100), entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
+    def __init__(self, bound_box_size=(100, 100), fill_color="#FF00FF", entity_anchor=None, location_coord=(WIN_WIDTH, WIN_HEIGHT)):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.Surface(stsc(bound_box_size))
         trans_color = "#FF00FF"
-        self.image.fill(trans_color)
+        self.image.fill(fill_color)
         self.image.set_colorkey(trans_color)
         self.rect = self.image.get_rect()
         self.speed_x = 0
