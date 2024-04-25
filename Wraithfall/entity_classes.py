@@ -393,7 +393,7 @@ mob_sprite_data = {"WRAITH1SPRITESHEET.png":
                           # 'r': [4, 7], 'l': [0, 3],
                           'dimensions': [17, 20]},
                    "WRAITH2SPRITESHEET.png":
-                         {'forward': [0, 4], 'backward': [5, 9],
+                         {'f': [0, 4], 'b': [5, 9],
                           # 'r': [5, 9], 'l': [0, 4],
                           'dimensions': [17, 20]}
                    }
@@ -470,7 +470,8 @@ class Mob(Entity):
     def update_sprite(self, speed_x, speed_y):
         """ Update the player's position and animation. """
         now = pygame.time.get_ticks()
-        if now - self.last_update > self.animation_speed * 1000:
+        animation_interval = 100  # Constant factor for animation speed
+        if now - self.last_update > animation_interval:
             self.last_update = now
             self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
             self.image = self.images[self.direction][self.current_frame]
