@@ -371,9 +371,15 @@ class Player(Entity):
         EXP: Number of EXP given to player for killing mob
         SPRITE: Reference to sprite sheet for the mob """
 mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
-                "EXP": 2, "SPRITE": ""},
+                "EXP": 2, "SPRITE": "WRAITH1SPRITESHEET.png"},
             1: {"NAME": "[Final Boss]", "STATS": {"ATK": 2, "HP Max": 20, "HP": 20, "DEF": 1, "SPD": 0},
-                "EXP": 50, "SPRITE": ""}}
+                "EXP": 50, "SPRITE": ""},
+            2: {"NAME": "Wraithsoul", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.png"},
+            3: {"NAME": "[Med Wraith 2]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITH3SPRITESHEET.png"},
+            4: {"NAME": "[Hard Wraith]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
+                "EXP": 2, "SPRITE": "WRAITH2SPRITESHEET.png"}}
 
 
 class Mob(Entity):
