@@ -58,7 +58,7 @@ def draw_rect(coords, size, fill=False, border=True, fill_color="#313131", borde
         pygame.draw.rect(SCREEN, fill_color, body_rect, stsc(border_size))"""
 
 
-def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
+def item_display_overworld(player, game_sprite_group, gui_sprite_group):
     success = False
     if player.check_inventory():
         # Only display if the player has items in their inventory
@@ -104,25 +104,40 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group, SCREEN):
     return success
 
 
-def item_menu(player):
+def item_menu(player, bg="black"):
     in_menu = True
     selected_item = None
     while in_menu:
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-        SCREEN.fill("black")
+        SCREEN.fill(bg)
+
+        draw_rect(coords=(100, 50), size=(1080, 500))
+        s = pygame.Surface((1080, 500), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (100, 50))
+
+        draw_rect(coords=(530, 575), size=(220, 100))
+        s = pygame.Surface((220, 100), pygame.SRCALPHA)
+        s.fill((49, 49, 49, 128))  # "#313131" with transparency
+        SCREEN.blit(s, (530, 575))
 
         item_buttons = []
         item_pointer = 1
-        y_axis = 100
+        x_axis = 370
+        y_axis = 130
         for item in player.inventory:
             button_text = str(item_pointer) + ". " + item.get_name()
             # Button pressed for BASE sword form
-            CURRENT_ITEM, item_displayed = setup_button(coords=(320, y_axis), text=button_text)
+            CURRENT_ITEM, item_displayed = setup_button(coords=(x_axis, y_axis), text=button_text, font_size=52)
             # item_displayed = False
             item_buttons.append([CURRENT_ITEM, item_displayed])
-            y_axis += 120
+            y_axis += 75
             item_pointer += 1
-        BACK_BUTTON, back_displayed = setup_button(coords=(150, 650), text="BACK")
+            if item_pointer % 5 == 1:
+                y_axis = 130
+                x_axis += 520
+
+        BACK_BUTTON, back_displayed = setup_button(coords=(645, 620), text="BACK", font_size=52)
         # back_displayed = False
 
         for i in range(len(item_buttons)):
@@ -242,7 +257,7 @@ class Battle:
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
-                self.selected_item = item_menu(self.player)
+                self.selected_item = item_menu(self.player, bg=self.background_color)
                 if self.selected_item:
                     self.player_chosen_action = 2
                     player_decided = True

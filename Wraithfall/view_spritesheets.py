@@ -12,11 +12,24 @@ pygame.display.set_caption("Sprite sheets")
 mc_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "MCSPRITESHEET.PNG")).convert_alpha()
 gpa_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "GRANDPAspritesheet.png")).convert_alpha()
 sword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "SWORDspritesheet.png")).convert_alpha()
+
+# Sword Variations
+firesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIRESWORDSPRITESHEET.png")).convert_alpha()
+darksword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKSWORDSPRITESHEET.png")).convert_alpha()
+icesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICESWORDSPRITESHEET.png")).convert_alpha()
+
+# Mobs
 wraithsoul_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITHSOULSPRITESHEET.png")).convert_alpha()
 wraith1_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH1SPRITESHEET.png")).convert_alpha()
 wraith2_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
 wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
-items_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ITEMspritesheet.png")).convert_alpha()
+
+# Items
+bandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
+dirtybandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DIRTYBANDAGEsprite.png")).convert_alpha()
+fireessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIREESSENCEsprite.png")).convert_alpha()
+iceessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICEESSENCEsprite.png")).convert_alpha()
+darkessence_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKESSENCEsprite.png")).convert_alpha()
 
 def get_image(sheet, frame, width, height, scale):
     image = pygame.Surface((width, height), pygame.SRCALPHA).convert_alpha()
@@ -39,6 +52,11 @@ mc_sprites = collect_frames(mc_sheet, 12, 14, 17, 3)
 gpa_sprites = collect_frames(gpa_sheet, 12, 17, 17, 3)
 sword_sprites = collect_frames(sword_sheet, 16, 17, 20, 3)
 
+# Sword Variations
+firesword_sprites = collect_frames(firesword_sheet, 16, 17, 20, 3)
+darksword_sprites = collect_frames(darksword_sheet, 16, 17, 20, 3)
+icesword_sprites = collect_frames(icesword_sheet, 16, 17, 20, 3)
+
 # Mob Frames
 wraithsoul_sprites = collect_frames(wraithsoul_sheet, 12, 17, 17, 3)
 wraith1_sprites = collect_frames(wraith1_sheet, 24, 18, 20, 3)
@@ -46,7 +64,11 @@ wraith2_sprites = collect_frames(wraith2_sheet, 10, 17, 20, 3)
 wraith3_sprites = collect_frames(wraith3_sheet, 8, 17, 20, 3)
 
 # Item Frames
-items_sprites = collect_frames(items_sheet, 5, 19, 16, 2)
+bandage_sprite = collect_frames(bandage_sheet, 1, 19, 12, 2)
+dirtybandage_sprite = collect_frames(dirtybandage_sheet, 1, 18, 12, 2)
+fireessence_sprite = collect_frames(fireessence_sheet, 1, 14, 17, 2)
+iceessence_sprite = collect_frames(iceessence_sheet, 1, 14, 15, 2)
+darkessence_sprite = collect_frames(darkessence_sheet, 1, 14, 17, 2)
 
 
 def print_frames(frames, x, y):
@@ -64,7 +86,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [mc_sprites, gpa_sprites, sword_sprites, wraithsoul_sprites, wraith1_sprites, wraith2_sprites, wraith3_sprites, items_sprites]
+    sprites_to_print = [firesword_sprites, darksword_sprites, icesword_sprites]
     while run:
 
         # update background

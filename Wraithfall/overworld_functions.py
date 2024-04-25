@@ -1,40 +1,44 @@
 import pygame, sys, os
-import game_window as WIN
+from game_window import random, math, get_font, window_size, WIN_WIDTH, WIN_HEIGHT, game_exit, scale_to_screen as stsc
 import entity_classes as ENTITY
-from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
+from battle_menu import Battle, item_menu, sword_menu, item_display_overworld as item_display
 import pygame.event as EVENTS
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
 
 pygame.init()
-SCREEN = pygame.display.set_mode(WIN.window_size())
-pygame.display.set_caption("Code for Overworld")
+SCREEN = pygame.display.set_mode(window_size())
+pygame.display.set_caption("Overworld Code")
 clock = pygame.time.Clock()
 
+""" Functions below are intended to be inserted BEFORE the Game Loop. """
 
 # Sprite Groups
 def setup_sprite_groups():
-    game_sprites = pygame.sprite.Group()
-    mob_sprites = pygame.sprite.Group()
-    mob_vision_sprites = pygame.sprite.Group()
-    npc_spites = pygame.sprite.Group()
-    item_sprites = pygame.sprite.Group()
-    sword_sprite = pygame.sprite.Group()
-    gui_sprites = pygame.sprite.Group()
-    sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
+    """ Put before game loop and before trying to spawn any entities with spawn_entity (or spawn_player) """
+    game_sprites = pygame.sprite.Group()  # All sprites
+    mob_sprites = pygame.sprite.Group()  # Mob sprites
+    mob_vision_sprites = pygame.sprite.Group()  # BoundingBoxes for mob vision
+    npc_spites = pygame.sprite.Group()  # NPC sprites
+    item_sprites = pygame.sprite.Group()  # Item sprites
+    sword_sprite = pygame.sprite.Group()  # Sword sprite
+    gui_sprites = pygame.sprite.Group()  # GUI sprites (items to be observed not touched)
+    all_sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
                      "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites,
                      "NPC": npc_spites}
-    return sprite_groups
+    return all_sprite_groups
 
 
 sprite_groups = setup_sprite_groups()
 
 def get_sprite_groups():
+    """ Put into game loop to avoid issues with sprite_groups not updating. """
     return sprite_groups
 
 
 def spawn_entity(new_entity, entity_type, spawn_xy=(None, None), override_mob_vision=False):
+    """ Goes before the game loop. Assign to player="""
     sprite_groups[entity_type].add(new_entity)
     sprite_groups["Game"].add(new_entity)
     if not override_mob_vision and entity_type == "Mob":
@@ -44,14 +48,68 @@ def spawn_entity(new_entity, entity_type, spawn_xy=(None, None), override_mob_vi
     return new_entity
 
 
-def spawn_player(spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2)):
+def spawn_player(spawn_xy=(WIN_WIDTH/2, WIN_HEIGHT/2)):
+    """ Goes before the game loop. Assign to player="""
     player = ENTITY.Player()
     sprite_groups["Game"].add(player)
     player.warp(x=spawn_xy[0], y=spawn_xy[1])
     return player
 
 
+""" Functions below are intended to be inserted INSIDE the Game Loop. """
+
+
+def input_events(player, events, playing_cutscene=False, cutscene=None):
+    # TODO don't use this will probably be deleted
+    for event in events:
+        if event.type == pygame.KEYDOWN:
+            # Escape Key
+            if event.key == pygame.K_ESCAPE:
+                game_exit()
+            if not playing_cutscene:
+                # Overworld Controls
+
+                # G key
+                if event.key == pygame.K_g:
+                    # Access Sword Menu
+                    if player.access_sword() is not None:
+                        sword_menu(player)
+                # Q key
+                if event.key == pygame.K_q:
+                    player.scroll_inv(-1)
+                    if player.inventory:
+                        # TODO printing to terminal is temp, only for debugging purposes
+                        print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+                # E key
+                if event.key == pygame.K_e:
+                    player.scroll_inv(1)
+                    if player.inventory:
+                        # TODO printing to terminal is temp, only for debugging purposes
+                        print(str(player.inventory_pointer) + ": " + str(player.inventory[player.inventory_pointer].get_name()))
+                # F key
+                if event.key == pygame.K_f:
+                    selected_item = player.access_item()
+                    if selected_item is not None:
+                        selected_item.use_item()
+            else:
+                # Cutscene Controls
+
+                # Enter key
+                if event.key == pygame.K_RETURN:
+                    playing_cutscene = not cutscene.next_textbox()
+        # check click on window exit button
+        if event.type == pygame.QUIT:
+            game_exit()
+
+
+def item_display_overworld(player, game_sprite_group, gui_sprite_group):
+    """ Goes into the game loop. Calls the function from battle_menu. """
+    success = item_display(player, game_sprite_group, gui_sprite_group, SCREEN)
+    return success
+
+
 def check_player_death(player, is_dead=False):
+    """ Goes into the game loop. """
     player_hp = player.get_stats()["HP"]
     death = False
     if player_hp <= 0 or is_dead:
@@ -60,11 +118,12 @@ def check_player_death(player, is_dead=False):
         print("Player has died. How sad!")
         base_exp = player.get_exp(base_exp_of_lvl=True)
         print("Reverted EXP: " + str(player.set_exp(base_exp)))
-        player.warp(x=WIN.WIN_WIDTH/2, y=WIN.WIN_HEIGHT/2)
+        player.warp(x=WIN_WIDTH/2, y=WIN_HEIGHT/2)
     return death
 
 
 def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, combat_cutscene=None):
+    """ Goes into the game loop. """
     # Player and Mob collision
     player_mob_collide = pygame.sprite.spritecollide(player, sprite_groups["Mob"], False)
     if not combat_invul and player_mob_collide:
@@ -123,3 +182,6 @@ def entity_collision(player, sprite_groups, combat_invul=False, invul_time=0, co
             if item_ref.pickup(player):
                 remove_item = pygame.sprite.spritecollide(player, sprite_groups["Item"], True)
     return combat_invul, invul_time
+
+
+

@@ -5,7 +5,7 @@ from battle_menu import Battle, item_menu, sword_menu, item_display_overworld
 import pygame.event as EVENTS
 
 from overworld_functions import check_player_death, entity_collision, \
-    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups
+    setup_sprite_groups, spawn_entity, spawn_player, get_sprite_groups, input_events
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -59,8 +59,8 @@ sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN
 grandpa = spawn_entity(ENTITY.NPC(), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
 
 # Item Entities
-for i in range(5):
-    healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item")
+for i in range(10):
+    healing_item = spawn_entity(ENTITY.Item(item_id=0), "Item", spawn_xy=(WIN.WIN_WIDTH/2 + 20 + i*10, WIN.WIN_HEIGHT/2))
 
 sprite_groups = get_sprite_groups()
 
@@ -79,6 +79,7 @@ looping = True
 combat_invul = False
 invul_time = 0
 playing_cutscene = True
+current_cutscene = test_entity_scene
 first_battle = True
 while looping:
     # Updating reference to sprite groups
@@ -120,7 +121,7 @@ while looping:
 
                 # Enter key
                 if event.key == pygame.K_RETURN:
-                    playing_cutscene = not test_entity_scene.next_textbox()
+                    playing_cutscene = not current_cutscene.next_textbox()
 
         # check click on window exit button
         if event.type == pygame.QUIT:
@@ -196,10 +197,12 @@ while looping:
     SCREEN.fill("#000000")
     sprite_groups["Game"].draw(SCREEN)
     # TODO GUI code here
-    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"], SCREEN)
+    item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"])
     sprite_groups["GUI"].draw(SCREEN)
 
-    playing_cutscene = play_scene(test_entity_scene, playing_cutscene)
+    playing_cutscene = play_scene(current_cutscene, playing_cutscene)
+    if not playing_cutscene and current_cutscene is not None:
+        current_cutscene = None
     # print(playing_cutscene)
     # update the display window...
     pygame.display.update()
