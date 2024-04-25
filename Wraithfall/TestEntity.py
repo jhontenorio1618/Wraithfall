@@ -58,7 +58,8 @@ for i in range(5):
 sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 75))
 
 # Grandpa
-grandpa = spawn_entity(ENTITY.NPC(), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
+grandpa = spawn_entity(ENTITY.NPC(npc_id=0), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
+deer = spawn_entity(ENTITY.NPC(npc_id=1), "NPC", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 + 70))
 
 # Item Entities
 for i in range(10):

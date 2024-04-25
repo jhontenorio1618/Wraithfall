@@ -516,22 +516,26 @@ class Mob(Entity):
         return self.target
 
 
-npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png", "dimensions": (17, 17, get_universal_scale())},
-            1: {"NAME": "Deer", "SPRITE": "DEERspritesheet.png", "dimensions": (17, 17, get_universal_scale())}} # TODO adjust for actual sprite
+npc_dict = {0: {"NAME": "Grandpa", "SPRITE": "GRANDPAspritesheet.png",
+                "dimensions": (17, 17, get_universal_scale()), "total": 12},
+            1: {"NAME": "Deer", "SPRITE": "DEERSPRITEsheet.png",
+                "dimensions": (23, 20, get_universal_scale()), "total": 6}}
 
 
 class NPC(Entity):
     def __init__(self, bound_box_size=(20, 20), image_fill="#00FFFF", npc_id=0):
         # Entity.__init__(self, bound_box_size=bound_box_size, image_fill=image_fill)
         super().__init__()  # Initialize the base class (Entity)
+        if npc_id not in npc_dict:
+            npc_id = 0
         self.npc_id = npc_id
-
         self.images = {'forward': [0, 1, 2, 3], 'backward': [4, 5, 6, 7], 'right': [8, 9, 10, 11], 'left': [8, 9, 10, 11]}
         self.current_frame = 0
         self.animation_speed = 0.1
         self.last_update = pygame.time.get_ticks()
         self.sprite_sheet = npc_dict[self.npc_id]["SPRITE"]
-        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=(17, 17, get_universal_scale()))
+        self.load_spritesheets(sprite_sheet=self.sprite_sheet, dimensions=npc_dict[self.npc_id]["dimensions"],
+                               sprite_total=npc_dict[self.npc_id]["total"])
         self.image = self.images['forward'][self.current_frame]
         self.rect = self.image.get_rect()
         self.direction = 'forward'
@@ -541,16 +545,23 @@ class NPC(Entity):
 
     def update(self):
         """ Calculate movement of the Mob. """
+        if self.npc_id is 1:
+            now = pygame.time.get_ticks()
+            if now - self.last_update > self.animation_speed * 5000:
+                self.last_update = now
+                self.current_frame = (self.current_frame + 1) % len(self.images[self.direction])
+                self.image = self.images[self.direction][self.current_frame]
+
         super(NPC, self).update()
         # TODO write unique walking behaviors
 
-    def load_spritesheets(self, sprite_sheet, dimensions):
+    def load_spritesheets(self, sprite_sheet, dimensions, sprite_total):
         sheet = pygame.image.load(os.path.join(DIR_SPRITES, sprite_sheet)).convert_alpha()
         frame_width = dimensions[0]
         frame_height = dimensions[1]
         scale = dimensions[2]
         # Load all frames for each direction
-        all_frames = collect_frames(sheet, 12, frame_width, frame_height, scale)
+        all_frames = collect_frames(sheet, sprite_total, frame_width, frame_height, scale)
 
         # Splits the frames into forward, backward, right, and left directions
         self.images['forward'] = all_frames[:3]
@@ -704,7 +715,7 @@ item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 10, "SPRITE": "BANDAG
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
              4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"},
              5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"}, # TODO apple sprite
-             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE:": 15, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
+             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE": 15, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
              }
 
 item_sprite_data = {"BANDAGEsprite.png":
