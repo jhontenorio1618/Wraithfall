@@ -154,7 +154,7 @@ scene11_text_lines = [
 # TODO set up SceneManager for each scene
 
 scene1 = SceneManager(scene1_text_lines, "pencilwriting.wav")
-scene2 = SceneManager(scene2_text_lines, "text_sound.wav")
+scene2 = SceneManager(scene2_text_lines, "coinsound.wav")
 scene3 = SceneManager(scene3_text_lines, "text_sound.wav")
 scene4 = SceneManager(scene4_text_lines, "text_sound.wav")
 scene5 = SceneManager(scene5_text_lines, "text_sound.wav")

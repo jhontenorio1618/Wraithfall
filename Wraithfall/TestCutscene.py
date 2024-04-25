@@ -42,7 +42,7 @@ def test_scene(scene):
             run = False
 
 
-test_scene(get_scene(1))
+#test_scene(get_scene(1))
 test_scene(get_scene(2))
 test_scene(get_scene(3))
 pygame.quit()
