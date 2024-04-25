@@ -15,11 +15,14 @@ WIN_WIDTH = 1280
 WIN_HEIGHT = 720
 screen = pygame.display.set_mode ((WIN_WIDTH, WIN_HEIGHT))
 # Set the current level, which determines which map is used
-current_level = 1  # Change this variable to switch between levels
+current_level = 3  # Change this variable to switch between levels
 
-DEFAULT_START_POSITION = (50, 50)  # Adjust as needed
+DEFAULT_START_POSITION = (70, 70)  # Adjust as needed
 
+START_POSITION = (900,600)
+BACK_POSITION = (1260,720)
 is_collised = False
+is_first_screen_map = True
 
 
 # Abstract base class for maps
@@ -90,11 +93,15 @@ class DynamicCollisionMap (AbstractMap):
                     if obj.name == "cave":
                         print ('you will be in the next level in 3 sec')
                         time.sleep (1)
-                        running (2, True)
+                        running (2, True,False,False)
                     if obj.name == "cave_exit":
                         print ('you will be in the next level in 3 sec')
                         time.sleep (1)
-                        running (3, True)
+                        running (1, True,False,True)
+                    if obj.name == "gate":
+                        print ('you will be in the next level in 3 sec')
+                        time.sleep (1)
+                        running (1, True,False,False )
                     if obj.name.lower () == "thorny_bush":  # Check if the object is a spike
                         player.hp_update (-0.01)  # Decrease health by 1 (or more based on your game design)
                         print (f"Player hit bush! New HP: {player.HP}")
@@ -134,8 +141,8 @@ level_2_map = DynamicCollisionMap (
 
 )
 level_3_map = DynamicCollisionMap (
-    'Game_map/game_map/second_Map.tmx',
-    collision_layers=["second_land_objects"]
+    'Game_map/game_map/second_Map2.tmx',
+    collision_layers=["second_land_objects","gate"]
 )
 
 
@@ -152,10 +159,19 @@ def select_map(level_number):
     else:
         raise ValueError ("Invalid level number")
 
-
-def running(current_level, is_collised):
+def running(current_level, is_collised, is_first_screen_map, is_come_back):
     # Main game loop
     running = True
+    if current_level  == 3 and is_first_screen_map == True:
+        player.rect.x, player.rect.y = START_POSITION
+    elif current_level  == 1 and is_come_back == True:
+        print('come back level')
+        player.rect.x, player.rect.y = BACK_POSITION
+        player.update()
+    if is_collised == True:
+        # is_collised = False
+        player.rect.x, player.rect.y = DEFAULT_START_POSITION  # Reset position to start
+
     while running:
         for event in pygame.event.get ():
             if event.type == pygame.QUIT:
@@ -164,9 +180,8 @@ def running(current_level, is_collised):
 
         screen.fill ((0, 0, 0))
 
-        if is_collised == True:
-            is_collised = False
-            player.rect.x, player.rect.y = DEFAULT_START_POSITION  # Reset position to start
+
+
 
         selected_map = select_map (current_level)
 
@@ -183,5 +198,5 @@ def running(current_level, is_collised):
         pygame.display.flip ()
 
 
-running (current_level, False)
+running (current_level, False,is_first_screen_map, False)
 pygame.quit ()
