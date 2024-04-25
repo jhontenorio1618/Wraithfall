@@ -84,6 +84,9 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
             display_text(text="E ->", coords=(154, 532), font_size=16, font_color="White")
         if current_item.found_player is not None:
             item_name = current_item.get_name()
+            for item in gui_sprite_group:
+                # Stops any sprite overlapping
+                item.kill()
             # Print item name
             display_text(text=item_name, coords=(115, 626), font_size=16, font_color="White", align="center")
             # Assure current_item is in proper sprite groups
@@ -92,7 +95,7 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
             if current_item not in game_sprite_group:
                 game_sprite_group.add(current_item)
             # Display item appearance (coords are center of item)
-            current_item.warp(x=stsc(115), y=stsc(600))
+            current_item.warp(x=stsc(115), y=stsc(590))
         else:
             # Stop Item from appearing in GUI by killing it
             if current_item in gui_sprite_group:

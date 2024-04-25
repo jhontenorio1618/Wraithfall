@@ -195,7 +195,7 @@ while looping:
 
     check_player_death(player)
 
-    SCREEN.fill("#000000")
+    SCREEN.fill("#483b46")
     sprite_groups["Game"].draw(SCREEN)
     # TODO GUI code here
     item_display_overworld(player, sprite_groups["Game"], sprite_groups["GUI"])
