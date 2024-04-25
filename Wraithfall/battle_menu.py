@@ -257,6 +257,7 @@ class Battle:
         else:
             self.playing_cutscene = False
         self.scene = scene
+        '''
         self.load_mob_spritesheet()
         
     def load_mob_spritesheet(self):
@@ -266,7 +267,7 @@ class Battle:
         else:
             #Default spritesheet if type not found
             self.mob_sprite_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH1SPRITESHEET.PNG")).convert_alpha()
-        
+        '''
 
     def combat_screen(self):
         open_sword_menu = False
@@ -291,6 +292,15 @@ class Battle:
         
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
+        
+        '''
+        #Load wraith sprite
+        wraith_sprite = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH1SPRITESHEET.PNG")).convert_alpha()
+        wraith_rect = wraith_sprite.get_rect()
+        #Position the wraith spite on the green
+        animation_sprite_group.add(wraith_sprite,wraith_rect)
+        '''
+        
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
