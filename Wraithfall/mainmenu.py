@@ -47,6 +47,11 @@ def play():
     #if game is not paused return false
     #paused = False #This will determine if game is paused in the future
     while True:
+
+        from TestEntity import play_testentity
+
+        # play_testentity()
+        """
         #Retrieve current mouse position
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
         
@@ -79,7 +84,7 @@ def play():
             if paused:
                 pause_menu()
                 paused = False'''
-            
+            """
         pygame.display.update()
         
 #ignore line 76-109 for now.
