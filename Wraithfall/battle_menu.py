@@ -104,12 +104,12 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
     return success
 
 
-def item_menu(player):
+def item_menu(player, bg="black"):
     in_menu = True
     selected_item = None
     while in_menu:
         PLAY_MOUSE_POSITION = pygame.mouse.get_pos()
-        SCREEN.fill("black")
+        SCREEN.fill(bg)
 
         draw_rect(coords=(100, 50), size=(1080, 500))
         s = pygame.Surface((1080, 500), pygame.SRCALPHA)
@@ -257,7 +257,7 @@ class Battle:
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
-                self.selected_item = item_menu(self.player)
+                self.selected_item = item_menu(self.player, bg=self.background_color)
                 if self.selected_item:
                     self.player_chosen_action = 2
                     player_decided = True
