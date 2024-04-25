@@ -59,6 +59,7 @@ class SceneManager:
         # Check if we have reached the end of text_lines
 
         if not self.scene_ended:
+            self.sound.stop()
             if self.current_line_index + 1 >= len(self.text_lines):
                 #If so, indicate that the scene has ended and return false
                 self.scene_ended = True
@@ -70,7 +71,7 @@ class SceneManager:
                 self.current_text_line = self.text_lines[self.current_line_index]
                 self.current_text_line.text_index = 0
                 # Stop sound before playing again
-                self.sound.stop()
+                # self.sound.stop()
                 # Play sound when text is displayed
                 self.sound.play()
         return self.scene_ended
@@ -104,6 +105,7 @@ class SceneManager:
         self.current_line_index = index
 
     def check_if_finished(self):
+        # self.sound.stop()
         return self.scene_ended
 
 
