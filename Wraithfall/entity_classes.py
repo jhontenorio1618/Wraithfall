@@ -410,7 +410,49 @@ class Mob(Entity):
         self.images['backward'] = all_frames[4:7]
         self.images['right'] = all_frames[8:11]
         self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
-
+        
+    def load_spritesheet2(self, sprite_sheet, dimensions):
+        wraith_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH2SPRITESHEET.png")).convert_alpha()
+        frame_width = 14
+        frame_height = 17
+        scale = stsc(2)
+        #Load all frames for each direction
+        all_frames = collect_frames(wraith_sheet, 12, frame_width, frame_height, scale)
+        
+        #Splites the frames into forward, backward, right, and left
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]
+        
+    def load_spritesheet3(self, sprite_sheet, dimensions):
+        wraith_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITH3SPRITESHEET.png")).convert_alpha()
+        frame_width = 14
+        frame_height = 17
+        scale = stsc(2)
+        #Load all frames for each direction
+        all_frames = collect_frames(wraith_sheet, 12, frame_width, frame_height, scale)
+        
+        #Splites the frames into forward, backward, right, and left
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']] 
+        
+    def load_spritesheet4(self, sprite_sheet, dimensions):
+        wraith_sheet = pygame.image.load(os.path.join(DIR_SPRITES, "WRAITHSOULSPRITESHEET.PNG")).convert_alpha()
+        frame_width = 14
+        frame_height = 17
+        scale = stsc(2)
+        #Load all frames for each direction
+        all_frames = collect_frames(wraith_sheet, 12, frame_width, frame_height, scale)
+        
+        #Splites the frames into forward, backward, right, and left
+        self.images['forward'] = all_frames[:3]
+        self.images['backward'] = all_frames[4:7]
+        self.images['right'] = all_frames[8:11]
+        self.images['left'] = [pygame.transform.flip(frame, True, False) for frame in self.images['right']]              
+        
     def update(self):
         """ Calculate movement of the Mob. """
         self.speed_x = 0
