@@ -26,7 +26,9 @@ wraith3_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "WRAITH3SPRITESH
 
 # Battle Sprites
 battlesword_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BATTLESWORDspritesheet.png")).convert_alpha()
-
+firebattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "FIREBATTLEspritesheet.png")).convert_alpha()
+darkbattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "DARKBATTLEspritesheet.png")).convert_alpha()
+icebattle_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "ICEBATTLEspritesheet.png")).convert_alpha()
 
 # Items
 bandage_sheet = pygame.image.load(os.path.join(WIN.DIR_SPRITES, "BANDAGEsprite.png")).convert_alpha()
@@ -76,6 +78,11 @@ darkessence_sprite = collect_frames(darkessence_sheet, 1, 14, 17, 2)
 
 # Battle Frames
 battlesword_sprites = collect_frames(battlesword_sheet, 6, 315, 333, 1)
+firebattle_sprites = collect_frames(firebattle_sheet, 6, 315, 333, 1)
+darkbattle_sprites = collect_frames(darkbattle_sheet, 6, 315, 333, 1)
+icebattle_sprites = collect_frames(icebattle_sheet, 6, 315, 333, 1)
+
+
 
 def print_frames(frames, x, y):
     for i in range(len(frames)):
@@ -92,7 +99,7 @@ def print_frames(frames, x, y):
 def display_sprites():
     run = True
     # currently, set to print main character, grandpa, and sword sprites
-    sprites_to_print = [battlesword_sprites]
+    sprites_to_print = [firebattle_sprites, darkbattle_sprites, icebattle_sprites]
     while run:
 
         # update background
@@ -110,4 +117,4 @@ def display_sprites():
 
         pygame.display.update()
 
-#display_sprites()
+display_sprites()
