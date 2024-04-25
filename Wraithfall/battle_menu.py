@@ -271,12 +271,15 @@ class Battle:
         play_mixer(-1)
         animation_sprite_group = pygame.sprite.Group()
         battle_anim = BattleAnimation()
+        if self.player.access_sword() is not None:
+            battle_anim.shift_form(self.player.access_sword().get_form())
         battle_anim.move()
         animation_sprite_group.add(battle_anim)
         while self.in_combat:
             if open_sword_menu:
                 # Pressed SWORD button
-                sword_menu(self.player)
+                sword_form = sword_menu(self.player)
+                battle_anim.shift_form(sword_form)
                 open_sword_menu = False
             if open_item_menu:
                 # Pressed ITEM button
@@ -593,7 +596,9 @@ class Battle:
 
 
 class BattleAnimation(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, id=0):
+        """ id = 0 for Player animations.
+            id = 1 for Mob animations. """
         pygame.sprite.Sprite.__init__(self)
         self.images = {'forward': [0, 1, 2, 3, 4, 5], 'backward': [0, 1, 2, 3, 4, 5]}
         self.current_frame = 0
@@ -634,6 +639,25 @@ class BattleAnimation(pygame.sprite.Sprite):
         self.rect.centerx = x
         self.rect.centery = y
         return x, y
+
+    def shift_form(self, form):
+        """ Given a string of a specified form, changes the sword to that form.
+        Used in combination of the SWORD menu. """
+        # TODO should change aspects of the sword here. For now, it's only visual
+        if form == "BASE":
+            self.load_spritesheets("BATTLESWORDspritesheet.png")
+            # self.image.fill("#FFCC40")
+        if form == "FIRE":
+            self.load_spritesheets("FIREBATTLEspritesheet.png")
+            # self.image.fill("#FF0000")
+        if form == "ICE":
+            self.load_spritesheets("ICEBATTLEspritesheet.png")
+            # self.image.fill("#0000FF")
+        if form == "DARK":
+            self.load_spritesheets("DARKBATTLEspritesheet.png")
+            # self.image.fill("#FF00FF")
+        return form
+
 
 
 
