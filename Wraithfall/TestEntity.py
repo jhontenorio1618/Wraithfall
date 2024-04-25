@@ -177,7 +177,7 @@ while looping:
         combat_invul, invul_time = entity_collision(player, sprite_groups, combat_invul=combat_invul, invul_time=invul_time,
                                                     combat_cutscene=combat_menu_scene)
 
-    check_player_death(player)
+    check_player_death(player, SCREEN)
 
     SCREEN.fill("#483b46")
     sprite_groups["Game"].draw(SCREEN)

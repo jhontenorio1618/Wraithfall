@@ -5,6 +5,8 @@ import entity_classes as ENTITY
 from battle_menu import Battle, item_menu, sword_menu, item_display_overworld as item_display
 import pygame.event as EVENTS
 from audio_mixer import load_mixer, play_mixer, pause_mixer, unpause_mixer, stop_mixer
+import assets
+from pygame.locals import KEYDOWN, K_RETURN
 
 from cutscenes import play_scene, get_scene
 from textbox import TextBox, SceneManager
@@ -113,18 +115,38 @@ def item_display_overworld(player, game_sprite_group, gui_sprite_group):
     return success
 
 
-def check_player_death(player, is_dead=False):
+def check_player_death(player, SCREEN, is_dead=False):
     """ Goes into the game loop. """
     player_hp = player.get_stats()["HP"]
     death = False
+    game_over_displayed = False  # Flag to track if "GAME OVER" screen is displayed
     if player_hp <= 0 or is_dead:
         death = True
-        # TODO remove debug code
-        print("Player has died. How sad!")
-        base_exp = player.get_exp(base_exp_of_lvl=True)
-        print("Reverted EXP: " + str(player.set_exp(base_exp)))
-        player.warp(x=WIN_WIDTH/2, y=WIN_HEIGHT/2)
-    return death
+        game_over_displayed = True  # Set flag to True to display "GAME OVER" screen
+
+    # Main game loop
+    while True:
+        # Fill the screen with black color if "GAME OVER" screen is displayed
+        if game_over_displayed:
+            SCREEN.fill((0, 0, 0))
+
+            # Define the path to the font file
+            font_path = os.path.join('assets', 'fonts', 'grand9Kpixel.ttf')
+
+            # Display "GAME OVER" screen
+            font = pygame.font.Font(font_path, 72)  # Increase font size to 72
+            game_over_text = font.render("GAME OVER", True, (255, 0, 0))
+            game_over_rect = game_over_text.get_rect(center=(SCREEN.get_width() // 2, SCREEN.get_height() // 2))
+            SCREEN.blit(game_over_text, game_over_rect)
+            pygame.display.flip()
+
+            # Wait for player to press enter
+            for event in pygame.event.get():
+                if event.type == KEYDOWN and event.key == K_RETURN:
+                    # Teleport player to (0,0)
+                    player.warp(x=0, y=0)
+                    game_over_displayed = False  # Set flag to False to hide "GAME OVER" screen
+                    return death  # Exit the function when Enter key is pressed
 
 music_pause = False
 

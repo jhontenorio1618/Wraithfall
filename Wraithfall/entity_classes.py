@@ -549,7 +549,7 @@ class NPC(Entity):
 
     def update(self):
         """ Calculate movement of the Mob. """
-        if self.npc_id is 1:
+        if self.npc_id == 1:
             now = pygame.time.get_ticks()
             if now - self.last_update > self.animation_speed * 5000:
                 self.last_update = now
