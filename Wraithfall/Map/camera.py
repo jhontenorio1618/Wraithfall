@@ -128,7 +128,7 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-            screen.fill('cabin room map.tmx')
+            screen.fill('black')
 
             camera_group.update()
             camera_group.custom_draw(player)
