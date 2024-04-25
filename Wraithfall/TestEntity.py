@@ -21,8 +21,9 @@ mob_vision_sprites = pygame.sprite.Group()
 item_sprites = pygame.sprite.Group()
 sword_sprite = pygame.sprite.Group()
 gui_sprites = pygame.sprite.Group()
+grandpa_sprites = pygame.sprite.Group()
 sprite_groups = {"Game": game_sprites, "Mob": mob_sprites, "Mob Vision": mob_vision_sprites,
-                 "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites}
+                 "Item": item_sprites, "Sword": sword_sprite, "GUI": gui_sprites, "Grandpa": grandpa_sprites}
 
 
 def spawn_entity(new_entity, entity_type, spawn_xy=(None, None)):
@@ -46,6 +47,9 @@ for i in range(5):
 
 # Sword Entity
 sword = spawn_entity(ENTITY.Sword(), "Sword", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 75))
+
+# Grandpa
+#grandpa = spawn_entity(ENTITY.NPC(), "Grandpa", spawn_xy=(WIN.WIN_WIDTH/2, WIN.WIN_HEIGHT/2 - 35))
 
 # Item Entities
 for i in range(5):
