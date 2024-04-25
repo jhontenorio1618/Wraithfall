@@ -160,11 +160,11 @@ class Entity(pygame.sprite.Sprite):
         BASE EXP: Minimum total EXP needed for current level (same as previous NEXT LVL, or 0 if level 1)
         GOAL EXP: Total EXP needed to reach next level
         STATS: Dictionary of stats for player's corresponding level """
-level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}},
-              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
-              3: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
-              4: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},
-              5: {"BASE EXP": 5, "GOAL EXP": 9999999999, "STATS": {"ATK": 3, "HP Max": 6, "DEF": 2, "SPD": 1}},}
+level_dict = {1: {"BASE EXP": 0, "GOAL EXP": 5, "STATS": {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 1, "SPD": 0}},
+              2: {"BASE EXP": 5, "GOAL EXP": 15, "STATS": {"ATK": 3, "HP Max": 15, "HP": 15, "DEF": 2, "SPD": 0}},
+              3: {"BASE EXP": 15, "GOAL EXP": 30, "STATS": {"ATK": 5, "HP Max": 20, "HP": 20, "DEF": 3, "SPD": 0}},
+              4: {"BASE EXP": 30, "GOAL EXP": 50, "STATS": {"ATK": 6, "HP Max": 25, "HP": 25, "DEF": 4, "SPD": 0}},
+              5: {"BASE EXP": 50, "GOAL EXP": 9999999999, "STATS": {"ATK": 8, "HP Max": 30, "HP": 30, "DEF": 5, "SPD": 0}},}
 
 
 class Player(Entity):
@@ -180,7 +180,7 @@ class Player(Entity):
         self.direction = 'forward'
         if player_stats is None:
             # Default Player Stats if none are given to initialize.
-            player_stats = {"ATK": 2, "HP Max": 5, "HP": 5, "DEF": 1, "SPD": 0}
+            player_stats = {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 1, "SPD": 0}
         self.name = "Oliver"
         self.found_sword = None
         self.inventory = []
@@ -379,7 +379,7 @@ mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF
             1: {"NAME": "[Boss Wraith]", "STATS": {"ATK": 2, "HP Max": 10, "HP": 10, "DEF": 10, "SPD": 0},
                 "EXP": 50, "SPRITE": "BOSSWRAITHSPRITESHEET.png"},
             2: {"NAME": "Wraithsoul", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
-                "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.png"},
+                "EXP": 2, "SPRITE": "WRAITHSOULSPRITESHEET.PNG"},
             3: {"NAME": "[Med Wraith 2]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
                 "EXP": 2, "SPRITE": "WRAITH3SPRITESHEET.png"},
             4: {"NAME": "[Hard Wraith]", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF": 1, "SPD": 0},
@@ -387,12 +387,10 @@ mob_dict = {0: {"NAME": "Wraith", "STATS": {"ATK": 2, "HP Max": 3, "HP": 3, "DEF
 
 mob_sprite_data = {"WRAITH1SPRITESHEET.png":
                     {'f': [0, 7], 'b': [8, 15], 'r': [16,23], 'dimensions': [18, 20], 'total': 24},
-                         """"{'forward': [0, 1, 2, 3, 4, 5, 6, 7], 'backward': [8, 9, 10, 11, 12, 13, 14, 15],
-                          'right': [16, 17, 18, 19, 20, 21, 22, 23], 'dimensions': [18, 20]}"""
-                     "WRAITHSOULSPRITESHEET.png":
-                         {'f': [0, 3], 'b': [4, 7], 'r': [8, 11],
+                   "WRAITHSOULSPRITESHEET.PNG":
+                       {'f': [0, 3], 'b': [4, 7], 'r': [8, 11],
                           'dimensions': [17, 17], 'total': 12},
-                     "WRAITH3SPRITESHEET.png":
+                   "WRAITH3SPRITESHEET.png":
                          {'f': [0, 3], 'b': [4, 7],
                           # 'r': [4, 7], 'l': [0, 3],
                           'dimensions': [17, 20], 'total': 8},
@@ -549,7 +547,7 @@ class NPC(Entity):
 
     def update(self):
         """ Calculate movement of the Mob. """
-        if self.npc_id is 1:
+        if self.npc_id == 1:
             now = pygame.time.get_ticks()
             if now - self.last_update > self.animation_speed * 5000:
                 self.last_update = now

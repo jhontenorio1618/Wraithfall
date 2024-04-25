@@ -1,3 +1,5 @@
+import random
+
 import pygame, sys, os
 import game_window as WIN
 import entity_classes as ENTITY
@@ -176,6 +178,11 @@ while looping:
 
         combat_invul, invul_time = entity_collision(player, sprite_groups, combat_invul=combat_invul, invul_time=invul_time,
                                                     combat_cutscene=combat_menu_scene)
+
+        if len(sprite_groups["Mob"]) < 5:
+            mob_ids = [0, 2, 3, 4]
+            spawn_mob = random.choice(mob_ids)
+            dummy_wraith = spawn_entity(ENTITY.Mob(mob_id=spawn_mob), "Mob")
 
     check_player_death(player)
 
