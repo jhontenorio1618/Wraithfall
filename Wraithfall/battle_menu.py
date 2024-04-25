@@ -382,7 +382,7 @@ class Battle:
                     stop_mixer()
                     unload_mixer()
                     # Essence for Sword is dropped
-                    possible_loot_ids = [1, 2, 3]
+                    possible_loot_ids = [1, 1, 2, 2, 3, 3, 4, 4, 0]
                     loot_id = random.choice(possible_loot_ids)
                     # Display exit button that appears as "NEXT"
                     next_displayed = enable_button(BATTLE_NEXT, PLAY_MOUSE_POSITION)

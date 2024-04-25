@@ -711,13 +711,13 @@ class Sword(Entity):
         TYPE: Distinguishes what type of STAT the item affects. If SWORD, means it is an item for the Sword
         VALUE: The numeric effect the item has on the relevant stat disclosed in TYPE (does not appear for "SWORD" type)
         SPRITE: Reference to sprite sheet for the item """
-item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 10, "SPRITE": "BANDAGEsprite.png"},
+item_dict = {0: {"NAME": "Bandage", "TYPE": "HP", "VALUE": 20, "SPRITE": "BANDAGEsprite.png"},
              1: {"NAME": "Fire Essence", "TYPE": "SWORD", "SPRITE": "FIREESSENCEsprite.png"},
              2: {"NAME": "Ice Essence", "TYPE": "SWORD", "SPRITE": "ICEESSENCEsprite.png"},
              3: {"NAME": "Dark Essence", "TYPE": "SWORD", "SPRITE": "DARKESSENCEsprite.png"},
-             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 2, "SPRITE": "DIRTYBANDAGEsprite.png"},
-             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 5, "SPRITE": "APPLEsprite.png"}, # TODO apple sprite
-             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE": 15, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
+             4: {"NAME": "Dirty Bandage", "TYPE": "HP", "VALUE": 5, "SPRITE": "DIRTYBANDAGEsprite.png"},
+             5: {"NAME": "Apple", "TYPE": "HP", "VALUE": 10, "SPRITE": "APPLEsprite.png"}, # TODO apple sprite
+             6: {"NAME": "Deer Meat", "TYPE": "HP", "VALUE": 30, "SPRITE": "DEERMEATsprite.png"} # TODO deer sprite
              }
 
 item_sprite_data = {"BANDAGEsprite.png":
